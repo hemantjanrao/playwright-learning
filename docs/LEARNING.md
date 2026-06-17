@@ -15,7 +15,9 @@ flowchart LR
     CHECK --> NEXT["Next lesson"]
 ```
 
-Ask the agent at any step: *"Teach me Lesson 03"* or *"Review my checkpoint answers"*.
+Ask the **Framework Coach** at any step: `/framework-coach Teach me Lesson 03` or *"Review my checkpoint answers"*.
+
+Invoke: `/framework-coach` · `@.cursor/skills/framework-coach/SKILL.md`
 
 ---
 
@@ -56,7 +58,7 @@ flowchart TD
 | 10 | Debugging | `playwright.config.ts` | `npm run test:debug` |
 | 11 | [Mocking strategies](./lessons/11-mocking-strategies.md) | `mocks/`, `utils/route-mocks.ts` | `npm run test:mock` |
 
-Lessons **03–10** — ask the agent: *"Teach me Lesson N"*.
+Lessons **03–10** — invoke Framework Coach: `/framework-coach Teach me Lesson N` (content in `.cursor/skills/framework-coach/curriculum.md`).
 
 ---
 

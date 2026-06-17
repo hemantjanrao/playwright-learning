@@ -200,4 +200,7 @@ npx playwright codegen <url>    # record locators (starting point only)
 
 ## Additional resources
 
+- Subagent (implement & review): [.cursor/agents/senior-sdet.md](../../agents/senior-sdet.md)
 - Playwright locator details: [playwright-patterns.md](playwright-patterns.md)
+- Repo architecture: [docs/ARCHITECTURE.md](../../../docs/ARCHITECTURE.md)
+- Onboarding (learning): [.cursor/agents/framework-coach.md](../../agents/framework-coach.md)
