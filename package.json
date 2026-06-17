@@ -37,14 +37,14 @@
     "validate": "npm run typecheck && npm run lint"
   },
   "devDependencies": {
-    "@eslint/js": "^9.28.0",
+    "@eslint/js": "^10.0.1",
     "@faker-js/faker": "^9.8.0",
     "@playwright/test": "^1.52.0",
     "@types/node": "^22.15.21",
     "allure-playwright": "^3.2.2",
     "cross-env": "^7.0.3",
     "dotenv": "^16.5.0",
-    "eslint": "^9.28.0",
+    "eslint": "^10.5.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-playwright": "^2.2.0",
     "msw": "^2.14.6",
