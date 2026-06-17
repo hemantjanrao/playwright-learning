@@ -42,7 +42,7 @@
     "@playwright/test": "^1.52.0",
     "@types/node": "^22.15.21",
     "allure-playwright": "^3.2.2",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "dotenv": "^16.5.0",
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
