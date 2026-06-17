@@ -1,37 +1,38 @@
-export interface ApiUser {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  phone: string;
-  website: string;
-  address: {
-    street: string;
-    suite: string;
-    city: string;
-    zipcode: string;
-    geo: { lat: string; lng: string };
-  };
-  company: {
-    name: string;
-    catchPhrase: string;
-    bs: string;
-  };
-}
+import type { ApiErrorResponse } from '@schemas/api.schemas';
 
-export interface ApiPost {
-  userId: number;
-  id?: number;
-  title: string;
-  body: string;
-}
+/** Discriminated union — callers narrow with `result.ok` instead of try/catch. */
+export type ApiSuccess<T> = {
+  readonly ok: true;
+  readonly data: T;
+  readonly status: number;
+};
 
-export interface ApiErrorResponse {
-  message?: string;
-  statusCode?: number;
-}
+export type ApiFailure = {
+  readonly ok: false;
+  readonly status: number;
+  readonly error: ApiErrorResponse;
+  readonly rawBody: unknown;
+};
+
+export type ApiResult<T> = ApiSuccess<T> | ApiFailure;
 
 export interface ApiClientOptions {
   baseUrl: string;
   extraHeaders?: Record<string, string>;
 }
+
+// Re-export contract types from schemas (single source of truth)
+export type {
+  ApiUser,
+  ApiPost,
+  CreatePostPayload,
+  ApiErrorResponse,
+} from '@schemas/api.schemas';
+
+export {
+  ApiUserSchema,
+  ApiPostSchema,
+  CreatePostSchema,
+  ApiUsersSchema,
+  ApiErrorResponseSchema,
+} from '@schemas/api.schemas';

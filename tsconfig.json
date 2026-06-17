@@ -23,6 +23,8 @@
       "@utils/*": ["utils/*"],
       "@config/*": ["config/*"],
       "@models/*": ["types/*"],
+      "@schemas/*": ["schemas/*"],
+      "@builders/*": ["builders/*"],
       "@test-data/*": ["test-data/*"]
     }
   },
