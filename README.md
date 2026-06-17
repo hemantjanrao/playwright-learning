@@ -44,6 +44,7 @@ npm run test:api          # API contracts only
 npm run test:ui           # UI E2E (chromium)
 npm run test:smoke        # @smoke — PR tier
 npm run test:regression   # @regression — nightly tier
+npm run test:mock         # @mock — MSW, page.route, Testcontainers
 npm run test:pr           # unit + api + smoke (CI PR pipeline)
 npm run test:headed
 npm run test:debug
@@ -68,6 +69,8 @@ npm run validate          # typecheck + lint + format
 ```
 ├── docs/                  # Architecture + learning curriculum
 ├── schemas/               # Zod schemas (single source of truth)
+├── mocks/                 # MSW handlers + mock payloads
+├── docker/wiremock/       # WireMock stub mappings for Testcontainers
 ├── builders/              # Fluent test data builders
 ├── tests/
 │   ├── unit/              # No browser

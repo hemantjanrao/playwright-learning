@@ -25,6 +25,7 @@
       "@models/*": ["types/*"],
       "@schemas/*": ["schemas/*"],
       "@builders/*": ["builders/*"],
+      "@mocks/*": ["mocks/*"],
       "@test-data/*": ["test-data/*"]
     }
   },

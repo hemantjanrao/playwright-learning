@@ -24,7 +24,9 @@ playwright-learning/
 │   ├── ui/                 # Browser E2E specs
 │   └── setup/              # Auth storageState setup
 ├── pages/                  # Page Object Model (locators + actions)
-├── fixtures/               # Custom Playwright fixtures
+├── mocks/                  # MSW handlers + mock payloads
+├── docker/wiremock/        # WireMock stubs for Testcontainers
+├── fixtures/               # Custom Playwright fixtures (incl. msw, container)
 ├── schemas/                # Zod schemas — single source of truth
 ├── builders/               # Fluent test data builders
 ├── types/                  # TypeScript types (branded, unions, utilities)
@@ -44,6 +46,7 @@ npm run test:ui           # UI E2E (chromium)
 npm run test:smoke        # @smoke tagged tests
 npm run test:regression   # @regression tagged tests
 npm run test:pr           # simulates CI PR pipeline
+npm run test:mock         # MSW + page.route + Testcontainers (@mock)
 npm run test:headed       # headed mode
 npm run test:debug        # debug mode
 npm run report            # HTML report

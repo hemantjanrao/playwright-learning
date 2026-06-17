@@ -16,6 +16,7 @@
     "test:regression": "playwright test --grep @regression",
     "test:pr": "playwright test --project=unit && playwright test --project=api && playwright test --project=chromium --grep @smoke",
     "test:nightly": "playwright test --grep @regression",
+    "test:mock": "playwright test --grep @mock --project=api-mock --project=chromium-mock",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
     "test:chromium": "playwright test --project=chromium",
@@ -46,11 +47,16 @@
     "eslint": "^9.28.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-playwright": "^2.2.0",
+    "msw": "^2.14.6",
     "prettier": "^3.5.3",
+    "testcontainers": "^12.0.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.33.0"
   },
   "dependencies": {
     "zod": "^4.4.3"
+  },
+  "overrides": {
+    "undici": "6.21.3"
   }
 }

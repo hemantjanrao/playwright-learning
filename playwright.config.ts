@@ -48,6 +48,16 @@ export default defineConfig({
     {
       name: 'api',
       testMatch: /tests\/api\/.*\.spec\.ts/,
+      testIgnore: /tests\/api\/(msw|container)-.*\.spec\.ts/,
+      use: {
+        ...devices['Desktop Chrome'],
+      },
+    },
+    // ── API mocks: MSW + Testcontainers (longer timeout for Docker startup) ─
+    {
+      name: 'api-mock',
+      testMatch: /tests\/api\/(msw|container)-.*\.spec\.ts/,
+      timeout: 120_000,
       use: {
         ...devices['Desktop Chrome'],
       },
@@ -61,8 +71,14 @@ export default defineConfig({
     {
       name: 'chromium',
       testMatch: /tests\/ui\/.*\.spec\.ts/,
+      testIgnore: /network-mock\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['setup'],
+    },
+    {
+      name: 'chromium-mock',
+      testMatch: /tests\/ui\/network-mock\.spec\.ts/,
+      use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'firefox',

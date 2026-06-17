@@ -195,6 +195,31 @@ New test needed?
 - **Parallel data:** `uniqueSuffix()` includes `TEST_PARALLEL_INDEX`
 - **No `waitForTimeout`** — use Playwright auto-wait + `expect`
 
+## Mocking strategies
+
+Three complementary approaches — pick by test layer:
+
+```mermaid
+flowchart TD
+    Q{What are you testing?}
+    Q -->|API via Node fetch| MSW["MSW setupServer\n+ FetchApiClient"]
+    Q -->|API via Playwright request| TC["Testcontainers\nWireMock Docker"]
+    Q -->|Browser fetch/XHR| PR["page.route\nroute-mocks.ts"]
+```
+
+| Strategy           | Layer                   | File(s)                                             | When to use                               |
+| ------------------ | ----------------------- | --------------------------------------------------- | ----------------------------------------- |
+| **MSW**            | API (Node `fetch`)      | `mocks/`, `fixtures/msw.fixture.ts`                 | Fast, no Docker; stub contract responses  |
+| **Testcontainers** | API (`request` fixture) | `docker/wiremock/`, `fixtures/container.fixture.ts` | Isolated real HTTP server; CI with Docker |
+| **page.route**     | UI (browser)            | `utils/route-mocks.ts`                              | Mock network calls from the page          |
+
+**Important:** MSW does **not** intercept Playwright's `request` fixture — use `FetchApiClient` for MSW tests, or WireMock for `ApiClient`.
+
+```bash
+npm run test:mock    # all @mock tagged tests
+SKIP_DOCKER_TESTS=true npm run test:mock   # MSW + page.route only
+```
+
 ## Extension points
 
 | Need              | Where to extend                                               |

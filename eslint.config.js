@@ -33,7 +33,7 @@ export default tseslint.config(
     rules: {
       'playwright/valid-test-tags': [
         'error',
-        { allowedTags: ['@smoke', '@regression', '@quarantine'] },
+        { allowedTags: ['@smoke', '@regression', '@quarantine', '@mock'] },
       ],
     },
   },
