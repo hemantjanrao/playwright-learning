@@ -2,59 +2,68 @@
 
 ## 1. Simple explanation
 
-A **Playwright project** is a named configuration slice: which tests to run, which browser to use, and what dependencies exist between projects.
+A **Playwright project** is a named slice of config: which tests run, which browser, and what must run first (`dependencies`).
 
 ## 2. Why it matters
 
-One `playwright.config.ts` can run unit, API, and UI tests with different rules. API tests skip browser install overhead. UI tests share one auth setup.
+One `playwright.config.ts` can run unit tests without a browser, API tests without auth, and UI tests with a shared login — each with the right rules.
 
-## 3. Example from this framework
+## 3. Project graph (current)
+
+```mermaid
+flowchart TB
+    subgraph FAST["No auth dependency"]
+        UNIT["unit"]
+        API["api"]
+        MOCK["api-mock"]
+        CHM["chromium-mock"]
+    end
+
+    subgraph UI["UI with auth"]
+        SETUP["setup"] --> CH["chromium"]
+        SETUP --> FF["firefox"]
+        SETUP --> WK["webkit"]
+    end
+```
+
+See full table: [ARCHITECTURE.md §2](../ARCHITECTURE.md#2-playwright-projects)
+
+## 4. Simplified config
 
 ```typescript
-// playwright.config.ts (simplified)
+// playwright.config.ts (conceptual)
 projects: [
-  { name: 'unit', testMatch: /tests\/unit\// },
-  { name: 'api', testMatch: /tests\/api\// },
-  { name: 'setup', testMatch: /auth\.setup\.ts/ },
-  { name: 'chromium', testMatch: /tests\/ui\//, dependencies: ['setup'] },
+  { name: 'unit',      testMatch: /tests\/unit\// },
+  { name: 'api',       testMatch: /tests\/api\//, testIgnore: /(msw|container)-/ },
+  { name: 'api-mock',  testMatch: /(msw|container)-/ },
+  { name: 'setup',     testMatch: /auth\.setup\.ts/ },
+  { name: 'chromium',  dependencies: ['setup'] },
 ];
 ```
 
-- `api` has **no** `dependencies` — runs immediately
-- `chromium` **depends on** `setup` — auth runs first
+## 5. Good vs bad
 
-## 4. Good vs bad
-
-**Bad:** All tests in one project → API tests launch browser 3× and wait for UI login.
-
-**Good:** Separate `api` project → HTTP only, parallel, fast.
-
-## 5. Common mistakes
-
-- Adding `dependencies: ['setup']` to API project
-- Using `testIgnore` instead of `testMatch` (harder to reason about)
-- Running full matrix on every PR
+| Bad | Good |
+|-----|------|
+| One project for everything | Layer-specific projects |
+| API waits for UI auth setup | `api` has no `dependencies` |
+| Full browser matrix on PR | `@smoke` on chromium only |
 
 ## 6. Mini exercise
 
-Run only the API project and time it:
-
 ```bash
-time npm run test:api
+time npm run test:api     # should be ~2s
+time npm test             # full suite — much longer
 ```
 
-Compare with:
-
-```bash
-time npm test
-```
+Open `playwright.config.ts` and find `testIgnore` on the `api` project — why exclude `msw-*` and `container-*`?
 
 ## 7. Checkpoint questions
 
 1. Which project runs `auth.setup.ts`?
-2. Why doesn't the `unit` project need `npx playwright install` for all browsers?
-3. What happens if you delete `dependencies: ['setup']` from chromium?
+2. Why does `chromium-mock` not depend on `setup`?
+3. What is the difference between `api` and `api-mock` projects?
 
 ---
 
-**Next:** [Lesson 03 — Fixtures](../LEARNING.md) — ask the agent: "Teach me Lesson 03"
+**Next:** [Lesson 11 — Mocking Strategies](11-mocking-strategies.md) or ask the agent: *"Teach me Lesson 03"*

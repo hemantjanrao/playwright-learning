@@ -2,41 +2,44 @@
 
 ## 1. Simple explanation
 
-A test automation **framework** is not just test files. It is the structure around tests: configuration, reusable page objects, fixtures, API clients, schemas, and CI pipelines. Tests stay thin; the framework carries complexity.
+A **framework** is the structure *around* tests — config, fixtures, page objects, schemas, CI. Tests stay thin; the framework carries complexity.
 
 ## 2. Why it matters
 
-Without a framework, every engineer writes tests differently. Locators get copy-pasted, login runs 50 times, API responses are cast with `as any`. A framework enforces **one way** to do things so the suite scales.
+Without it, every engineer copies login code, uses brittle locators, and runs everything on every PR. A framework enforces **one way** to build tests so the suite scales.
 
-## 3. Example from this repository
+## 3. Visual map (this repo)
 
-Open `docs/ARCHITECTURE.md` — it shows how layers connect:
-
+```mermaid
+flowchart LR
+    TESTS["tests/"] --> FIX["fixtures/"]
+    FIX --> PAGES["pages/"]
+    FIX --> UTILS["utils/"]
+    UTILS --> SCHEMAS["schemas/"]
 ```
-tests/ → fixtures/ → pages/ + utils/ → schemas/
-```
 
-Run the three layers independently:
+Full diagrams: [ARCHITECTURE.md](../ARCHITECTURE.md)
+
+## 4. Run each layer
 
 ```bash
-npm run test:unit   # no browser
-npm run test:api    # HTTP only
-npm run test:ui     # browser E2E
+npm run test:unit    # 12 tests · ~2s · no browser
+npm run test:api     #  5 tests · ~2s · HTTP only
+npm run test:ui      #  7 tests · ~5s · browser + auth setup
+npm run test:mock    #  6 tests · MSW + Docker + page.route
 ```
 
-## 4. Good vs bad
+## 5. Good vs bad
 
-**Bad — everything in one spec file:**
+**Bad** — everything in one spec:
 
 ```typescript
-test('login and check products', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com');
-  await page.fill('#user-name', 'standard_user');
-  // 40 more lines...
-});
+await page.goto('https://www.saucedemo.com');
+await page.fill('#user-name', 'standard_user');
+// 40 more lines...
 ```
 
-**Good — framework layers:**
+**Good** — framework layers:
 
 ```typescript
 test('should login...', { tag: '@smoke' }, async ({ loginPage, dashboardPage, config }) => {
@@ -46,24 +49,17 @@ test('should login...', { tag: '@smoke' }, async ({ loginPage, dashboardPage, co
 });
 ```
 
-## 5. Common mistakes
-
-- Putting assertions inside Page Objects
-- Hard-coding URLs instead of `config.baseUrl`
-- Running API tests through browser projects
-- Skipping tags — everything runs on every PR (slow CI)
-
 ## 6. Mini exercise
 
-1. Run `npm run test:unit`, `npm run test:api`, `npm run test:ui` separately
-2. Count how many tests each layer runs
-3. Open `playwright.config.ts` and find the `projects` array — list all project names
+1. Open [ARCHITECTURE.md §2](../ARCHITECTURE.md#2-playwright-projects) — list all 8 Playwright projects
+2. Run `npm run test:pr` and note the three stages (unit → api → smoke)
+3. Find where `BASE_URL` is loaded (`utils/config-loader.ts`)
 
 ## 7. Checkpoint questions
 
-1. What Playwright project runs `tests/api/` and does it need a browser?
-2. Where does the framework load `BASE_URL` from?
-3. Why are Page Objects in `pages/` instead of inside `tests/`?
+1. What project runs `tests/api/` and does it need browser auth setup?
+2. Why are Page Objects in `pages/` instead of `tests/`?
+3. What command simulates CI on a PR?
 
 ---
 

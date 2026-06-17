@@ -1,231 +1,433 @@
 # Framework Architecture
 
-Production-grade Playwright + TypeScript test automation framework. This document explains how layers connect and why each exists.
+Production-grade Playwright + TypeScript automation framework. This document is the **single source of truth** for system design, data flows, and visual architecture.
 
-## High-level diagram
+---
+
+## At a glance
+
+```mermaid
+block-beta
+    columns 4
+
+    block:ci:1
+        columns 1
+        CI["CI/CD"]
+        PR["PR < 5 min"]
+        NIGHTLY["Nightly"]
+    end
+
+    block:tests:1
+        columns 1
+        TESTS["Tests"]
+        UNIT["unit"]
+        API["api"]
+        UI["ui"]
+    end
+
+    block:fw:1
+        columns 1
+        FW["Framework"]
+        FIX["fixtures"]
+        POM["pages"]
+        UTILS["utils"]
+    end
+
+    block:contracts:1
+        columns 1
+        CONTRACTS["Contracts"]
+        ZOD["Zod schemas"]
+        TYPES["TS types"]
+    end
+
+    ci --> tests
+    tests --> fw
+    fw --> contracts
+```
+
+| Principle | Implementation |
+|-----------|----------------|
+| Test pyramid | `unit` → `api` → `ui` |
+| Fast PR feedback | `test:pr` — unit + api + `@smoke` |
+| Contract safety | Zod validates API, env, and JSON fixtures |
+| Auth efficiency | `storageState` — login once, reuse everywhere |
+| No flake masking | `retries: 0` on PR |
+| Mocking by layer | MSW · Testcontainers · `page.route` |
+
+---
+
+## Diagram index
+
+| # | Diagram | Section |
+|---|---------|---------|
+| 1 | [Layered architecture](#1-layered-architecture) | System layers |
+| 2 | [Playwright projects](#2-playwright-projects) | Project graph |
+| 3 | [Fixture composition](#3-fixture-composition) | Fixture layers |
+| 4 | [Authentication flow](#4-authentication-flow) | storageState |
+| 5 | [API contract flow](#5-api-contract-flow) | Zod validation |
+| 6 | [Mocking strategies](#6-mocking-strategies) | MSW / Docker / route |
+| 7 | [CI pipeline](#7-ci-pipeline) | PR vs nightly |
+| 8 | [Test decision tree](#8-test-decision-tree) | Where to add tests |
+
+---
+
+## 1. Layered architecture
 
 ```mermaid
 flowchart TB
-    subgraph CI["CI/CD Tiers"]
-        PR["PR: unit + api + @smoke"]
-        NIGHTLY["Nightly: @regression × all browsers"]
+    subgraph L0["⓪ CI / Operations"]
+        direction LR
+        W1["playwright.yml"]
+        W2["playwright-nightly.yml"]
+        TAGS["@smoke · @regression · @mock"]
     end
 
-    subgraph Tests["Test Layer"]
-        UNIT["tests/unit/"]
-        API["tests/api/"]
-        UI["tests/ui/"]
-        SETUP["tests/setup/auth.setup.ts"]
+    subgraph L1["① Test suites"]
+        direction TB
+        T_UNIT["tests/unit/"]
+        T_API["tests/api/"]
+        T_MOCK["tests/api/msw-* · container-*"]
+        T_UI["tests/ui/"]
+        T_SETUP["tests/setup/"]
     end
 
-    subgraph Framework["Framework Layer"]
+    subgraph L2["② Framework"]
+        direction TB
         FIX["fixtures/"]
         PAGES["pages/"]
         BUILD["builders/"]
+        MOCKS["mocks/"]
         UTILS["utils/"]
     end
 
-    subgraph Contracts["Contract Layer"]
-        SCHEMAS["schemas/ — Zod"]
-        TYPES["types/ — TS types"]
+    subgraph L3["③ Contracts & types"]
+        direction LR
+        SCHEMAS["schemas/"]
+        TYPES["types/"]
     end
 
-    subgraph Config["Configuration"]
-        ENV[".env.* files"]
+    subgraph L4["④ Config & data"]
+        direction LR
+        ENV[".env.*"]
         PWCFG["playwright.config.ts"]
-        LOADER["config-loader.ts"]
+        JSON["test-data/"]
+        DOCKER["docker/wiremock/"]
     end
 
-    PR --> UNIT & API & UI
-    NIGHTLY --> API & UI
-
-    UNIT --> SCHEMAS & UTILS
-    API --> FIX & SCHEMAS
-    UI --> FIX & PAGES & SETUP
-
-    FIX --> PAGES & UTILS & LOADER
-    UTILS --> SCHEMAS & TYPES
-    BUILD --> SCHEMAS
-    PAGES --> UTILS
-
-    LOADER --> ENV & SCHEMAS
-    PWCFG --> LOADER
-
-    SETUP --> FIX & PAGES
+    L0 --> L1
+    L1 --> L2
+    L2 --> L3
+    L2 --> L4
+    L3 --> L4
 ```
 
-## Test pyramid (enforced)
+### Folder responsibilities
+
+| Folder | Owns | Does not own |
+|--------|------|--------------|
+| `tests/` | Specs, assertions, test intent | Locator logic, HTTP client code |
+| `fixtures/` | Dependency injection, lifecycle | Business assertions |
+| `pages/` | Locators + user actions | Assertions |
+| `schemas/` | Runtime + compile-time contracts | Test scenarios |
+| `mocks/` | MSW handlers + mock payloads | Real API calls |
+| `utils/` | Config, clients, helpers, tags | Page-specific locators |
+| `docker/wiremock/` | HTTP stub mappings | Container orchestration (in `utils/testcontainers.ts`) |
+
+---
+
+## 2. Playwright projects
+
+Eight projects. Each has a single responsibility.
 
 ```mermaid
-flowchart LR
-    subgraph Pyramid["Test Pyramid"]
-        E2E["E2E UI — few, critical journeys"]
-        API_T["API — contract tests"]
-        UNIT_T["Unit — framework code"]
+flowchart TB
+    subgraph FAST["Fast — no browser auth"]
+        UNIT["unit<br/><small>tests/unit/</small>"]
+        API["api<br/><small>live API contracts</small>"]
+        MOCK["api-mock<br/><small>MSW + Testcontainers</small>"]
     end
 
-    UNIT_T --> API_T --> E2E
-```
-
-| Layer    | Location       | Playwright project                | Browser?            |
-| -------- | -------------- | --------------------------------- | ------------------- |
-| Unit     | `tests/unit/`  | `unit`                            | No                  |
-| API      | `tests/api/`   | `api`                             | No (uses `request`) |
-| UI setup | `tests/setup/` | `setup`                           | Yes (once)          |
-| UI E2E   | `tests/ui/`    | `chromium` / `firefox` / `webkit` | Yes                 |
-
-## Playwright projects
-
-```mermaid
-flowchart LR
-    SETUP["setup\n(auth.setup.ts)"]
-    CH["chromium\n(UI specs)"]
-    FF["firefox\n(UI specs)"]
-    WK["webkit\n(UI specs)"]
-    API_P["api\n(API specs)"]
-    UNIT_P["unit\n(unit specs)"]
+    subgraph BROWSER["Browser"]
+        SETUP["setup<br/><small>auth.setup.ts</small>"]
+        CH["chromium<br/><small>UI E2E</small>"]
+        CHM["chromium-mock<br/><small>page.route</small>"]
+        FF["firefox"]
+        WK["webkit"]
+    end
 
     SETUP --> CH & FF & WK
-    API_P -.->|no dependency| API_P
-    UNIT_P -.->|no dependency| UNIT_P
+
+    style UNIT fill:#e8f5e9
+    style API fill:#e8f5e9
+    style MOCK fill:#fff3e0
+    style CHM fill:#fff3e0
+    style SETUP fill:#e3f2fd
 ```
 
-**Key design decision:** API and unit tests do **not** depend on browser auth setup. This keeps PR runs fast and layers decoupled.
+| Project | `testMatch` | Depends on | Browser | Typical runtime |
+|---------|-------------|------------|---------|-----------------|
+| `unit` | `tests/unit/**` | — | No | ~2s |
+| `api` | `tests/api/**` (excl. mock) | — | No* | ~2s |
+| `api-mock` | `msw-*`, `container-*` | — | No* | ~5–40s |
+| `setup` | `auth.setup.ts` | — | Yes | ~2s |
+| `chromium` | `tests/ui/**` (excl. network-mock) | `setup` | Yes | ~5s |
+| `chromium-mock` | `network-mock.spec.ts` | — | Yes | ~2s |
+| `firefox` / `webkit` | `tests/ui/**` | `setup` | Yes | nightly |
 
-## Authentication flow
+\*Uses Playwright `request` or Node `fetch` — no browser window.
+
+---
+
+## 3. Fixture composition
+
+Fixtures are **typed dependency injection layers**. Each layer extends the one below.
+
+```mermaid
+flowchart BT
+    BASE["@fixtures/index<br/>config · pages · apiClient"]
+    AUTH["authenticated.fixture<br/>+ storageState"]
+    MSW["msw.fixture<br/>+ mswServer · fetchApiClient"]
+    TC["container.fixture<br/>+ wireMock · mockApiClient"]
+
+    BASE --> AUTH
+    BASE --> MSW
+    BASE --> TC
+
+    style BASE fill:#e3f2fd
+    style AUTH fill:#f3e5f5
+    style MSW fill:#fff8e1
+    style TC fill:#fff8e1
+```
+
+| Fixture import | Use when |
+|----------------|----------|
+| `@fixtures/index` | Default UI/API tests |
+| `@fixtures/authenticated.fixture` | UI tests that need login (skip login form) |
+| `@fixtures/msw.fixture` | API tests with MSW + `fetch` |
+| `@fixtures/container.fixture` | API tests against WireMock Docker |
+
+```typescript
+// Typed composition example
+export type AuthenticatedFixtures = TestFixtures & { storageState: string };
+```
+
+---
+
+## 4. Authentication flow
+
+Login runs **once** per test run. Authenticated specs reuse `storageState`.
 
 ```mermaid
 sequenceDiagram
-    participant Setup as auth.setup.ts
-    participant Browser
-    participant Disk as auth/.auth/user.json
-    participant Test as authenticated.spec.ts
+    autonumber
+    participant S as setup project
+    participant B as Browser
+    participant D as auth/.auth/user.json
+    participant T as authenticatedTest
 
-    Setup->>Browser: UI login once
-    Setup->>Disk: save storageState
-    Test->>Browser: load storageState
-    Test->>Browser: goto /inventory.html
-    Note over Test: No login form interaction
+    Note over S,D: Runs once before UI projects
+    S->>B: loginPage.login(credentials)
+    B->>D: storageState({ path })
+
+    Note over T,B: Every authenticated spec
+    T->>B: load storageState (fixture)
+    T->>B: dashboardPage.open()
+    Note right of T: No login form interaction
 ```
 
-## Data flow (API contract test)
+| Spec type | Auth approach |
+|-----------|---------------|
+| `login.spec.ts` | Full UI login (tests the login journey) |
+| `dashboard.spec.ts` | `authenticatedTest` |
+| `authenticated.spec.ts` | `authenticatedTest` |
+| `negative-login.spec.ts` | No auth (guest) |
+
+---
+
+## 5. API contract flow
+
+Every live API test validates **status + schema + key fields**.
 
 ```mermaid
 sequenceDiagram
-    participant Spec as users-get.spec.ts
+    autonumber
+    participant Spec as *.spec.ts
     participant Client as ApiClient
     participant API as External API
     participant Zod as Zod Schema
 
     Spec->>Client: getValidated(path, ApiUsersSchema)
-    Client->>API: HTTP GET
-    API-->>Client: JSON body
-    Client->>Client: check status code
-    Client->>Zod: schema.safeParse(body)
-    Zod-->>Client: typed ApiUser[]
-    Client-->>Spec: validated data
+    Client->>API: HTTP GET (Playwright request)
+    API-->>Client: JSON body + status
+
+    alt status mismatch
+        Client-->>Spec: throw ApiRequestError
+    else status OK
+        Client->>Zod: schema.safeParse(body)
+        alt schema fail
+            Client-->>Spec: throw ApiValidationError
+        else schema OK
+            Client-->>Spec: typed data
+        end
+    end
 ```
 
-## Folder responsibilities
+### Error taxonomy
 
-| Folder         | Responsibility                                            |
-| -------------- | --------------------------------------------------------- |
-| `tests/unit/`  | Framework logic — config, schemas, builders, URL builder  |
-| `tests/api/`   | HTTP contract tests — status + Zod schema + key fields    |
-| `tests/ui/`    | Browser E2E — user journeys                               |
-| `tests/setup/` | One-time auth, saves `storageState`                       |
-| `pages/`       | Page Objects — locators + actions only (no assertions)    |
-| `fixtures/`    | Dependency injection — pages, config, apiClient           |
-| `schemas/`     | **Single source of truth** — Zod schemas, `z.infer` types |
-| `types/`       | TS-only types — branded IDs, unions, utility types        |
-| `builders/`    | Fluent test data builders                                 |
-| `utils/`       | Config loader, API client, logger, constants, tags        |
-| `test-data/`   | Static JSON — validated at load time via Zod              |
+| Error | Trigger |
+|-------|---------|
+| `ApiRequestError` | HTTP status ≠ expected |
+| `ApiValidationError` | Zod contract mismatch |
+| `ApiParseError` | Body is not valid JSON |
 
-## CI tiers
+---
 
-| Tier       | Trigger        | Command                           | Target time |
-| ---------- | -------------- | --------------------------------- | ----------- |
-| PR         | push / PR      | `npm run test:pr`                 | < 5 min     |
-| Nightly    | cron 02:00 UTC | `--grep @regression` all projects | < 45 min    |
-| Local full | manual         | `npm test`                        | varies      |
+## 6. Mocking strategies
 
-### Test tags
-
-| Tag           | Purpose                                       |
-| ------------- | --------------------------------------------- |
-| `@smoke`      | Critical path — runs on every PR              |
-| `@regression` | Full coverage — runs nightly                  |
-| `@quarantine` | Flaky / under investigation — exclude from PR |
-
-## Locator strategy
-
-Priority order (enforced in page objects):
-
-1. `getByRole` / `getByLabel` / `getByPlaceholder`
-2. `getByTestId` — `data-test` attributes
-3. CSS — only when no semantic alternative (document why)
-
-## Adding a new test (decision tree)
-
-```
-New test needed?
-├── Pure logic / schema / config?     → tests/unit/
-├── HTTP endpoint contract?           → tests/api/ + Zod schema
-└── User journey in browser?
-    ├── Needs login?
-    │   ├── Testing login itself?     → tests/ui/ + base fixture
-    │   └── Already logged in?        → authenticatedTest fixture
-    └── Tag with @smoke or @regression
-```
-
-## Error taxonomy (API layer)
-
-| Error class          | When thrown                |
-| -------------------- | -------------------------- |
-| `ApiRequestError`    | HTTP status ≠ expected     |
-| `ApiValidationError` | Zod schema mismatch        |
-| `ApiParseError`      | Response is not valid JSON |
-
-## Reliability policies
-
-- **CI retries:** `0` on PR (`retries: 0`)
-- **Nightly retries:** `1` max (`CI_TIER=nightly`)
-- **Trace:** `on-failure` in CI, `on-first-retry` locally
-- **Parallel data:** `uniqueSuffix()` includes `TEST_PARALLEL_INDEX`
-- **No `waitForTimeout`** — use Playwright auto-wait + `expect`
-
-## Mocking strategies
-
-Three complementary approaches — pick by test layer:
+Three tools. **Pick by test layer** — not by preference.
 
 ```mermaid
 flowchart TD
-    Q{What are you testing?}
-    Q -->|API via Node fetch| MSW["MSW setupServer\n+ FetchApiClient"]
-    Q -->|API via Playwright request| TC["Testcontainers\nWireMock Docker"]
-    Q -->|Browser fetch/XHR| PR["page.route\nroute-mocks.ts"]
+    START(["Need to stub network?"])
+
+    START --> Q1{"Who initiates<br/>the request?"}
+
+    Q1 -->|Browser fetch/XHR| ROUTE["page.route<br/>utils/route-mocks.ts"]
+    Q1 -->|Node fetch| Q2{"Need real HTTP<br/>server?"}
+    Q1 -->|Playwright request| TC
+
+    Q2 -->|No — fast stub| MSW["MSW setupServer<br/>FetchApiClient"]
+    Q2 -->|Yes — isolated| TC["Testcontainers<br/>WireMock Docker"]
+
+    ROUTE --> UI_TEST["tests/ui/network-mock.spec.ts"]
+    MSW --> MSW_TEST["tests/api/msw-users.spec.ts"]
+    TC --> TC_TEST["tests/api/container-users.spec.ts"]
+
+    style ROUTE fill:#e8eaf6
+    style MSW fill:#fff8e1
+    style TC fill:#fce4ec
 ```
 
-| Strategy           | Layer                   | File(s)                                             | When to use                               |
-| ------------------ | ----------------------- | --------------------------------------------------- | ----------------------------------------- |
-| **MSW**            | API (Node `fetch`)      | `mocks/`, `fixtures/msw.fixture.ts`                 | Fast, no Docker; stub contract responses  |
-| **Testcontainers** | API (`request` fixture) | `docker/wiremock/`, `fixtures/container.fixture.ts` | Isolated real HTTP server; CI with Docker |
-| **page.route**     | UI (browser)            | `utils/route-mocks.ts`                              | Mock network calls from the page          |
+| Strategy | Client | Intercepts | Requires Docker |
+|----------|--------|------------|-----------------|
+| **MSW** | `FetchApiClient` | Node `fetch` | No |
+| **Testcontainers** | `ApiClient` | Real HTTP to container | Yes |
+| **page.route** | Browser `fetch` | Browser network | No |
 
-**Important:** MSW does **not** intercept Playwright's `request` fixture — use `FetchApiClient` for MSW tests, or WireMock for `ApiClient`.
+> **Critical:** MSW does **not** patch Playwright's `request` fixture. Use `fetchApiClient` for MSW, or WireMock for `apiClient`.
 
 ```bash
-npm run test:mock    # all @mock tagged tests
-SKIP_DOCKER_TESTS=true npm run test:mock   # MSW + page.route only
+npm run test:mock                              # all @mock tests
+SKIP_DOCKER_TESTS=true npm run test:mock       # MSW + page.route only
 ```
+
+---
+
+## 7. CI pipeline
+
+```mermaid
+flowchart LR
+    subgraph PR["PR — playwright.yml"]
+        direction TB
+        P1["validate<br/>typecheck · lint · format"]
+        P2["test:pr<br/>unit + api + @smoke"]
+        P1 --> P2
+    end
+
+    subgraph NIGHTLY["Nightly — playwright-nightly.yml"]
+        direction TB
+        N1["@regression"]
+        N2["api · chromium · firefox · webkit"]
+        N1 --> N2
+    end
+
+    PUSH["git push"] --> PR
+    CRON["02:00 UTC"] --> NIGHTLY
+
+    style PR fill:#e8f5e9
+    style NIGHTLY fill:#e3f2fd
+```
+
+### Test tags
+
+| Tag | Runs on PR | Runs nightly | Purpose |
+|-----|------------|--------------|---------|
+| `@smoke` | Yes | Yes | Critical path |
+| `@regression` | No | Yes | Full coverage |
+| `@mock` | No | Yes* | MSW, Docker, page.route |
+| `@quarantine` | No | No | Flaky — under investigation |
+
+\*Run locally with `npm run test:mock`.
+
+### Reliability policies
+
+| Policy | Value |
+|--------|-------|
+| PR retries | `0` |
+| Nightly retries | `1` max |
+| CI trace | `retain-on-failure` |
+| Parallel data | `uniqueSuffix()` includes worker index |
+| Sleeps | **Forbidden** — use auto-wait + `expect` |
+
+---
+
+## 8. Test decision tree
+
+```mermaid
+flowchart TD
+    NEW(["New test needed"])
+
+    NEW --> LAYER{"What layer?"}
+
+    LAYER -->|Pure logic| UNIT["tests/unit/"]
+    LAYER -->|HTTP contract| API_Q{"Live or mocked?"}
+    LAYER -->|Browser journey| UI_Q{"Needs login?"}
+
+    API_Q -->|Live API| API["tests/api/<br/>apiClient + Zod"]
+    API_Q -->|MSW stub| MSW_T["tests/api/msw-*<br/>fetchApiClient"]
+    API_Q -->|Docker stub| CON_T["tests/api/container-*<br/>mockApiClient"]
+
+    UI_Q -->|Tests login form| UI_LOGIN["tests/ui/<br/>base test fixture"]
+    UI_Q -->|Already logged in| UI_AUTH["tests/ui/<br/>authenticatedTest"]
+    UI_Q -->|Network mock only| UI_ROUTE["tests/ui/network-mock<br/>page.route"]
+
+    API --> TAG["Tag @smoke or @regression"]
+    MSW_T --> TAG_MOCK["Tag @mock @regression"]
+    CON_T --> TAG_MOCK
+    UI_LOGIN --> TAG
+    UI_AUTH --> TAG
+    UI_ROUTE --> TAG_MOCK
+```
+
+---
+
+## Locator strategy
+
+Sauce Demo uses `data-test` attributes — configured via `testIdAttribute: 'data-test'`.
+
+| Priority | Method | Example |
+|----------|--------|---------|
+| 1 | Role / label / placeholder | `getByRole('button', { name: 'Login' })` |
+| 2 | Test ID | `getByTestId('shopping-cart-badge')` |
+| 3 | CSS (document why) | `.bm-menu-wrap` — third-party burger menu |
+
+---
 
 ## Extension points
 
-| Need              | Where to extend                                               |
-| ----------------- | ------------------------------------------------------------- |
-| New API entity    | `schemas/api.schemas.ts` → `ApiClient` methods                |
-| New page          | `pages/NewPage.ts` → register in `fixtures/index.ts`          |
-| New env           | Add to `ENVIRONMENTS` + `.env.{name}`                         |
-| New fixture layer | `fixtures/*.fixture.ts` extending base with typed composition |
-| OpenAPI contracts | Generate types → align Zod schemas                            |
+| Need | Where |
+|------|-------|
+| New API entity | `schemas/api.schemas.ts` → `ApiClient` methods |
+| New page | `pages/NewPage.ts` → `fixtures/index.ts` |
+| New environment | `ENVIRONMENTS` + `.env.{name}` |
+| New fixture layer | `fixtures/*.fixture.ts` with typed composition |
+| New mock handler | `mocks/handlers.ts` or `docker/wiremock/mappings/` |
+| OpenAPI contracts | Generate types → align Zod schemas |
+
+---
+
+## Related docs
+
+- [LEARNING.md](./LEARNING.md) — hands-on curriculum
+- [lessons/11-mocking-strategies.md](./lessons/11-mocking-strategies.md) — mocking deep dive
+- [../README.md](../README.md) — quick start
