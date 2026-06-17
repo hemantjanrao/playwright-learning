@@ -61,7 +61,7 @@ When a user says they are new, cover:
 
 ## Teaching a lesson
 
-For *"Teach me Lesson N"* or *"Explain fixtures"*:
+For _"Teach me Lesson N"_ or _"Explain fixtures"_:
 
 1. **Simple explanation** — one paragraph, no jargon.
 2. **Why it matters** — business/testing value in this framework.
@@ -74,27 +74,27 @@ Lessons 01, 02, 11 live in `docs/lessons/`. Lessons 03–10 live in `.cursor/ski
 
 ## Concept deep-dives
 
-When the user asks *"what is X?"* or seems confused by syntax:
+When the user asks _"what is X?"_ or seems confused by syntax:
 
-| Topic | Read |
-|-------|------|
+| Topic                                              | Read                     |
+| -------------------------------------------------- | ------------------------ |
 | `async`/`await`, generics, `z.infer`, path aliases | `typescript-concepts.md` |
-| Fixtures, projects, locators, storageState, MSW | `playwright-concepts.md` |
-| Full lesson walkthroughs | `curriculum.md` |
+| Fixtures, projects, locators, storageState, MSW    | `playwright-concepts.md` |
+| Full lesson walkthroughs                           | `curriculum.md`          |
 
-Explain using **this repo's code** as the example. After explaining, ask: *"Want to see this in a real test file?"* and point to the spec.
+Explain using **this repo's code** as the example. After explaining, ask: _"Want to see this in a real test file?"_ and point to the spec.
 
 ## Key framework facts (memorize)
 
-| Question | Answer |
-|----------|--------|
-| How many Playwright projects? | 8: `unit`, `api`, `api-mock`, `setup`, `chromium`, `chromium-mock`, `firefox`, `webkit` |
-| Which `test` import for UI login flow? | `@fixtures/index` → `test` |
-| Which import for pre-authenticated UI? | `@fixtures/authenticated.fixture` → `authenticatedTest` |
-| Which import for MSW API tests? | `@fixtures/msw.fixture` → `mswTest` + `fetchApiClient` |
-| Where do assertions belong? | In `tests/` specs — **not** in `pages/` |
-| CI PR command? | `npm run test:pr` |
-| Simulate full regression locally? | `npm run test:regression` |
+| Question                               | Answer                                                                                  |
+| -------------------------------------- | --------------------------------------------------------------------------------------- |
+| How many Playwright projects?          | 8: `unit`, `api`, `api-mock`, `setup`, `chromium`, `chromium-mock`, `firefox`, `webkit` |
+| Which `test` import for UI login flow? | `@fixtures/index` → `test`                                                              |
+| Which import for pre-authenticated UI? | `@fixtures/authenticated.fixture` → `authenticatedTest`                                 |
+| Which import for MSW API tests?        | `@fixtures/msw.fixture` → `mswTest` + `fetchApiClient`                                  |
+| Where do assertions belong?            | In `tests/` specs — **not** in `pages/`                                                 |
+| CI PR command?                         | `npm run test:pr`                                                                       |
+| Simulate full regression locally?      | `npm run test:regression`                                                               |
 
 ## Response format
 
@@ -104,23 +104,29 @@ Explain using **this repo's code** as the example. After explaining, ask: *"Want
 ## Lesson N — [Title]
 
 ### Simple explanation
+
 [1 short paragraph]
 
 ### Why it matters
+
 [1–2 sentences]
 
 ### In this repo
+
 [Code citation or file paths]
 
 ### Concept spotlight
+
 [TS or Playwright detail — only what's needed for this lesson]
 
 ### Try it
+
 \`\`\`bash
 [command]
 \`\`\`
 
 ### Checkpoint
+
 1. [Question]
 2. [Question]
 

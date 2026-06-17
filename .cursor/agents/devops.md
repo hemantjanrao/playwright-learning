@@ -35,32 +35,32 @@ Read `.cursor/skills/devops/SKILL.md` for full workflows. This agent adds **repo
 
 ## Decision tree
 
-| User intent | Your focus |
-|-------------|------------|
-| "Create / fix pipeline" | Tier (PR vs nightly vs mock) → jobs → secrets → artifacts |
-| "Publish test report" | HTML artifact vs GitHub Pages vs Allure — pick one pattern |
-| "Set up GitHub repo" | Branch protection, secrets, environments, templates, badges |
-| "CI is slow / flaky" | Job splitting, caching, `retries: 0` on PR, trace on failure |
-| "Add environment (qa/staging)" | GitHub Environment + secrets + `workflow_dispatch` input |
-| "PR status / badges" | Required checks, README shields, workflow status |
+| User intent                    | Your focus                                                   |
+| ------------------------------ | ------------------------------------------------------------ |
+| "Create / fix pipeline"        | Tier (PR vs nightly vs mock) → jobs → secrets → artifacts    |
+| "Publish test report"          | HTML artifact vs GitHub Pages vs Allure — pick one pattern   |
+| "Set up GitHub repo"           | Branch protection, secrets, environments, templates, badges  |
+| "CI is slow / flaky"           | Job splitting, caching, `retries: 0` on PR, trace on failure |
+| "Add environment (qa/staging)" | GitHub Environment + secrets + `workflow_dispatch` input     |
+| "PR status / badges"           | Required checks, README shields, workflow status             |
 
 ## This repo — non-negotiables
 
 ### Existing workflows (extend these)
 
-| File | Trigger | Purpose |
-|------|---------|---------|
-| `.github/workflows/playwright.yml` | PR + push to main | `validate` → `test:pr` |
-| `.github/workflows/playwright-nightly.yml` | cron 02:00 UTC + manual | `@regression` matrix |
+| File                                       | Trigger                 | Purpose                |
+| ------------------------------------------ | ----------------------- | ---------------------- |
+| `.github/workflows/playwright.yml`         | PR + push to main       | `validate` → `test:pr` |
+| `.github/workflows/playwright-nightly.yml` | cron 02:00 UTC + manual | `@regression` matrix   |
 
 ### Environment variables (CI)
 
-| Variable | PR | Nightly | Notes |
-|----------|-----|---------|-------|
-| `CI` | `true` | `true` | Enables `forbidOnly`, trace policy |
-| `CI_TIER` | `pr` | `nightly` | Controls retries in config |
-| `TEST_ENV` | `dev` | input or `dev` | Maps to `.env.*` |
-| `BASE_URL`, `API_BASE_URL`, `E2E_*` | secrets | secrets | Never hard-code real creds |
+| Variable                            | PR      | Nightly        | Notes                              |
+| ----------------------------------- | ------- | -------------- | ---------------------------------- |
+| `CI`                                | `true`  | `true`         | Enables `forbidOnly`, trace policy |
+| `CI_TIER`                           | `pr`    | `nightly`      | Controls retries in config         |
+| `TEST_ENV`                          | `dev`   | input or `dev` | Maps to `.env.*`                   |
+| `BASE_URL`, `API_BASE_URL`, `E2E_*` | secrets | secrets        | Never hard-code real creds         |
 
 ### Test commands (use these in workflows)
 
@@ -73,11 +73,11 @@ npm run test:mock         # @mock — needs Docker for container tests
 
 ### Artifact paths
 
-| Output | Path | When to upload |
-|--------|------|----------------|
-| HTML report | `reports/html/` | `failure()` on PR; `always()` on nightly |
-| Traces / screenshots | `test-results/` | `failure()` |
-| Allure raw | `reports/allure-results/` | When `ALLURE_REPORT=true` |
+| Output               | Path                      | When to upload                           |
+| -------------------- | ------------------------- | ---------------------------------------- |
+| HTML report          | `reports/html/`           | `failure()` on PR; `always()` on nightly |
+| Traces / screenshots | `test-results/`           | `failure()`                              |
+| Allure raw           | `reports/allure-results/` | When `ALLURE_REPORT=true`                |
 
 ### Playwright install in CI
 
@@ -110,11 +110,11 @@ Use `gh` CLI for GitHub operations when the user has it authenticated.
 
 ## Reporting options
 
-| Approach | Best for | Reference |
-|----------|----------|-----------|
-| Upload artifact | PR failures, quick setup | Already in `playwright.yml` |
-| GitHub Pages | Team dashboard, history | [reporting.md](../skills/devops/reporting.md) |
-| Allure + Pages | Rich trends, categories | [reporting.md](../skills/devops/reporting.md) |
+| Approach        | Best for                 | Reference                                     |
+| --------------- | ------------------------ | --------------------------------------------- |
+| Upload artifact | PR failures, quick setup | Already in `playwright.yml`                   |
+| GitHub Pages    | Team dashboard, history  | [reporting.md](../skills/devops/reporting.md) |
+| Allure + Pages  | Rich trends, categories  | [reporting.md](../skills/devops/reporting.md) |
 | PR comment link | Developer UX on failures | [reporting.md](../skills/devops/reporting.md) |
 
 Default recommendation for this repo: **keep artifact uploads**; add **GitHub Pages** for nightly Allure or HTML when the user wants a persistent dashboard.
@@ -125,19 +125,24 @@ Default recommendation for this repo: **keep artifact uploads**; add **GitHub Pa
 
 ```markdown
 ## Goal
+
 [What the pipeline should do]
 
 ## Trigger
+
 [PR / push / schedule / workflow_dispatch]
 
 ## Jobs
+
 | Job | Runs on | Steps | Secrets |
-|-----|---------|-------|---------|
+| --- | ------- | ----- | ------- |
 
 ## Reporting
+
 [Artifact / Pages / Allure]
 
 ## GitHub settings needed
+
 - [ ] Secret: BASE_URL
 - [ ] Branch protection: quality, test-fast
 ```
@@ -148,16 +153,20 @@ Default recommendation for this repo: **keep artifact uploads**; add **GitHub Pa
 ## Do this in GitHub UI
 
 ### 1. Secrets (Settings → Secrets and variables → Actions)
+
 | Name | Value | Required |
-|------|-------|----------|
+| ---- | ----- | -------- |
 
 ### 2. Branch protection (Settings → Branches)
+
 - [ ] Require status checks: ...
 
 ### 3. Environments (optional)
+
 - [ ] `qa` — approval gate + secrets
 
 ### 4. Pages (if reporting site)
+
 - [ ] Source: GitHub Actions
 ```
 

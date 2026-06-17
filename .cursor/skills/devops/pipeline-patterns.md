@@ -325,10 +325,10 @@ Parallel jobs reduce wall time; branch protection must list all required job nam
 
 ## Anti-patterns
 
-| Anti-pattern | Fix |
-|--------------|-----|
-| `npm test` without project filter on PR | Use `npm run test:pr` |
-| `retries: 2` in workflow for PR | Remove — config sets `0` for PR |
+| Anti-pattern                                         | Fix                                                        |
+| ---------------------------------------------------- | ---------------------------------------------------------- |
+| `npm test` without project filter on PR              | Use `npm run test:pr`                                      |
+| `retries: 2` in workflow for PR                      | Remove — config sets `0` for PR                            |
 | Caching `~/.cache/ms-playwright` without version pin | Use `playwright install` each run or official cache action |
-| Uploading artifacts on every PR success | `if: failure()` on PR tier |
-| Secrets in `env:` defaults in committed YAML | GitHub Secrets only |
+| Uploading artifacts on every PR success              | `if: failure()` on PR tier                                 |
+| Secrets in `env:` defaults in committed YAML         | GitHub Secrets only                                        |

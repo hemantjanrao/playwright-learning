@@ -2,7 +2,7 @@
 
 ## 1. Simple explanation
 
-A **framework** is the structure *around* tests — config, fixtures, page objects, schemas, CI. Tests stay thin; the framework carries complexity.
+A **framework** is the structure _around_ tests — config, fixtures, page objects, schemas, CI. Tests stay thin; the framework carries complexity.
 
 ## 2. Why it matters
 

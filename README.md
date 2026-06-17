@@ -6,12 +6,12 @@ Enterprise-grade Playwright framework with Page Object Model, Zod contracts, typ
 
 ## Documentation
 
-| Doc | What's inside |
-|-----|---------------|
+| Doc                                              | What's inside                                         |
+| ------------------------------------------------ | ----------------------------------------------------- |
 | [**docs/ARCHITECTURE.md**](docs/ARCHITECTURE.md) | Layered diagrams, project graph, mocking, CI pipeline |
-| [**docs/LEARNING.md**](docs/LEARNING.md) | Hands-on curriculum — start here to learn |
-| [**docs/README.md**](docs/README.md) | Documentation hub & navigation |
-| [**AGENTS.md**](AGENTS.md) | Cursor agent onboarding |
+| [**docs/LEARNING.md**](docs/LEARNING.md)         | Hands-on curriculum — start here to learn             |
+| [**docs/README.md**](docs/README.md)             | Documentation hub & navigation                        |
+| [**AGENTS.md**](AGENTS.md)                       | Cursor agent onboarding                               |
 
 ---
 
@@ -53,16 +53,16 @@ flowchart TB
 
 ## Running tests
 
-| Command | What runs | When to use |
-|---------|-----------|-------------|
-| `npm run test:pr` | unit + api + `@smoke` | Before every push |
-| `npm run test:smoke` | Critical path | Quick confidence |
-| `npm run test:regression` | Full `@regression` | Pre-release |
-| `npm run test:mock` | MSW + Docker + `page.route` | Mocking work |
-| `npm run test:unit` | Framework unit tests | After utils changes |
-| `npm run test:api` | Live API contracts | After API client changes |
-| `npm run test:ui` | UI E2E chromium | After page object changes |
-| `npm run validate` | typecheck + lint + format | Quality gate |
+| Command                   | What runs                   | When to use               |
+| ------------------------- | --------------------------- | ------------------------- |
+| `npm run test:pr`         | unit + api + `@smoke`       | Before every push         |
+| `npm run test:smoke`      | Critical path               | Quick confidence          |
+| `npm run test:regression` | Full `@regression`          | Pre-release               |
+| `npm run test:mock`       | MSW + Docker + `page.route` | Mocking work              |
+| `npm run test:unit`       | Framework unit tests        | After utils changes       |
+| `npm run test:api`        | Live API contracts          | After API client changes  |
+| `npm run test:ui`         | UI E2E chromium             | After page object changes |
+| `npm run validate`        | typecheck + lint + format   | Quality gate              |
 
 ---
 
@@ -93,12 +93,12 @@ playwright-learning/
 
 ## Demo targets
 
-| Layer | Target | Project |
-|-------|--------|---------|
-| Unit | Framework code | `unit` |
-| API | [JSONPlaceholder](https://jsonplaceholder.typicode.com) | `api` |
-| API mocks | MSW + WireMock Docker | `api-mock` |
-| UI | [Sauce Demo](https://www.saucedemo.com) | `chromium` / `firefox` / `webkit` |
+| Layer     | Target                                                  | Project                           |
+| --------- | ------------------------------------------------------- | --------------------------------- |
+| Unit      | Framework code                                          | `unit`                            |
+| API       | [JSONPlaceholder](https://jsonplaceholder.typicode.com) | `api`                             |
+| API mocks | MSW + WireMock Docker                                   | `api-mock`                        |
+| UI        | [Sauce Demo](https://www.saucedemo.com)                 | `chromium` / `firefox` / `webkit` |
 
 ---
 

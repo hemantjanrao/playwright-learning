@@ -24,12 +24,12 @@ Replace `OWNER/REPO` with the actual path.
 
 **Settings → Secrets and variables → Actions → New repository secret**
 
-| Secret | Purpose | Required for demo |
-|--------|---------|-----------------|
-| `BASE_URL` | App under test | Optional (workflow has Sauce Demo default) |
-| `API_BASE_URL` | API contracts | Optional |
-| `E2E_USERNAME` | Login user | Optional |
-| `E2E_PASSWORD` | Login password | Optional |
+| Secret         | Purpose        | Required for demo                          |
+| -------------- | -------------- | ------------------------------------------ |
+| `BASE_URL`     | App under test | Optional (workflow has Sauce Demo default) |
+| `API_BASE_URL` | API contracts  | Optional                                   |
+| `E2E_USERNAME` | Login user     | Optional                                   |
+| `E2E_PASSWORD` | Login password | Optional                                   |
 
 For real environments, **all four are required**. Never put values in the repo.
 
@@ -37,11 +37,11 @@ For real environments, **all four are required**. Never put values in the repo.
 
 **Settings → Environments → New environment**
 
-| Environment | Use case |
-|-------------|----------|
-| `dev` | Default PR / development |
-| `qa` | QA URL + credentials |
-| `staging` | Pre-prod; optional approval gate |
+| Environment | Use case                         |
+| ----------- | -------------------------------- |
+| `dev`       | Default PR / development         |
+| `qa`        | QA URL + credentials             |
+| `staging`   | Pre-prod; optional approval gate |
 
 Add the same secret names per environment with different values. Reference in workflow:
 
@@ -97,14 +97,17 @@ Create `.github/pull_request_template.md`:
 
 ```markdown
 ## Summary
-- 
+
+-
 
 ## Test evidence
+
 - [ ] `npm run validate` passes locally
 - [ ] `npm run test:pr` passes locally
 - [ ] New/changed tests tagged (`@smoke` / `@regression`)
 
 ## CI
+
 - [ ] PR checks green
 ```
 
@@ -161,12 +164,12 @@ Add a short section:
 
 ## 10. Optional enterprise features
 
-| Feature | When |
-|---------|------|
-| Rulesets (org) | Centralized branch rules across repos |
-| OIDC to cloud | Tests need AWS/GCP roles without long-lived keys |
-| Environments + reviewers | Staging/prod test gates |
-| Repository rules | Block force-push, require signed commits |
+| Feature                  | When                                             |
+| ------------------------ | ------------------------------------------------ |
+| Rulesets (org)           | Centralized branch rules across repos            |
+| OIDC to cloud            | Tests need AWS/GCP roles without long-lived keys |
+| Environments + reviewers | Staging/prod test gates                          |
+| Repository rules         | Block force-push, require signed commits         |
 
 ---
 

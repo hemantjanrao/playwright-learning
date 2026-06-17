@@ -87,10 +87,10 @@ export class LoginPage extends BasePage {
 
 ### Rules
 
-| Do in `pages/` | Do in `tests/` |
-|----------------|----------------|
-| Locators, clicks, fills | `expect()`, test data choices |
-| `open()`, `login()`, `logout()` | Tags, describe blocks |
+| Do in `pages/`                  | Do in `tests/`                |
+| ------------------------------- | ----------------------------- |
+| Locators, clicks, fills         | `expect()`, test data choices |
+| `open()`, `login()`, `logout()` | Tags, describe blocks         |
 
 ### Try it
 
@@ -136,11 +136,11 @@ testIdAttribute: 'data-test',
 
 ### Good vs bad
 
-| Bad | Good |
-|-----|------|
-| `page.locator('#login-button')` | `page.getByRole('button', { name: 'Login' })` |
-| `div.cart > span:nth-child(2)` | `getByTestId('add-to-cart-sauce-labs-backpack')` |
-| `waitForTimeout(2000)` | `await expect(locator).toBeVisible()` |
+| Bad                             | Good                                             |
+| ------------------------------- | ------------------------------------------------ |
+| `page.locator('#login-button')` | `page.getByRole('button', { name: 'Login' })`    |
+| `div.cart > span:nth-child(2)`  | `getByTestId('add-to-cart-sauce-labs-backpack')` |
+| `waitForTimeout(2000)`          | `await expect(locator).toBeVisible()`            |
 
 ### Try it
 
@@ -200,7 +200,7 @@ export const authenticatedTest = base.extend({
 import { authenticatedTest as test } from '@fixtures/authenticated.fixture';
 
 test('should access dashboard...', async ({ dashboardPage }) => {
-  await dashboardPage.open();  // no loginPage.login() needed
+  await dashboardPage.open(); // no loginPage.login() needed
 });
 ```
 
@@ -251,11 +251,11 @@ expectApiFailure(result);
 
 ### Layers
 
-| Method | When |
-|--------|------|
-| `getValidated` | Happy path — throws on bad status or schema |
-| `getResult` | Negative path — returns `{ ok: false, ... }` |
-| `getRaw` | Custom assertions on raw response |
+| Method         | When                                         |
+| -------------- | -------------------------------------------- |
+| `getValidated` | Happy path — throws on bad status or schema  |
+| `getResult`    | Negative path — returns `{ ok: false, ... }` |
+| `getRaw`       | Custom assertions on raw response            |
 
 ### Try it
 
@@ -302,7 +302,7 @@ const result = schema.safeParse(parsed);
 if (!result.success) {
   throw new ApiValidationError(url, status, result.error, parsed);
 }
-return result.data;  // typed as z.infer<S>
+return result.data; // typed as z.infer<S>
 ```
 
 ### Also validated
@@ -357,11 +357,11 @@ forbidOnly: isCi,
 
 ### Tag guide
 
-| Tag | Meaning | Typical tier |
-|-----|---------|--------------|
-| `@smoke` | Critical path | PR |
-| `@regression` | Broader coverage | Nightly |
-| `@mock` | Needs MSW/Docker/route mocks | On demand / nightly |
+| Tag           | Meaning                      | Typical tier        |
+| ------------- | ---------------------------- | ------------------- |
+| `@smoke`      | Critical path                | PR                  |
+| `@regression` | Broader coverage             | Nightly             |
+| `@mock`       | Needs MSW/Docker/route mocks | On demand / nightly |
 
 ### Try it
 

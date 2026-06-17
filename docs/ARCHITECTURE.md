@@ -45,29 +45,29 @@ block-beta
     fw --> contracts
 ```
 
-| Principle | Implementation |
-|-----------|----------------|
-| Test pyramid | `unit` → `api` → `ui` |
-| Fast PR feedback | `test:pr` — unit + api + `@smoke` |
-| Contract safety | Zod validates API, env, and JSON fixtures |
-| Auth efficiency | `storageState` — login once, reuse everywhere |
-| No flake masking | `retries: 0` on PR |
-| Mocking by layer | MSW · Testcontainers · `page.route` |
+| Principle        | Implementation                                |
+| ---------------- | --------------------------------------------- |
+| Test pyramid     | `unit` → `api` → `ui`                         |
+| Fast PR feedback | `test:pr` — unit + api + `@smoke`             |
+| Contract safety  | Zod validates API, env, and JSON fixtures     |
+| Auth efficiency  | `storageState` — login once, reuse everywhere |
+| No flake masking | `retries: 0` on PR                            |
+| Mocking by layer | MSW · Testcontainers · `page.route`           |
 
 ---
 
 ## Diagram index
 
-| # | Diagram | Section |
-|---|---------|---------|
-| 1 | [Layered architecture](#1-layered-architecture) | System layers |
-| 2 | [Playwright projects](#2-playwright-projects) | Project graph |
-| 3 | [Fixture composition](#3-fixture-composition) | Fixture layers |
-| 4 | [Authentication flow](#4-authentication-flow) | storageState |
-| 5 | [API contract flow](#5-api-contract-flow) | Zod validation |
-| 6 | [Mocking strategies](#6-mocking-strategies) | MSW / Docker / route |
-| 7 | [CI pipeline](#7-ci-pipeline) | PR vs nightly |
-| 8 | [Test decision tree](#8-test-decision-tree) | Where to add tests |
+| #   | Diagram                                         | Section              |
+| --- | ----------------------------------------------- | -------------------- |
+| 1   | [Layered architecture](#1-layered-architecture) | System layers        |
+| 2   | [Playwright projects](#2-playwright-projects)   | Project graph        |
+| 3   | [Fixture composition](#3-fixture-composition)   | Fixture layers       |
+| 4   | [Authentication flow](#4-authentication-flow)   | storageState         |
+| 5   | [API contract flow](#5-api-contract-flow)       | Zod validation       |
+| 6   | [Mocking strategies](#6-mocking-strategies)     | MSW / Docker / route |
+| 7   | [CI pipeline](#7-ci-pipeline)                   | PR vs nightly        |
+| 8   | [Test decision tree](#8-test-decision-tree)     | Where to add tests   |
 
 ---
 
@@ -123,15 +123,15 @@ flowchart TB
 
 ### Folder responsibilities
 
-| Folder | Owns | Does not own |
-|--------|------|--------------|
-| `tests/` | Specs, assertions, test intent | Locator logic, HTTP client code |
-| `fixtures/` | Dependency injection, lifecycle | Business assertions |
-| `pages/` | Locators + user actions | Assertions |
-| `schemas/` | Runtime + compile-time contracts | Test scenarios |
-| `mocks/` | MSW handlers + mock payloads | Real API calls |
-| `utils/` | Config, clients, helpers, tags | Page-specific locators |
-| `docker/wiremock/` | HTTP stub mappings | Container orchestration (in `utils/testcontainers.ts`) |
+| Folder             | Owns                             | Does not own                                           |
+| ------------------ | -------------------------------- | ------------------------------------------------------ |
+| `tests/`           | Specs, assertions, test intent   | Locator logic, HTTP client code                        |
+| `fixtures/`        | Dependency injection, lifecycle  | Business assertions                                    |
+| `pages/`           | Locators + user actions          | Assertions                                             |
+| `schemas/`         | Runtime + compile-time contracts | Test scenarios                                         |
+| `mocks/`           | MSW handlers + mock payloads     | Real API calls                                         |
+| `utils/`           | Config, clients, helpers, tags   | Page-specific locators                                 |
+| `docker/wiremock/` | HTTP stub mappings               | Container orchestration (in `utils/testcontainers.ts`) |
 
 ---
 
@@ -164,15 +164,15 @@ flowchart TB
     style SETUP fill:#e3f2fd
 ```
 
-| Project | `testMatch` | Depends on | Browser | Typical runtime |
-|---------|-------------|------------|---------|-----------------|
-| `unit` | `tests/unit/**` | — | No | ~2s |
-| `api` | `tests/api/**` (excl. mock) | — | No* | ~2s |
-| `api-mock` | `msw-*`, `container-*` | — | No* | ~5–40s |
-| `setup` | `auth.setup.ts` | — | Yes | ~2s |
-| `chromium` | `tests/ui/**` (excl. network-mock) | `setup` | Yes | ~5s |
-| `chromium-mock` | `network-mock.spec.ts` | — | Yes | ~2s |
-| `firefox` / `webkit` | `tests/ui/**` | `setup` | Yes | nightly |
+| Project              | `testMatch`                        | Depends on | Browser | Typical runtime |
+| -------------------- | ---------------------------------- | ---------- | ------- | --------------- |
+| `unit`               | `tests/unit/**`                    | —          | No      | ~2s             |
+| `api`                | `tests/api/**` (excl. mock)        | —          | No\*    | ~2s             |
+| `api-mock`           | `msw-*`, `container-*`             | —          | No\*    | ~5–40s          |
+| `setup`              | `auth.setup.ts`                    | —          | Yes     | ~2s             |
+| `chromium`           | `tests/ui/**` (excl. network-mock) | `setup`    | Yes     | ~5s             |
+| `chromium-mock`      | `network-mock.spec.ts`             | —          | Yes     | ~2s             |
+| `firefox` / `webkit` | `tests/ui/**`                      | `setup`    | Yes     | nightly         |
 
 \*Uses Playwright `request` or Node `fetch` — no browser window.
 
@@ -199,12 +199,12 @@ flowchart BT
     style TC fill:#fff8e1
 ```
 
-| Fixture import | Use when |
-|----------------|----------|
-| `@fixtures/index` | Default UI/API tests |
+| Fixture import                    | Use when                                   |
+| --------------------------------- | ------------------------------------------ |
+| `@fixtures/index`                 | Default UI/API tests                       |
 | `@fixtures/authenticated.fixture` | UI tests that need login (skip login form) |
-| `@fixtures/msw.fixture` | API tests with MSW + `fetch` |
-| `@fixtures/container.fixture` | API tests against WireMock Docker |
+| `@fixtures/msw.fixture`           | API tests with MSW + `fetch`               |
+| `@fixtures/container.fixture`     | API tests against WireMock Docker          |
 
 ```typescript
 // Typed composition example
@@ -235,12 +235,12 @@ sequenceDiagram
     Note right of T: No login form interaction
 ```
 
-| Spec type | Auth approach |
-|-----------|---------------|
-| `login.spec.ts` | Full UI login (tests the login journey) |
-| `dashboard.spec.ts` | `authenticatedTest` |
-| `authenticated.spec.ts` | `authenticatedTest` |
-| `negative-login.spec.ts` | No auth (guest) |
+| Spec type                | Auth approach                           |
+| ------------------------ | --------------------------------------- |
+| `login.spec.ts`          | Full UI login (tests the login journey) |
+| `dashboard.spec.ts`      | `authenticatedTest`                     |
+| `authenticated.spec.ts`  | `authenticatedTest`                     |
+| `negative-login.spec.ts` | No auth (guest)                         |
 
 ---
 
@@ -274,11 +274,11 @@ sequenceDiagram
 
 ### Error taxonomy
 
-| Error | Trigger |
-|-------|---------|
-| `ApiRequestError` | HTTP status ≠ expected |
-| `ApiValidationError` | Zod contract mismatch |
-| `ApiParseError` | Body is not valid JSON |
+| Error                | Trigger                |
+| -------------------- | ---------------------- |
+| `ApiRequestError`    | HTTP status ≠ expected |
+| `ApiValidationError` | Zod contract mismatch  |
+| `ApiParseError`      | Body is not valid JSON |
 
 ---
 
@@ -308,11 +308,11 @@ flowchart TD
     style TC fill:#fce4ec
 ```
 
-| Strategy | Client | Intercepts | Requires Docker |
-|----------|--------|------------|-----------------|
-| **MSW** | `FetchApiClient` | Node `fetch` | No |
-| **Testcontainers** | `ApiClient` | Real HTTP to container | Yes |
-| **page.route** | Browser `fetch` | Browser network | No |
+| Strategy           | Client           | Intercepts             | Requires Docker |
+| ------------------ | ---------------- | ---------------------- | --------------- |
+| **MSW**            | `FetchApiClient` | Node `fetch`           | No              |
+| **Testcontainers** | `ApiClient`      | Real HTTP to container | Yes             |
+| **page.route**     | Browser `fetch`  | Browser network        | No              |
 
 > **Critical:** MSW does **not** patch Playwright's `request` fixture. Use `fetchApiClient` for MSW, or WireMock for `apiClient`.
 
@@ -353,24 +353,24 @@ flowchart LR
 
 ### Test tags
 
-| Tag | Runs on PR | Runs nightly | Purpose |
-|-----|------------|--------------|---------|
-| `@smoke` | Yes | Yes | Critical path |
-| `@regression` | No | Yes | Full coverage |
-| `@mock` | Path-filtered PR | Yes* | MSW, Docker, page.route |
-| `@quarantine` | No | No | Flaky — under investigation |
+| Tag           | Runs on PR       | Runs nightly | Purpose                     |
+| ------------- | ---------------- | ------------ | --------------------------- |
+| `@smoke`      | Yes              | Yes          | Critical path               |
+| `@regression` | No               | Yes          | Full coverage               |
+| `@mock`       | Path-filtered PR | Yes\*        | MSW, Docker, page.route     |
+| `@quarantine` | No               | No           | Flaky — under investigation |
 
 \*Run locally with `npm run test:mock`.
 
 ### Reliability policies
 
-| Policy | Value |
-|--------|-------|
-| PR retries | `0` |
-| Nightly retries | `1` max |
-| CI trace | `retain-on-failure` |
-| Parallel data | `uniqueSuffix()` includes worker index |
-| Sleeps | **Forbidden** — use auto-wait + `expect` |
+| Policy          | Value                                    |
+| --------------- | ---------------------------------------- |
+| PR retries      | `0`                                      |
+| Nightly retries | `1` max                                  |
+| CI trace        | `retain-on-failure`                      |
+| Parallel data   | `uniqueSuffix()` includes worker index   |
+| Sleeps          | **Forbidden** — use auto-wait + `expect` |
 
 ---
 
@@ -408,24 +408,24 @@ flowchart TD
 
 Sauce Demo uses `data-test` attributes — configured via `testIdAttribute: 'data-test'`.
 
-| Priority | Method | Example |
-|----------|--------|---------|
-| 1 | Role / label / placeholder | `getByRole('button', { name: 'Login' })` |
-| 2 | Test ID | `getByTestId('shopping-cart-badge')` |
-| 3 | CSS (document why) | `.bm-menu-wrap` — third-party burger menu |
+| Priority | Method                     | Example                                   |
+| -------- | -------------------------- | ----------------------------------------- |
+| 1        | Role / label / placeholder | `getByRole('button', { name: 'Login' })`  |
+| 2        | Test ID                    | `getByTestId('shopping-cart-badge')`      |
+| 3        | CSS (document why)         | `.bm-menu-wrap` — third-party burger menu |
 
 ---
 
 ## Extension points
 
-| Need | Where |
-|------|-------|
-| New API entity | `schemas/api.schemas.ts` → `ApiClient` methods |
-| New page | `pages/NewPage.ts` → `fixtures/index.ts` |
-| New environment | `ENVIRONMENTS` + `.env.{name}` |
-| New fixture layer | `fixtures/*.fixture.ts` with typed composition |
-| New mock handler | `mocks/handlers.ts` or `docker/wiremock/mappings/` |
-| OpenAPI contracts | Generate types → align Zod schemas |
+| Need              | Where                                              |
+| ----------------- | -------------------------------------------------- |
+| New API entity    | `schemas/api.schemas.ts` → `ApiClient` methods     |
+| New page          | `pages/NewPage.ts` → `fixtures/index.ts`           |
+| New environment   | `ENVIRONMENTS` + `.env.{name}`                     |
+| New fixture layer | `fixtures/*.fixture.ts` with typed composition     |
+| New mock handler  | `mocks/handlers.ts` or `docker/wiremock/mappings/` |
+| OpenAPI contracts | Generate types → align Zod schemas                 |
 
 ---
 

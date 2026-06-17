@@ -34,46 +34,46 @@ Read `.cursor/skills/senior-sdet/SKILL.md` for full workflows. This agent adds *
 
 ## Decision tree
 
-| User intent | Your focus |
-|-------------|------------|
-| "Write tests for X" | Acceptance criteria → test cases → pick layer → implement |
-| "Flaky / intermittent" | Reproduce → isolate (timing, data, network, parallelism) → fix root cause |
-| "Review my tests" | Coverage gaps, anti-patterns, maintainability, CI cost |
-| "Debug failure" | Trace/screenshot → classify (locator, env, data, app bug) → fix or file defect |
-| "Add mocking" | Pick layer: MSW / Testcontainers / `page.route` (see ARCHITECTURE §6) |
+| User intent            | Your focus                                                                     |
+| ---------------------- | ------------------------------------------------------------------------------ |
+| "Write tests for X"    | Acceptance criteria → test cases → pick layer → implement                      |
+| "Flaky / intermittent" | Reproduce → isolate (timing, data, network, parallelism) → fix root cause      |
+| "Review my tests"      | Coverage gaps, anti-patterns, maintainability, CI cost                         |
+| "Debug failure"        | Trace/screenshot → classify (locator, env, data, app bug) → fix or file defect |
+| "Add mocking"          | Pick layer: MSW / Testcontainers / `page.route` (see ARCHITECTURE §6)          |
 
 ## This repo — non-negotiables
 
 ### Imports
 
 ```typescript
-import { test, expect } from '@fixtures/index';                              // base UI + API
-import { authenticatedTest as test, expect } from '@fixtures/authenticated.fixture';  // pre-auth UI
-import { mswTest as test, expect } from '@fixtures/msw.fixture';            // MSW (use fetchApiClient)
-import { containerTest as test, expect } from '@fixtures/container.fixture';  // WireMock Docker
+import { test, expect } from '@fixtures/index'; // base UI + API
+import { authenticatedTest as test, expect } from '@fixtures/authenticated.fixture'; // pre-auth UI
+import { mswTest as test, expect } from '@fixtures/msw.fixture'; // MSW (use fetchApiClient)
+import { containerTest as test, expect } from '@fixtures/container.fixture'; // WireMock Docker
 ```
 
 Never import `test` from `@playwright/test` directly — you lose typed fixtures.
 
 ### Folder ownership
 
-| Folder | Owns | Does not own |
-|--------|------|--------------|
-| `tests/` | Specs, assertions, tags | Locators, HTTP client logic |
-| `pages/` | Locators, user actions | Assertions |
-| `fixtures/` | DI, lifecycle | Business assertions |
-| `schemas/` | Zod contracts | Test scenarios |
-| `utils/` | Clients, config, helpers | Page-specific locators |
+| Folder      | Owns                     | Does not own                |
+| ----------- | ------------------------ | --------------------------- |
+| `tests/`    | Specs, assertions, tags  | Locators, HTTP client logic |
+| `pages/`    | Locators, user actions   | Assertions                  |
+| `fixtures/` | DI, lifecycle            | Business assertions         |
+| `schemas/`  | Zod contracts            | Test scenarios              |
+| `utils/`    | Clients, config, helpers | Page-specific locators      |
 
 ### Playwright projects (pick the right one)
 
-| Layer | Project | Command |
-|-------|---------|---------|
-| Unit / schemas | `unit` | `npm run test:unit` |
-| Live API | `api` | `npm run test:api` |
-| MSW + Docker | `api-mock` | `npm run test:mock` |
-| UI E2E | `chromium` (+ `setup` dep) | `npm run test:ui` |
-| UI route mocks | `chromium-mock` | `npm run test:mock` |
+| Layer          | Project                    | Command             |
+| -------------- | -------------------------- | ------------------- |
+| Unit / schemas | `unit`                     | `npm run test:unit` |
+| Live API       | `api`                      | `npm run test:api`  |
+| MSW + Docker   | `api-mock`                 | `npm run test:mock` |
+| UI E2E         | `chromium` (+ `setup` dep) | `npm run test:ui`   |
+| UI route mocks | `chromium-mock`            | `npm run test:mock` |
 
 ### Locators (priority)
 
@@ -94,25 +94,25 @@ Never import `test` from `@playwright/test` directly — you lose typed fixtures
 test('...', { tag: ['@smoke', '@regression'] }, async () => { ... });
 ```
 
-| Tag | Tier |
-|-----|------|
-| `@smoke` | PR (`npm run test:pr`) |
-| `@regression` | Nightly |
-| `@mock` | `npm run test:mock` |
+| Tag           | Tier                   |
+| ------------- | ---------------------- |
+| `@smoke`      | PR (`npm run test:pr`) |
+| `@regression` | Nightly                |
+| `@mock`       | `npm run test:mock`    |
 
 PR: `retries: 0` — fix flakes, don't mask. Never commit `test.only` (`forbidOnly` in CI).
 
 ## Anti-patterns (call out and fix)
 
-| Anti-pattern | Fix |
-|--------------|-----|
-| `page.waitForTimeout(3000)` | `expect(locator).toBeVisible()` or `waitForResponse` |
-| Brittle CSS (`div > span:nth-child(3)`) | Role or test-id locator |
-| Assertions in Page Objects | Move `expect()` to specs |
-| `apiClient` with MSW | Use `fetchApiClient` |
-| Hard-coded URLs / secrets | `loadConfig()` + `.env.example` |
-| One mega E2E per feature | Split by journey; API setup for data |
-| Increasing timeout as only fix | Fix root cause |
+| Anti-pattern                            | Fix                                                  |
+| --------------------------------------- | ---------------------------------------------------- |
+| `page.waitForTimeout(3000)`             | `expect(locator).toBeVisible()` or `waitForResponse` |
+| Brittle CSS (`div > span:nth-child(3)`) | Role or test-id locator                              |
+| Assertions in Page Objects              | Move `expect()` to specs                             |
+| `apiClient` with MSW                    | Use `fetchApiClient`                                 |
+| Hard-coded URLs / secrets               | `loadConfig()` + `.env.example`                      |
+| One mega E2E per feature                | Split by journey; API setup for data                 |
+| Increasing timeout as only fix          | Fix root cause                                       |
 
 ## Test design workflow
 
@@ -147,17 +147,21 @@ PR: `retries: 0` — fix flakes, don't mask. Never commit `test.only` (`forbidOn
 
 ```markdown
 ## Scope
+
 [Feature under test]
 
 ## Risks
+
 - [Risk 1]
 
 ## Test cases
-| ID | Layer | Scenario | Expected |
-|----|-------|----------|----------|
-| TC-01 | api | ... | ... |
+
+| ID    | Layer | Scenario | Expected |
+| ----- | ----- | -------- | -------- |
+| TC-01 | api   | ...      | ...      |
 
 ## Out of scope
+
 - ...
 ```
 
@@ -165,15 +169,19 @@ PR: `retries: 0` — fix flakes, don't mask. Never commit `test.only` (`forbidOn
 
 ```markdown
 ## Failure
+
 [One-line summary]
 
 ## Evidence
+
 [Trace / screenshot / log]
 
 ## Root cause
+
 [Classification + explanation]
 
 ## Fix
+
 [Concrete change]
 ```
 

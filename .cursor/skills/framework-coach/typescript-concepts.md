@@ -44,6 +44,7 @@ async login(username: string, password: string): Promise<void> {
 ```
 
 **Rules:**
+
 - Every `await` must be inside an `async` function.
 - Test callbacks are `async`: `async ({ loginPage }) => { ... }`.
 - Missing `await` → test may finish before the action completes → flaky failures.
@@ -206,7 +207,7 @@ await apiClient.getValidated(API_ENDPOINTS.userById(userId), ApiUserSchema, 200)
 
 ```typescript
 export class LoginPage extends BasePage {
-  readonly usernameInput: Locator;  // set in constructor, not reassigned
+  readonly usernameInput: Locator; // set in constructor, not reassigned
 
   constructor(page: Page) {
     super(page);
@@ -261,8 +262,8 @@ If `loadLoginTestData` changes its return shape, the fixture type updates automa
 ## 12. Optional chaining (`?.`) and nullish coalescing (`??`)
 
 ```typescript
-expect(users[0]?.email).toContain('@');  // safe if array is empty
-process.env.GITHUB_SHA ?? 'local'         // default when undefined/null
+expect(users[0]?.email).toContain('@'); // safe if array is empty
+process.env.GITHUB_SHA ?? 'local'; // default when undefined/null
 ```
 
 ---
@@ -277,11 +278,11 @@ process.env.GITHUB_SHA ?? 'local'         // default when undefined/null
 
 ## Quick reference
 
-| Syntax | Where you'll see it |
-|--------|---------------------|
-| `async`/`await` | Every Page Object method, every test |
-| `z.infer<typeof X>` | `schemas/*.ts` type exports |
-| Generics `<S>` | `api-client.ts` validated methods |
-| `type TestFixtures` | `fixtures/index.ts` |
-| `asUserId()` | API tests with path params |
-| Path aliases `@fixtures/` | All test files |
+| Syntax                    | Where you'll see it                  |
+| ------------------------- | ------------------------------------ |
+| `async`/`await`           | Every Page Object method, every test |
+| `z.infer<typeof X>`       | `schemas/*.ts` type exports          |
+| Generics `<S>`            | `api-client.ts` validated methods    |
+| `type TestFixtures`       | `fixtures/index.ts`                  |
+| `asUserId()`              | API tests with path params           |
+| Path aliases `@fixtures/` | All test files                       |
