@@ -1,0 +1,8 @@
+{
+  "samplePost": {
+    "userId": 1,
+    "title": "Framework smoke post",
+    "body": "Created by Playwright API test automation framework."
+  },
+  "sampleUserId": 1
+}
