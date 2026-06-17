@@ -7,13 +7,22 @@ import { logger } from '@utils/logger';
 
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
+/**
+ * Typed HTTP client for API contract tests.
+ *
+ * Design:
+ * - `getValidated` / `postValidated` — happy-path tests with Zod contract checks
+ * - `getResult` — negative tests via discriminated union (no throw)
+ * - Uses Playwright `request` fixture (no browser overhead)
+ */
 export class ApiClient {
   constructor(
     private readonly request: APIRequestContext,
     private readonly options: ApiClientOptions,
   ) {}
 
-  private buildUrl(path: string): string {
+  /** Joins base URL and path, normalizing slashes. */
+  buildUrl(path: string): string {
     const base = this.options.baseUrl.replace(/\/$/, '');
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
     return `${base}${normalizedPath}`;
@@ -26,10 +35,7 @@ export class ApiClient {
     });
   }
 
-  /**
-   * Contract-driven GET — validates response against a Zod schema at runtime.
-   * Preferred for production API tests.
-   */
+  /** Contract-driven GET — validates response body against a Zod schema. */
   async getValidated<S extends z.ZodType>(
     path: string,
     schema: S,
@@ -38,9 +44,7 @@ export class ApiClient {
     return this.requestValidated('GET', path, schema, expectedStatus);
   }
 
-  /**
-   * Contract-driven POST — validates response against a Zod schema at runtime.
-   */
+  /** Contract-driven POST — validates response body against a Zod schema. */
   async postValidated<S extends z.ZodType, B>(
     path: string,
     body: B,
@@ -50,43 +54,25 @@ export class ApiClient {
     return this.requestValidated('POST', path, schema, expectedStatus, body);
   }
 
+  /** Contract-driven PUT — validates response body against a Zod schema. */
+  async putValidated<S extends z.ZodType, B>(
+    path: string,
+    body: B,
+    schema: S,
+    expectedStatus = 200,
+  ): Promise<z.infer<S>> {
+    return this.requestValidated('PUT', path, schema, expectedStatus, body);
+  }
+
   /**
-   * Returns a discriminated union — use for negative tests or optional error handling.
+   * Returns discriminated union `ApiResult<T>` — use for negative / exploratory tests.
+   * Narrow with `result.ok` or the `expectApiFailure()` helper.
    */
   async getResult<T = unknown>(path: string): Promise<ApiResult<T>> {
     const url = this.buildUrl(path);
     const response = await this.request.get(url, { headers: this.options.extraHeaders });
     await this.logResponse('GET', url, response);
-    return this.toApiResult<T>(url, response);
-  }
-
-  /** @deprecated Prefer getValidated() for contract-checked responses. */
-  async get<T>(path: string, expectedStatus = 200): Promise<T> {
-    const url = this.buildUrl(path);
-    const response = await this.request.get(url, { headers: this.options.extraHeaders });
-    await this.logResponse('GET', url, response);
-    return this.parseJson<T>(url, response, expectedStatus);
-  }
-
-  /** @deprecated Prefer postValidated() for contract-checked responses. */
-  async post<T, B = unknown>(path: string, body: B, expectedStatus = 201): Promise<T> {
-    const url = this.buildUrl(path);
-    const response = await this.request.post(url, {
-      data: body,
-      headers: { 'Content-Type': 'application/json', ...this.options.extraHeaders },
-    });
-    await this.logResponse('POST', url, response);
-    return this.parseJson<T>(url, response, expectedStatus);
-  }
-
-  async put<T, B = unknown>(path: string, body: B, expectedStatus = 200): Promise<T> {
-    const url = this.buildUrl(path);
-    const response = await this.request.put(url, {
-      data: body,
-      headers: { 'Content-Type': 'application/json', ...this.options.extraHeaders },
-    });
-    await this.logResponse('PUT', url, response);
-    return this.parseJson<T>(url, response, expectedStatus);
+    return this.toApiResult<T>(response);
   }
 
   async delete(path: string, expectedStatus = 200): Promise<void> {
@@ -100,6 +86,7 @@ export class ApiClient {
     }
   }
 
+  /** Escape hatch — raw Playwright response for custom assertions. */
   async getRaw(path: string): Promise<APIResponse> {
     const url = this.buildUrl(path);
     const response = await this.request.get(url, { headers: this.options.extraHeaders });
@@ -120,7 +107,7 @@ export class ApiClient {
 
     const status = response.status();
     const bodyText = await response.text();
-    const parsed = this.safeParseJson(bodyText);
+    const parsed = this.parseJsonStrict(bodyText, url, status);
 
     if (status !== expectedStatus) {
       throw new ApiRequestError(method, url, expectedStatus, status, bodyText);
@@ -134,11 +121,7 @@ export class ApiClient {
     return result.data;
   }
 
-  private async dispatch(
-    method: HttpMethod,
-    url: string,
-    body?: unknown,
-  ): Promise<APIResponse> {
+  private async dispatch(method: HttpMethod, url: string, body?: unknown): Promise<APIResponse> {
     const headers = {
       ...(body !== undefined ? { 'Content-Type': 'application/json' } : {}),
       ...this.options.extraHeaders,
@@ -156,7 +139,7 @@ export class ApiClient {
     }
   }
 
-  private async toApiResult<T>(_url: string, response: APIResponse): Promise<ApiResult<T>> {
+  private async toApiResult<T>(response: APIResponse): Promise<ApiResult<T>> {
     const status = response.status();
     const bodyText = await response.text();
     const parsed = this.safeParseJson(bodyText);
@@ -173,24 +156,12 @@ export class ApiClient {
     return { ok: false, status, error, rawBody: parsed };
   }
 
-  private async parseJson<T>(
-    url: string,
-    response: APIResponse,
-    expectedStatus: number,
-  ): Promise<T> {
-    const status = response.status();
-    const bodyText = await response.text();
-
-    if (status !== expectedStatus) {
-      throw new ApiRequestError('REQUEST', url, expectedStatus, status, bodyText);
-    }
-
+  private parseJsonStrict(bodyText: string, url: string, status: number): unknown {
     if (!bodyText) {
-      return {} as T;
+      return {};
     }
-
     try {
-      return JSON.parse(bodyText) as T;
+      return JSON.parse(bodyText);
     } catch {
       throw new ApiParseError(url, status, bodyText);
     }

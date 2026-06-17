@@ -1,205 +1,124 @@
 # Playwright TypeScript Test Automation Framework
 
-Production-ready Playwright framework with Page Object Model, typed API client, multi-environment config, custom fixtures, and GitHub Actions CI.
+Enterprise-grade Playwright framework: Page Object Model, Zod contract testing, typed fixtures, tiered CI, and a structured learning path.
+
+## Documentation
+
+| Doc                                          | Purpose                                         |
+| -------------------------------------------- | ----------------------------------------------- |
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | System design, mermaid diagrams, decision trees |
+| [docs/LEARNING.md](docs/LEARNING.md)         | **Start here to learn** — lesson curriculum     |
+| [AGENTS.md](AGENTS.md)                       | Cursor agent brief                              |
 
 ## Tech stack
 
-- Playwright + TypeScript
-- ESLint + Prettier
-- dotenv (multi-environment)
-- Faker.js (dynamic test data)
-- Playwright HTML report (+ optional Allure)
+- Playwright + TypeScript (strict)
+- Zod — runtime contracts (API, env, test data)
+- ESLint + Prettier + `eslint-plugin-playwright`
+- Faker.js — parallel-safe dynamic data
+- GitHub Actions — PR fast tier + nightly regression
 
 ## Demo targets
 
-| Layer | Target                                                  | Purpose                      |
-| ----- | ------------------------------------------------------- | ---------------------------- |
-| UI    | [Sauce Demo](https://www.saucedemo.com)                 | Login, dashboard, auth flows |
-| API   | [JSONPlaceholder](https://jsonplaceholder.typicode.com) | GET/POST contract examples   |
+| Layer | Target                                                  | Playwright project                |
+| ----- | ------------------------------------------------------- | --------------------------------- |
+| Unit  | Framework code                                          | `unit` (no browser)               |
+| API   | [JSONPlaceholder](https://jsonplaceholder.typicode.com) | `api` (no browser)                |
+| UI    | [Sauce Demo](https://www.saucedemo.com)                 | `chromium` / `firefox` / `webkit` |
 
-Replace URLs and credentials in `.env.*` files when pointing at your own application.
-
-## Prerequisites
-
-- Node.js 20+ (LTS)
-- npm 10+
-
-## Setup
+## Quick start
 
 ```bash
-# Install dependencies
 npm install
-
-# Install Playwright browsers
 npx playwright install
-
-# Copy environment template (if needed)
 cp .env.example .env.dev
+npm run test:pr    # simulates CI — unit + api + smoke
 ```
-
-## Environment configuration
-
-Environment files:
-
-| File           | Purpose                     |
-| -------------- | --------------------------- |
-| `.env.dev`     | Local development (default) |
-| `.env.qa`      | QA environment              |
-| `.env.staging` | Staging environment         |
-| `.env.example` | Template (safe to commit)   |
-
-Set `TEST_ENV` to load the matching file:
-
-```bash
-TEST_ENV=qa npm test
-# or
-npm run test:qa
-```
-
-Required variables:
-
-| Variable        | Description            |
-| --------------- | ---------------------- |
-| `BASE_URL`      | Application under test |
-| `API_BASE_URL`  | API base URL           |
-| `E2E_USERNAME`  | UI test username       |
-| `E2E_PASSWORD`  | UI test password       |
-| `HEADLESS`      | `true` / `false`       |
-| `ALLURE_REPORT` | Enable Allure reporter |
-
-**Never commit real secrets.** Use GitHub Actions secrets in CI.
 
 ## Running tests
 
 ```bash
-# All tests (all browser projects)
-npm test
-
-# UI tests only
-npm run test:ui
-
-# API tests only
-npm run test:api
-
-# Specific browser
-npm run test:chromium
-npm run test:firefox
-npm run test:webkit
-
-# Headed / debug
+npm test                  # full suite (all projects)
+npm run test:unit         # framework unit tests
+npm run test:api          # API contracts only
+npm run test:ui           # UI E2E (chromium)
+npm run test:smoke        # @smoke — PR tier
+npm run test:regression   # @regression — nightly tier
+npm run test:pr           # unit + api + smoke (CI PR pipeline)
 npm run test:headed
 npm run test:debug
-
-# Environment-specific
-npm run test:dev
-npm run test:qa
-npm run test:staging
-
-# Allure-enabled run
-npm run test:allure
-npm run report:allure:open
-```
-
-## Reports and debugging
-
-```bash
-# Open Playwright HTML report
 npm run report
+npm run validate          # typecheck + lint + format
 ```
 
-Artifacts on failure:
+## Test pyramid
 
-- Screenshots (`only-on-failure`)
-- Videos (`retain-on-failure`)
-- Traces (`on-first-retry`)
-
-Reports output to `reports/html/`. Traces and videos are in `test-results/`.
-
-## Code quality
-
-```bash
-npm run lint
-npm run lint:fix
-npm run format
-npm run format:check
-npm run typecheck
-npm run validate    # typecheck + lint + format check
+```
+        ┌─────────┐
+        │  UI E2E │  few, @smoke on PR
+        ├─────────┤
+        │   API   │  contract tests, every PR
+        ├─────────┤
+        │  Unit   │  framework logic, every PR
+        └─────────┘
 ```
 
 ## Folder structure
 
 ```
-├── .github/workflows/     # CI pipelines
-├── config/                # Environment defaults
-├── fixtures/              # Custom Playwright fixtures
-├── pages/                 # Page Object Model classes
-├── test-data/             # Static JSON test data
+├── docs/                  # Architecture + learning curriculum
+├── schemas/               # Zod schemas (single source of truth)
+├── builders/              # Fluent test data builders
 ├── tests/
-│   ├── api/               # API contract tests
-│   ├── setup/             # Auth storageState setup
-│   └── ui/                # UI E2E tests
-├── types/                 # Shared TypeScript interfaces
-├── utils/                 # Config loader, API client, helpers
-├── auth/.auth/            # Generated storageState (gitignored)
-├── reports/               # HTML / Allure output (gitignored)
-├── playwright.config.ts
-└── tsconfig.json
+│   ├── unit/              # No browser
+│   ├── api/               # HTTP only
+│   ├── ui/                # Browser E2E
+│   └── setup/             # Auth storageState
+├── pages/                 # Page Objects (locators + actions)
+├── fixtures/              # Custom fixtures (typed)
+├── types/                 # Branded types, unions, utilities
+├── utils/                 # API client, config, logger, tags
+├── test-data/             # JSON fixtures (Zod-validated)
+└── .github/workflows/
+    ├── playwright.yml         # PR: validate + test:pr
+    └── playwright-nightly.yml # Full @regression matrix
 ```
 
-## Authentication strategies
+## CI tiers
 
-1. **UI login** — `LoginPage.login()` in tests (`login.spec.ts`, `dashboard.spec.ts`)
-2. **storageState** — `tests/setup/auth.setup.ts` saves session to `auth/.auth/user.json`; `authenticated.spec.ts` reuses it via `authenticated.fixture.ts`
+| Tier    | Workflow                 | What runs                          |
+| ------- | ------------------------ | ---------------------------------- |
+| PR      | `playwright.yml`         | lint, typecheck, unit, api, @smoke |
+| Nightly | `playwright-nightly.yml` | @regression × api + all browsers   |
 
-## Adding new tests
+**Reliability:** `retries: 0` on PR. Traces on failure in CI.
 
-### UI test
+## Authentication
 
-1. Add or extend a page object in `pages/`
-2. Create `tests/ui/<feature>.spec.ts`
-3. Import `test` and `expect` from `@fixtures/index`
-4. Use role/label locators; avoid `waitForTimeout`
-5. Keep assertions in the spec (not in page objects)
+1. **UI login test** — `login.spec.ts` exercises the login form
+2. **storageState** — `auth.setup.ts` logs in once; `authenticatedTest` fixture reuses session
+3. Dashboard/cart tests use `authenticatedTest` — no repeated UI login
 
-### API test
+## Adding tests
 
-1. Add types in `types/api.types.ts` if needed
-2. Use `apiClient` fixture from `@fixtures/index`
-3. Validate with `utils/api-assertions.ts` helpers
-
-### Authenticated UI test
+See the decision tree in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md#adding-a-new-test-decision-tree).
 
 ```typescript
-import { authenticatedTest as test, expect } from '@fixtures/authenticated.fixture';
+// API contract test
+const users = await apiClient.getValidated(API_ENDPOINTS.users, ApiUsersSchema);
+
+// Authenticated UI test
+import { authenticatedTest as test } from '@fixtures/authenticated.fixture';
+
+// Tag for CI tiering
+test('...', { tag: '@smoke' }, async () => { ... });
 ```
 
-## CI/CD
+## Learning
 
-GitHub Actions workflow: `.github/workflows/playwright.yml`
+Open **[docs/LEARNING.md](docs/LEARNING.md)** and start with Lesson 01, or ask the agent:
 
-On each PR/push:
-
-1. Install dependencies and browsers
-2. Lint + typecheck
-3. Run Playwright (default: Chromium)
-4. Upload HTML report artifact
-5. Upload traces/videos/screenshots on failure
-
-Manual dispatch supports:
-
-- `test_env`: dev | qa | staging
-- `browser`: chromium | firefox | webkit | all
-
-Configure repository secrets: `BASE_URL`, `API_BASE_URL`, `E2E_USERNAME`, `E2E_PASSWORD` (optional — defaults come from `.env.*` files in repo for demo).
-
-## Best practices enforced
-
-- Strict TypeScript (`noImplicitAny`, no unused locals)
-- Locator priority: role → label → text → test id
-- Parallel-safe tests with isolated data (Faker suffixes)
-- No hardcoded URLs or credentials in source
-- POM with typed locators and action methods only
-- Config validation at startup
+> "Teach me Lesson 01"
 
 ## License
 

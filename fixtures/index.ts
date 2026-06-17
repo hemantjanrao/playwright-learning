@@ -9,6 +9,10 @@ import { loadConfig } from '@utils/config-loader';
 import { generateUserProfile, loadLoginTestData } from '@utils/test-data-factory';
 import { logger } from '@utils/logger';
 
+/**
+ * Typed fixture map — every custom fixture declared here for compile-time safety.
+ * Tests import `test` from this file (not @playwright/test directly).
+ */
 export type TestFixtures = {
   config: AppConfig;
   loginPage: LoginPage;
@@ -37,6 +41,7 @@ export const test = base.extend<TestFixtures>({
     await use(new UserProfilePage(page));
   },
 
+  /** API client uses Playwright `request` — no browser required. */
   apiClient: async ({ request, config }, use) => {
     await use(
       new ApiClient(request, {
@@ -53,6 +58,7 @@ export const test = base.extend<TestFixtures>({
     await use(loadLoginTestData());
   },
 
+  /** Wraps page to capture browser console errors for debugging. */
   page: async ({ page }, use) => {
     page.on('console', (message) => {
       if (message.type() === 'error') {

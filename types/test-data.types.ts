@@ -4,11 +4,8 @@ export interface StaticUserCredentials {
   description: string;
 }
 
-export interface LoginTestData {
-  validUser: StaticUserCredentials;
-  lockedUser: StaticUserCredentials;
-  invalidPassword: StaticUserCredentials;
-}
+/** @deprecated Import from @schemas/test-data.schemas — types inferred from Zod. */
+export type { LoginTestData } from '@schemas/test-data.schemas';
 
 export interface GeneratedUserProfile {
   firstName: string;

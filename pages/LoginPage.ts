@@ -2,6 +2,13 @@ import type { Locator, Page } from '@playwright/test';
 import { BasePage } from '@pages/BasePage';
 import { ROUTES } from '@utils/constants';
 
+/**
+ * Page Object for the Sauce Demo login screen.
+ *
+ * Locator strategy (priority order):
+ * 1. getByRole / getByPlaceholder — accessibility-first
+ * 2. getByTestId — stable data-test attributes
+ */
 export class LoginPage extends BasePage {
   readonly usernameInput: Locator;
   readonly passwordInput: Locator;
@@ -13,7 +20,7 @@ export class LoginPage extends BasePage {
     this.usernameInput = page.getByPlaceholder('Username');
     this.passwordInput = page.getByPlaceholder('Password');
     this.loginButton = page.getByRole('button', { name: 'Login' });
-    this.errorMessage = page.locator('[data-test="error"]');
+    this.errorMessage = page.getByTestId('error');
   }
 
   async open(): Promise<void> {
@@ -29,6 +36,7 @@ export class LoginPage extends BasePage {
     await this.loginButton.click();
   }
 
+  /** Full login flow: fill credentials and submit. */
   async login(username: string, password: string): Promise<void> {
     await this.fillCredentials(username, password);
     await this.submit();

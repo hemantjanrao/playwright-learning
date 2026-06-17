@@ -1,5 +1,6 @@
 import type { ZodError } from 'zod';
 
+/** Thrown when HTTP status code does not match expected value. */
 export class ApiRequestError extends Error {
   readonly name = 'ApiRequestError';
 
@@ -16,6 +17,7 @@ export class ApiRequestError extends Error {
   }
 }
 
+/** Thrown when response JSON fails Zod contract validation. */
 export class ApiValidationError extends Error {
   readonly name = 'ApiValidationError';
 
@@ -29,6 +31,7 @@ export class ApiValidationError extends Error {
   }
 }
 
+/** Thrown when response body is not valid JSON. */
 export class ApiParseError extends Error {
   readonly name = 'ApiParseError';
 

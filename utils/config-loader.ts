@@ -2,6 +2,7 @@ import { config as loadDotenv } from 'dotenv';
 import { existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import type { AppConfig, ConfigValidationError, EnvironmentName } from '@models/config.types';
+import { AppConfigSchema } from '@schemas/config.schemas';
 import { ENVIRONMENTS } from '@utils/constants';
 
 function resolveEnvFile(envName: string): string {
@@ -41,6 +42,10 @@ function validateRequired(
     }));
 }
 
+/**
+ * Loads and validates environment configuration.
+ * Two validation layers: required env vars, then Zod schema (URLs, types).
+ */
 export function loadConfig(overrides?: Partial<AppConfig>): AppConfig {
   const envName = (process.env.TEST_ENV ?? 'dev').toLowerCase();
 
@@ -50,7 +55,7 @@ export function loadConfig(overrides?: Partial<AppConfig>): AppConfig {
 
   loadDotenv({ path: resolveEnvFile(envName), override: true });
 
-  const config: AppConfig = {
+  const rawConfig: AppConfig = {
     env: envName,
     baseUrl: process.env.BASE_URL ?? '',
     apiBaseUrl: process.env.API_BASE_URL ?? '',
@@ -64,10 +69,10 @@ export function loadConfig(overrides?: Partial<AppConfig>): AppConfig {
   };
 
   const errors = validateRequired([
-    { key: 'baseUrl', value: config.baseUrl },
-    { key: 'apiBaseUrl', value: config.apiBaseUrl },
-    { key: 'E2E_USERNAME', value: config.credentials.username },
-    { key: 'E2E_PASSWORD', value: config.credentials.password },
+    { key: 'baseUrl', value: rawConfig.baseUrl },
+    { key: 'apiBaseUrl', value: rawConfig.apiBaseUrl },
+    { key: 'E2E_USERNAME', value: rawConfig.credentials.username },
+    { key: 'E2E_PASSWORD', value: rawConfig.credentials.password },
   ]);
 
   if (errors.length > 0) {
@@ -75,7 +80,12 @@ export function loadConfig(overrides?: Partial<AppConfig>): AppConfig {
     throw new Error(`Environment configuration is invalid:\n${details}`);
   }
 
-  return config;
+  const parsed = AppConfigSchema.safeParse(rawConfig);
+  if (!parsed.success) {
+    throw new Error(`Config schema validation failed:\n${parsed.error.message}`);
+  }
+
+  return parsed.data;
 }
 
 export function getConfig(): AppConfig {

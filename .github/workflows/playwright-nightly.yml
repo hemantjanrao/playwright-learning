@@ -1,36 +1,33 @@
-name: Playwright PR (fast tier)
+name: Playwright Nightly (full regression)
 
 on:
-  pull_request:
-    branches: [main, master]
-  push:
-    branches: [main, master]
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_env:
+        description: Target environment
+        required: false
+        default: dev
+        type: choice
+        options: [dev, qa, staging]
 
 env:
-  TEST_ENV: dev
+  TEST_ENV: ${{ github.event.inputs.test_env || 'dev' }}
   HEADLESS: true
   CI: true
-  CI_TIER: pr
+  CI_TIER: nightly
 
 jobs:
-  quality:
-    name: Lint & Typecheck
+  regression:
+    name: Full regression (${{ matrix.project }})
     runs-on: ubuntu-latest
-    timeout-minutes: 10
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
-      - run: npm ci
-      - run: npm run validate
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [api, chromium, firefox, webkit]
 
-  test-fast:
-    name: Unit + API + Smoke E2E
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    needs: quality
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -38,8 +35,8 @@ jobs:
           node-version: '20'
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:pr
+      - run: npx playwright install --with-deps
+      - run: npx playwright test --project=${{ matrix.project }} --grep @regression
         env:
           BASE_URL: ${{ secrets.BASE_URL || 'https://www.saucedemo.com' }}
           API_BASE_URL: ${{ secrets.API_BASE_URL || 'https://jsonplaceholder.typicode.com' }}
@@ -47,17 +44,17 @@ jobs:
           E2E_PASSWORD: ${{ secrets.E2E_PASSWORD || 'secret_sauce' }}
 
       - name: Upload HTML report
-        if: failure()
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-html-report-pr
+          name: nightly-report-${{ matrix.project }}
           path: reports/html/
           retention-days: 14
 
-      - name: Upload traces on failure
+      - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-test-results-pr
+          name: nightly-results-${{ matrix.project }}
           path: test-results/
           retention-days: 7

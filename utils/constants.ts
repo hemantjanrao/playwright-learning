@@ -7,7 +7,12 @@ import type {
 } from '@models/api-endpoints.types';
 import type { PostId, UserId } from '@models/branded.types';
 
-export const ENVIRONMENTS = ['dev', 'qa', 'staging', 'prod'] as const satisfies readonly EnvironmentName[];
+export const ENVIRONMENTS = [
+  'dev',
+  'qa',
+  'staging',
+  'prod',
+] as const satisfies readonly EnvironmentName[];
 
 export const ROUTES = {
   login: '/',

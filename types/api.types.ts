@@ -22,12 +22,7 @@ export interface ApiClientOptions {
 }
 
 // Re-export contract types from schemas (single source of truth)
-export type {
-  ApiUser,
-  ApiPost,
-  CreatePostPayload,
-  ApiErrorResponse,
-} from '@schemas/api.schemas';
+export type { ApiUser, ApiPost, CreatePostPayload, ApiErrorResponse } from '@schemas/api.schemas';
 
 export {
   ApiUserSchema,

@@ -2,7 +2,14 @@ import type { UserId } from '@models/branded.types';
 import type { CreatePostPayload } from '@schemas/api.schemas';
 import { uniqueSuffix } from '@utils/test-data-factory';
 
-/** Fluent builder — composable test data with typed chaining. */
+/**
+ * Fluent builder for API post payloads.
+ *
+ * Why a builder?
+ * - Scales when payloads have many optional fields
+ * - Readable test setup: postBuilder().withUserId(1).withUniqueTitle('x').build()
+ * - Returns typed CreatePostPayload (server `id` omitted)
+ */
 export class PostBuilder {
   private payload: CreatePostPayload = {
     userId: 1,
@@ -25,6 +32,7 @@ export class PostBuilder {
     return this;
   }
 
+  /** Appends worker-safe unique suffix — parallel-test friendly. */
   withUniqueTitle(prefix: string): this {
     this.payload.title = `${prefix}-${uniqueSuffix()}`;
     return this;

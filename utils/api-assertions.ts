@@ -9,7 +9,11 @@ import {
 import { expect } from '@playwright/test';
 import { ApiValidationError } from '@utils/api-errors';
 
-/** Contract assertions — delegate to Zod schemas (single source of truth). */
+/**
+ * Contract assertions backed by Zod schemas.
+ * Prefer `getValidated()` in ApiClient — use these when asserting pre-fetched data.
+ */
+
 export function assertUserShape(user: unknown): asserts user is ApiUser {
   const result = ApiUserSchema.safeParse(user);
   if (!result.success) {
@@ -31,7 +35,7 @@ export function assertArrayOfUsers(users: unknown): asserts users is ApiUser[] {
   }
 }
 
-/** Narrows ApiResult to ApiFailure — use in negative API tests without conditionals. */
+/** Narrows `ApiResult` to `ApiFailure` — avoids conditionals in negative API tests. */
 export function expectApiFailure<T>(result: ApiResult<T>): asserts result is ApiFailure {
   expect(result.ok).toBe(false);
 }

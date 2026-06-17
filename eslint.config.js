@@ -30,6 +30,12 @@ export default tseslint.config(
   {
     ...eslintPluginPlaywright.configs['flat/recommended'],
     files: ['tests/**/*.ts'],
+    rules: {
+      'playwright/valid-test-tags': [
+        'error',
+        { allowedTags: ['@smoke', '@regression', '@quarantine'] },
+      ],
+    },
   },
   {
     files: ['fixtures/**/*.ts'],
