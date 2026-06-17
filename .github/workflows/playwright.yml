@@ -6,6 +6,14 @@ on:
   push:
     branches: [main, master]
 
+concurrency:
+  group: pr-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   TEST_ENV: dev
   HEADLESS: true
@@ -19,45 +27,105 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: npm
-      - run: npm ci
+      - uses: ./.github/actions/setup-node-playwright
       - run: npm run validate
 
-  test-fast:
-    name: Unit + API + Smoke E2E
+  unit:
+    name: Unit tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-playwright
+      - uses: ./.github/actions/configure-test-env
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      - run: npx playwright test --project=unit
+      - uses: ./.github/actions/upload-playwright-artifacts
+        if: failure()
+        with:
+          report-name: playwright-html-report-unit
+          results-name: playwright-test-results-unit
+
+  api:
+    name: API contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: quality
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-playwright
+        with:
+          browsers: chromium
+      - uses: ./.github/actions/configure-test-env
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      - run: npx playwright test --project=api
+      - uses: ./.github/actions/upload-playwright-artifacts
+        if: failure()
+        with:
+          report-name: playwright-html-report-api
+          results-name: playwright-test-results-api
+
+  smoke-e2e:
+    name: Smoke E2E
     runs-on: ubuntu-latest
     timeout-minutes: 15
     needs: quality
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup-node-playwright
         with:
-          node-version: '20'
-          cache: npm
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npm run test:pr
+          browsers: chromium
+      - uses: ./.github/actions/configure-test-env
         env:
-          BASE_URL: ${{ secrets.BASE_URL || 'https://www.saucedemo.com' }}
-          API_BASE_URL: ${{ secrets.API_BASE_URL || 'https://jsonplaceholder.typicode.com' }}
-          E2E_USERNAME: ${{ secrets.E2E_USERNAME || 'standard_user' }}
-          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD || 'secret_sauce' }}
-
-      - name: Upload HTML report
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      - run: npx playwright test --project=chromium --grep @smoke
+      - uses: ./.github/actions/upload-playwright-artifacts
         if: failure()
-        uses: actions/upload-artifact@v4
         with:
-          name: playwright-html-report-pr
-          path: reports/html/
-          retention-days: 14
+          report-name: playwright-html-report-pr
+          results-name: playwright-test-results-pr
 
-      - name: Upload traces on failure
-        if: failure()
-        uses: actions/upload-artifact@v4
+  pr-feedback:
+    name: PR failure summary
+    runs-on: ubuntu-latest
+    needs: [unit, api, smoke-e2e]
+    if: failure() && github.event_name == 'pull_request'
+    steps:
+      - name: Comment with report links
+        uses: actions/github-script@v7
         with:
-          name: playwright-test-results-pr
-          path: test-results/
-          retention-days: 7
+          script: |
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = [
+              '### Playwright PR checks failed',
+              '',
+              'Download artifacts from the [workflow run](' + runUrl + '):',
+              '',
+              '| Artifact | Contents |',
+              '|----------|----------|',
+              '| `playwright-html-report-pr` | HTML report (smoke E2E) |',
+              '| `playwright-html-report-api` | HTML report (API) |',
+              '| `playwright-html-report-unit` | HTML report (unit) |',
+              '| `playwright-test-results-*` | Traces — open at [trace.playwright.dev](https://trace.playwright.dev) |',
+              '',
+              'Reproduce locally: `CI=true npm run test:pr`',
+            ].join('\n');
+
+            github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });

@@ -1,0 +1,35 @@
+name: Upload Playwright artifacts
+description: Upload HTML report and test-results (traces, screenshots)
+
+inputs:
+  report-name:
+    description: Artifact name for the HTML report
+    required: true
+  results-name:
+    description: Artifact name for test-results
+    required: true
+  upload-report:
+    description: 'When to upload report — failure | always'
+    required: false
+    default: failure
+
+runs:
+  using: composite
+  steps:
+    - name: Upload HTML report
+      if: inputs.upload-report == 'always' || failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.report-name }}
+        path: reports/html/
+        retention-days: 14
+        if-no-files-found: ignore
+
+    - name: Upload traces and screenshots
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ inputs.results-name }}
+        path: test-results/
+        retention-days: 7
+        if-no-files-found: ignore

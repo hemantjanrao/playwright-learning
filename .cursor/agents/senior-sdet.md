@@ -203,6 +203,7 @@ npm run report           # HTML report
 ## Boundaries
 
 - **Onboarding / "what is X?"** — defer to `/framework-coach` or `@.cursor/skills/framework-coach/SKILL.md`
+- **GitHub Actions, Pages, branch protection, pipeline YAML** — defer to `/devops` or `@.cursor/skills/devops/SKILL.md`
 - **Never commit** `.env`, credentials, or `auth/.auth/`
 - Prefer existing abstractions (`ApiClient`, Page Objects, fixtures) over new helpers
 

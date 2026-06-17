@@ -12,6 +12,13 @@ on:
         type: choice
         options: [dev, qa, staging]
 
+concurrency:
+  group: nightly-${{ github.workflow }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
 env:
   TEST_ENV: ${{ github.event.inputs.test_env || 'dev' }}
   HEADLESS: true
@@ -20,9 +27,10 @@ env:
 
 jobs:
   regression:
-    name: Full regression (${{ matrix.project }})
+    name: Regression (${{ matrix.project }})
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    environment: ${{ github.event.inputs.test_env || 'dev' }}
     strategy:
       fail-fast: false
       matrix:
@@ -30,31 +38,41 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup-node-playwright
         with:
-          node-version: '20'
-          cache: npm
-      - run: npm ci
-      - run: npx playwright install --with-deps
-      - run: npx playwright test --project=${{ matrix.project }} --grep @regression
+          browsers: all
+      - uses: ./.github/actions/configure-test-env
         env:
-          BASE_URL: ${{ secrets.BASE_URL || 'https://www.saucedemo.com' }}
-          API_BASE_URL: ${{ secrets.API_BASE_URL || 'https://jsonplaceholder.typicode.com' }}
-          E2E_USERNAME: ${{ secrets.E2E_USERNAME || 'standard_user' }}
-          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD || 'secret_sauce' }}
-
-      - name: Upload HTML report
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      - run: npx playwright test --project=${{ matrix.project }} --grep @regression
+      - uses: ./.github/actions/upload-playwright-artifacts
         if: always()
-        uses: actions/upload-artifact@v4
         with:
-          name: nightly-report-${{ matrix.project }}
-          path: reports/html/
-          retention-days: 14
+          report-name: nightly-report-${{ matrix.project }}
+          results-name: nightly-results-${{ matrix.project }}
+          upload-report: always
 
-      - name: Upload test results
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: nightly-results-${{ matrix.project }}
-          path: test-results/
-          retention-days: 7
+  nightly-summary:
+    name: Nightly summary
+    runs-on: ubuntu-latest
+    needs: regression
+    if: always()
+    steps:
+      - name: Write job summary
+        run: |
+          {
+            echo "## Nightly regression"
+            echo ""
+            echo "| Input | Value |"
+            echo "|-------|-------|"
+            echo "| Environment | \`${{ env.TEST_ENV }}\` |"
+            echo "| Trigger | \`${{ github.event_name }}\` |"
+            echo "| Matrix | api, chromium, firefox, webkit |"
+            echo ""
+            echo "### Reports"
+            echo "- Download **nightly-report-*** artifacts from this run"
+            echo "- Published dashboard updates via **Publish test report** workflow (GitHub Pages)"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -330,7 +330,7 @@ flowchart LR
     subgraph PR["PR — playwright.yml"]
         direction TB
         P1["validate<br/>typecheck · lint · format"]
-        P2["test:pr<br/>unit + api + @smoke"]
+        P2["unit ∥ api ∥ @smoke<br/>parallel after quality"]
         P1 --> P2
     end
 
@@ -338,14 +338,17 @@ flowchart LR
         direction TB
         N1["@regression"]
         N2["api · chromium · firefox · webkit"]
-        N1 --> N2
+        N3["publish-reports.yml → Pages"]
+        N1 --> N2 --> N3
     end
 
-    PUSH["git push"] --> PR
-    CRON["02:00 UTC"] --> NIGHTLY
+    subgraph MOCK["Mock — playwright-mock.yml"]
+        M1["@mock · path-filtered PR"]
+    end
 
-    style PR fill:#e8f5e9
-    style NIGHTLY fill:#e3f2fd
+    PUSH["git push / PR"] --> PR
+    CRON["02:00 UTC"] --> NIGHTLY
+    PR -.-> MOCK
 ```
 
 ### Test tags
@@ -354,7 +357,7 @@ flowchart LR
 |-----|------------|--------------|---------|
 | `@smoke` | Yes | Yes | Critical path |
 | `@regression` | No | Yes | Full coverage |
-| `@mock` | No | Yes* | MSW, Docker, page.route |
+| `@mock` | Path-filtered PR | Yes* | MSW, Docker, page.route |
 | `@quarantine` | No | No | Flaky — under investigation |
 
 \*Run locally with `npm run test:mock`.

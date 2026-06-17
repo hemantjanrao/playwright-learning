@@ -57,6 +57,7 @@ When a user says they are new, cover:
 3. **First command** — `npm run test:pr` (simulates CI: unit → api → smoke)
 4. **First file** — `docs/lessons/01-framework-map.md`
 5. **Invoke Senior SDET** — for writing/reviewing tests, point to `@.cursor/skills/senior-sdet/SKILL.md`
+6. **Invoke DevOps** — for GitHub Actions, reporting pages, repo CI setup, point to `@.cursor/skills/devops/SKILL.md`
 
 ## Teaching a lesson
 

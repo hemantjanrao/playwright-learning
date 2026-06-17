@@ -1,0 +1,59 @@
+name: Playwright Mock tier
+
+on:
+  pull_request:
+    paths:
+      - 'tests/api/msw-*.spec.ts'
+      - 'tests/api/container-*.spec.ts'
+      - 'tests/ui/network-mock.spec.ts'
+      - 'mocks/**'
+      - 'docker/**'
+      - 'fixtures/msw.fixture.ts'
+      - 'fixtures/container.fixture.ts'
+      - 'fixtures/index.ts'
+      - 'playwright.config.ts'
+  push:
+    branches: [main, master]
+    paths:
+      - 'tests/api/msw-*.spec.ts'
+      - 'tests/api/container-*.spec.ts'
+      - 'tests/ui/network-mock.spec.ts'
+      - 'mocks/**'
+      - 'docker/**'
+  workflow_dispatch:
+
+concurrency:
+  group: mock-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  CI: true
+  CI_TIER: pr
+  TEST_ENV: dev
+  HEADLESS: true
+
+jobs:
+  mock-tests:
+    name: MSW + Docker mocks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-node-playwright
+        with:
+          browsers: chromium
+      - uses: ./.github/actions/configure-test-env
+        env:
+          BASE_URL: ${{ secrets.BASE_URL }}
+          API_BASE_URL: ${{ secrets.API_BASE_URL }}
+          E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
+          E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
+      - run: npm run test:mock
+      - uses: ./.github/actions/upload-playwright-artifacts
+        if: failure()
+        with:
+          report-name: playwright-mock-report
+          results-name: playwright-mock-results

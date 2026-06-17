@@ -1,0 +1,15 @@
+name: Configure test environment
+description: Apply CI env vars with demo-safe defaults when secrets are unset. Pass secrets via env on the calling step.
+
+runs:
+  using: composite
+  steps:
+    - name: Export test environment variables
+      shell: bash
+      run: |
+        {
+          echo "BASE_URL=${BASE_URL:-https://www.saucedemo.com}"
+          echo "API_BASE_URL=${API_BASE_URL:-https://jsonplaceholder.typicode.com}"
+          echo "E2E_USERNAME=${E2E_USERNAME:-standard_user}"
+          echo "E2E_PASSWORD=${E2E_PASSWORD:-secret_sauce}"
+        } >> "$GITHUB_ENV"

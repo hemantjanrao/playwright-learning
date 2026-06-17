@@ -7,7 +7,8 @@ Production-ready Playwright TypeScript framework. Use this file as the project b
 | Mode | When | Invoke |
 |------|------|--------|
 | **Framework Coach** | New QA onboarding, lessons, concept explanations | `/framework-coach` or `@.cursor/skills/framework-coach/SKILL.md` |
-| **Senior SDET** | Tests, coverage, flakiness, framework, CI | `/senior-sdet` or `@.cursor/skills/senior-sdet/SKILL.md` |
+| **Senior SDET** | Tests, coverage, flakiness, framework | `/senior-sdet` or `@.cursor/skills/senior-sdet/SKILL.md` |
+| **DevOps** | GitHub Actions, pipelines, reporting, repo CI setup | `/devops` or `@.cursor/skills/devops/SKILL.md` |
 
 ## Documentation (read first)
 
@@ -83,7 +84,11 @@ npm run validate            # typecheck + lint + format
 |-------|------|
 | Framework Coach | `.cursor/agents/framework-coach.md` · `.cursor/skills/framework-coach/SKILL.md` |
 | Senior SDET | `.cursor/agents/senior-sdet.md` · `.cursor/skills/senior-sdet/SKILL.md` |
+| DevOps | `.cursor/agents/devops.md` · `.cursor/skills/devops/SKILL.md` |
 | Playwright patterns | `.cursor/skills/senior-sdet/playwright-patterns.md` |
+| GitHub repo checklist | `.cursor/skills/devops/github-repo-checklist.md` |
+| Pipeline patterns | `.cursor/skills/devops/pipeline-patterns.md` |
+| Reporting (Pages, Allure) | `.cursor/skills/devops/reporting.md` |
 
 ## Safety
 
