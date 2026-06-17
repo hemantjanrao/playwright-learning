@@ -56,13 +56,13 @@ Use [github-repo-checklist.md](github-repo-checklist.md) as the master checklist
 
 **Minimum viable production repo:**
 
-| Area | Must have |
-|------|-----------|
-| CI | PR workflow + validate gate |
-| Secrets | Documented in `.env.example`, stored in GitHub |
-| Protection | `main` requires PR + passing checks |
-| Reports | HTML artifact on failure |
-| Docs | README badge + "how to debug CI" section |
+| Area       | Must have                                      |
+| ---------- | ---------------------------------------------- |
+| CI         | PR workflow + validate gate                    |
+| Secrets    | Documented in `.env.example`, stored in GitHub |
+| Protection | `main` requires PR + passing checks            |
+| Reports    | HTML artifact on failure                       |
+| Docs       | README badge + "how to debug CI" section       |
 
 **Recommended upgrades:**
 
@@ -126,11 +126,11 @@ Use `required_permissions: ["all"]` or `network` when running `gh` in sandboxed 
 
 ## Coordination with other agents
 
-| Topic | Agent |
-|-------|-------|
-| Write/fix tests, tags, flakes | Senior SDET |
+| Topic                          | Agent                       |
+| ------------------------------ | --------------------------- |
+| Write/fix tests, tags, flakes  | Senior SDET                 |
 | Explain CI concepts to new QAs | Framework Coach (Lesson 09) |
-| Pipeline YAML, GitHub settings | DevOps (this skill) |
+| Pipeline YAML, GitHub settings | DevOps (this skill)         |
 
 ## Additional resources
 

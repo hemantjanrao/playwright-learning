@@ -11,7 +11,7 @@ Reference for QA engineers learning Playwright through this repo. Each section: 
 **In this framework:** Tests and fixtures import from `@playwright/test`. Page Objects import `Page`, `Locator` types from the same package.
 
 ```typescript
-import { test, expect } from '@fixtures/index';  // NOT @playwright/test directly
+import { test, expect } from '@fixtures/index'; // NOT @playwright/test directly
 import type { Page, Locator } from '@playwright/test';
 ```
 
@@ -39,12 +39,12 @@ test.describe('Login', () => {
 
 **Layers in this repo:**
 
-| Import | Fixtures added | Use for |
-|--------|----------------|---------|
-| `@fixtures/index` | `config`, `loginPage`, `apiClient`, ... | Most tests |
-| `@fixtures/authenticated.fixture` | + `storageState` | UI tests skipping login |
-| `@fixtures/msw.fixture` | + `mswServer`, `fetchApiClient` | MSW API tests |
-| `@fixtures/container.fixture` | + `mockApiClient`, WireMock container | Docker API tests |
+| Import                            | Fixtures added                          | Use for                 |
+| --------------------------------- | --------------------------------------- | ----------------------- |
+| `@fixtures/index`                 | `config`, `loginPage`, `apiClient`, ... | Most tests              |
+| `@fixtures/authenticated.fixture` | + `storageState`                        | UI tests skipping login |
+| `@fixtures/msw.fixture`           | + `mswServer`, `fetchApiClient`         | MSW API tests           |
+| `@fixtures/container.fixture`     | + `mockApiClient`, WireMock container   | Docker API tests        |
 
 **Fixture lifecycle:**
 
@@ -68,16 +68,16 @@ config: async ({}, use) => {
 
 **Eight projects:**
 
-| Project | Tests | Browser | Depends on |
-|---------|-------|---------|------------|
-| `unit` | `tests/unit/` | No | — |
-| `api` | `tests/api/` (not msw/container) | No* | — |
-| `api-mock` | `msw-*`, `container-*` | No* | — |
-| `setup` | `auth.setup.ts` | Yes | — |
-| `chromium` | `tests/ui/` | Chrome | `setup` |
-| `chromium-mock` | `network-mock.spec.ts` | Chrome | — |
-| `firefox` | `tests/ui/` | Firefox | `setup` |
-| `webkit` | `tests/ui/` | Safari | `setup` |
+| Project         | Tests                            | Browser | Depends on |
+| --------------- | -------------------------------- | ------- | ---------- |
+| `unit`          | `tests/unit/`                    | No      | —          |
+| `api`           | `tests/api/` (not msw/container) | No\*    | —          |
+| `api-mock`      | `msw-*`, `container-*`           | No\*    | —          |
+| `setup`         | `auth.setup.ts`                  | Yes     | —          |
+| `chromium`      | `tests/ui/`                      | Chrome  | `setup`    |
+| `chromium-mock` | `network-mock.spec.ts`           | Chrome  | —          |
+| `firefox`       | `tests/ui/`                      | Firefox | `setup`    |
+| `webkit`        | `tests/ui/`                      | Safari  | `setup`    |
 
 \*API projects set `devices['Desktop Chrome']` for user-agent only — no visible browser.
 
@@ -135,10 +135,10 @@ testIdAttribute: 'data-test',  // Sauce Demo uses data-test, not data-testid
 
 **Rules in this repo:**
 
-| Layer | Owns | Does not own |
-|-------|------|--------------|
-| `pages/` | Locators, user actions (`login()`, `open()`) | Assertions |
-| `tests/` | Test intent, `expect()` | Raw selectors |
+| Layer    | Owns                                         | Does not own  |
+| -------- | -------------------------------------------- | ------------- |
+| `pages/` | Locators, user actions (`login()`, `open()`) | Assertions    |
+| `tests/` | Test intent, `expect()`                      | Raw selectors |
 
 ```typescript
 // Good — assertion in spec
@@ -224,11 +224,11 @@ Open trace → see each action, network, console, DOM snapshot at failure time.
 
 ## 12. Mocking by layer
 
-| Who calls the API? | Tool | Fixture |
-|--------------------|------|---------|
-| Browser (`fetch` in page) | `page.route` | `mockJsonRoute` in `utils/route-mocks.ts` |
-| Node `fetch` in test process | MSW | `mswTest` + `fetchApiClient` |
-| Playwright `request` | Testcontainers + WireMock | `containerTest` + `mockApiClient` |
+| Who calls the API?           | Tool                      | Fixture                                   |
+| ---------------------------- | ------------------------- | ----------------------------------------- |
+| Browser (`fetch` in page)    | `page.route`              | `mockJsonRoute` in `utils/route-mocks.ts` |
+| Node `fetch` in test process | MSW                       | `mswTest` + `fetchApiClient`              |
+| Playwright `request`         | Testcontainers + WireMock | `containerTest` + `mockApiClient`         |
 
 See `docs/lessons/11-mocking-strategies.md` for the full decision tree.
 
@@ -256,12 +256,12 @@ Each test should use unique data (`generateUserProfile()`) or read-only shared d
 
 ## Quick reference
 
-| Concept | File to open |
-|---------|--------------|
-| Base fixtures | `fixtures/index.ts` |
-| Auth reuse | `fixtures/authenticated.fixture.ts`, `tests/setup/auth.setup.ts` |
-| MSW | `fixtures/msw.fixture.ts`, `mocks/handlers.ts` |
-| Page Object example | `pages/LoginPage.ts` |
-| UI test example | `tests/ui/login.spec.ts` |
-| API test example | `tests/api/users-get.spec.ts` |
-| Config | `playwright.config.ts` |
+| Concept             | File to open                                                     |
+| ------------------- | ---------------------------------------------------------------- |
+| Base fixtures       | `fixtures/index.ts`                                              |
+| Auth reuse          | `fixtures/authenticated.fixture.ts`, `tests/setup/auth.setup.ts` |
+| MSW                 | `fixtures/msw.fixture.ts`, `mocks/handlers.ts`                   |
+| Page Object example | `pages/LoginPage.ts`                                             |
+| UI test example     | `tests/ui/login.spec.ts`                                         |
+| API test example    | `tests/api/users-get.spec.ts`                                    |
+| Config              | `playwright.config.ts`                                           |

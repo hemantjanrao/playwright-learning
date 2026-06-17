@@ -15,7 +15,7 @@ flowchart LR
     CHECK --> NEXT["Next lesson"]
 ```
 
-Ask the **Framework Coach** at any step: `/framework-coach Teach me Lesson 03` or *"Review my checkpoint answers"*.
+Ask the **Framework Coach** at any step: `/framework-coach Teach me Lesson 03` or _"Review my checkpoint answers"_.
 
 Invoke: `/framework-coach` · `@.cursor/skills/framework-coach/SKILL.md`
 
@@ -44,19 +44,19 @@ flowchart TD
 
 ## Lesson index
 
-| # | Topic | Key files | Command |
-|---|-------|-----------|---------|
-| 01 | [Framework map](./lessons/01-framework-map.md) | `docs/ARCHITECTURE.md` | `npm test` |
-| 02 | [Playwright projects](./lessons/02-playwright-projects.md) | `playwright.config.ts` | `npm run test:api` |
-| 03 | Fixtures | `fixtures/index.ts` | `npm run test:ui` |
-| 04 | Page Object Model | `pages/BasePage.ts` | `npm run test:ui` |
-| 05 | Locator strategy | `pages/DashboardPage.ts` | `npm run test:ui` |
-| 06 | Auth optimization | `fixtures/authenticated.fixture.ts` | `npm run test:ui` |
-| 07 | API contracts | `utils/api-client.ts` | `npm run test:api` |
-| 08 | Zod + TypeScript | `schemas/`, `types/` | `npm run test:unit` |
-| 09 | CI tiers & tags | `.github/workflows/` | `npm run test:pr` |
-| 10 | Debugging | `playwright.config.ts` | `npm run test:debug` |
-| 11 | [Mocking strategies](./lessons/11-mocking-strategies.md) | `mocks/`, `utils/route-mocks.ts` | `npm run test:mock` |
+| #   | Topic                                                      | Key files                           | Command              |
+| --- | ---------------------------------------------------------- | ----------------------------------- | -------------------- |
+| 01  | [Framework map](./lessons/01-framework-map.md)             | `docs/ARCHITECTURE.md`              | `npm test`           |
+| 02  | [Playwright projects](./lessons/02-playwright-projects.md) | `playwright.config.ts`              | `npm run test:api`   |
+| 03  | Fixtures                                                   | `fixtures/index.ts`                 | `npm run test:ui`    |
+| 04  | Page Object Model                                          | `pages/BasePage.ts`                 | `npm run test:ui`    |
+| 05  | Locator strategy                                           | `pages/DashboardPage.ts`            | `npm run test:ui`    |
+| 06  | Auth optimization                                          | `fixtures/authenticated.fixture.ts` | `npm run test:ui`    |
+| 07  | API contracts                                              | `utils/api-client.ts`               | `npm run test:api`   |
+| 08  | Zod + TypeScript                                           | `schemas/`, `types/`                | `npm run test:unit`  |
+| 09  | CI tiers & tags                                            | `.github/workflows/`                | `npm run test:pr`    |
+| 10  | Debugging                                                  | `playwright.config.ts`              | `npm run test:debug` |
+| 11  | [Mocking strategies](./lessons/11-mocking-strategies.md)   | `mocks/`, `utils/route-mocks.ts`    | `npm run test:mock`  |
 
 Lessons **03–10** — invoke Framework Coach: `/framework-coach Teach me Lesson N` (content in `.cursor/skills/framework-coach/curriculum.md`).
 
@@ -64,16 +64,16 @@ Lessons **03–10** — invoke Framework Coach: `/framework-coach Teach me Lesso
 
 ## Commands cheat sheet
 
-| Goal | Command |
-|------|---------|
-| Simulate CI PR | `npm run test:pr` |
-| Smoke only | `npm run test:smoke` |
-| Full regression | `npm run test:regression` |
-| Mocking suite | `npm run test:mock` |
-| By layer | `npm run test:unit` / `test:api` / `test:ui` |
-| Debug | `npm run test:debug` |
-| Report | `npm run report` |
-| Quality gate | `npm run validate` |
+| Goal            | Command                                      |
+| --------------- | -------------------------------------------- |
+| Simulate CI PR  | `npm run test:pr`                            |
+| Smoke only      | `npm run test:smoke`                         |
+| Full regression | `npm run test:regression`                    |
+| Mocking suite   | `npm run test:mock`                          |
+| By layer        | `npm run test:unit` / `test:api` / `test:ui` |
+| Debug           | `npm run test:debug`                         |
+| Report          | `npm run report`                             |
+| Quality gate    | `npm run validate`                           |
 
 ---
 

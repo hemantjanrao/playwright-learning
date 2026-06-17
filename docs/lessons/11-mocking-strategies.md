@@ -69,12 +69,12 @@ test('...', async ({ mockApiClient }) => {
 
 ## 5. Good vs bad
 
-| Bad | Good |
-|-----|------|
-| `waitForTimeout` waiting for API | Mock response + `expect` |
-| One mock tool for everything | Pick by layer (see diagram) |
-| MSW with `apiClient` (request fixture) | MSW with `fetchApiClient` |
-| Mock tests on every PR | Tag `@mock`, run nightly / on demand |
+| Bad                                    | Good                                 |
+| -------------------------------------- | ------------------------------------ |
+| `waitForTimeout` waiting for API       | Mock response + `expect`             |
+| One mock tool for everything           | Pick by layer (see diagram)          |
+| MSW with `apiClient` (request fixture) | MSW with `fetchApiClient`            |
+| Mock tests on every PR                 | Tag `@mock`, run nightly / on demand |
 
 ## 6. Mini exercise
 
@@ -94,4 +94,4 @@ npm run test:mock
 
 ---
 
-**Next:** Ask the agent *"Teach me Lesson 03 — Fixtures"* for the full fixture composition deep dive.
+**Next:** Ask the agent _"Teach me Lesson 03 — Fixtures"_ for the full fixture composition deep dive.

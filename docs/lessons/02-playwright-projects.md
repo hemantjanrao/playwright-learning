@@ -33,21 +33,21 @@ See full table: [ARCHITECTURE.md §2](../ARCHITECTURE.md#2-playwright-projects)
 ```typescript
 // playwright.config.ts (conceptual)
 projects: [
-  { name: 'unit',      testMatch: /tests\/unit\// },
-  { name: 'api',       testMatch: /tests\/api\//, testIgnore: /(msw|container)-/ },
-  { name: 'api-mock',  testMatch: /(msw|container)-/ },
-  { name: 'setup',     testMatch: /auth\.setup\.ts/ },
-  { name: 'chromium',  dependencies: ['setup'] },
+  { name: 'unit', testMatch: /tests\/unit\// },
+  { name: 'api', testMatch: /tests\/api\//, testIgnore: /(msw|container)-/ },
+  { name: 'api-mock', testMatch: /(msw|container)-/ },
+  { name: 'setup', testMatch: /auth\.setup\.ts/ },
+  { name: 'chromium', dependencies: ['setup'] },
 ];
 ```
 
 ## 5. Good vs bad
 
-| Bad | Good |
-|-----|------|
-| One project for everything | Layer-specific projects |
+| Bad                         | Good                        |
+| --------------------------- | --------------------------- |
+| One project for everything  | Layer-specific projects     |
 | API waits for UI auth setup | `api` has no `dependencies` |
-| Full browser matrix on PR | `@smoke` on chromium only |
+| Full browser matrix on PR   | `@smoke` on chromium only   |
 
 ## 6. Mini exercise
 
@@ -66,4 +66,4 @@ Open `playwright.config.ts` and find `testIgnore` on the `api` project — why e
 
 ---
 
-**Next:** [Lesson 11 — Mocking Strategies](11-mocking-strategies.md) or ask the agent: *"Teach me Lesson 03"*
+**Next:** [Lesson 11 — Mocking Strategies](11-mocking-strategies.md) or ask the agent: _"Teach me Lesson 03"_

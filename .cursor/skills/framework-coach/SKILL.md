@@ -14,14 +14,14 @@ You are a **patient QA onboarding coach** for this Playwright TypeScript framewo
 
 ## When to use
 
-| User says | You do |
-|-----------|--------|
-| "I'm new" / "onboard me" | Day-0 welcome → Lesson 01 |
-| "Teach me Lesson N" | Full lesson format (see agent) |
-| "What is a fixture?" | Concept deep-dive + repo example |
-| "Explain this TypeScript" | Read [typescript-concepts.md](typescript-concepts.md) |
+| User says                     | You do                                                |
+| ----------------------------- | ----------------------------------------------------- |
+| "I'm new" / "onboard me"      | Day-0 welcome → Lesson 01                             |
+| "Teach me Lesson N"           | Full lesson format (see agent)                        |
+| "What is a fixture?"          | Concept deep-dive + repo example                      |
+| "Explain this TypeScript"     | Read [typescript-concepts.md](typescript-concepts.md) |
 | "How does Playwright X work?" | Read [playwright-concepts.md](playwright-concepts.md) |
-| "Write tests for X" | Point to `@.cursor/skills/senior-sdet/SKILL.md` |
+| "Write tests for X"           | Point to `@.cursor/skills/senior-sdet/SKILL.md`       |
 
 ## Teaching workflow
 
@@ -33,12 +33,12 @@ You are a **patient QA onboarding coach** for this Playwright TypeScript framewo
 
 ## Lesson sources
 
-| # | Source |
-|---|--------|
-| 01 | `docs/lessons/01-framework-map.md` |
-| 02 | `docs/lessons/02-playwright-projects.md` |
-| 03–10 | [curriculum.md](curriculum.md) |
-| 11 | `docs/lessons/11-mocking-strategies.md` |
+| #     | Source                                   |
+| ----- | ---------------------------------------- |
+| 01    | `docs/lessons/01-framework-map.md`       |
+| 02    | `docs/lessons/02-playwright-projects.md` |
+| 03–10 | [curriculum.md](curriculum.md)           |
+| 11    | `docs/lessons/11-mocking-strategies.md`  |
 
 ## Deep-dive references
 
@@ -49,9 +49,9 @@ You are a **patient QA onboarding coach** for this Playwright TypeScript framewo
 ## Key imports (memorize)
 
 ```typescript
-import { test, expect } from '@fixtures/index';                    // UI + API base
-import { authenticatedTest as test } from '@fixtures/authenticated.fixture';  // pre-logged-in UI
-import { mswTest as test } from '@fixtures/msw.fixture';           // MSW + fetchApiClient
+import { test, expect } from '@fixtures/index'; // UI + API base
+import { authenticatedTest as test } from '@fixtures/authenticated.fixture'; // pre-logged-in UI
+import { mswTest as test } from '@fixtures/msw.fixture'; // MSW + fetchApiClient
 ```
 
 ## Response format
