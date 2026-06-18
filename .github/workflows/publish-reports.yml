@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  actions: read
   pages: write
   id-token: write
 
@@ -26,7 +27,8 @@ jobs:
       - name: Download chromium nightly report
         uses: actions/download-artifact@v8
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ github.token }}
+          repository: ${{ github.repository }}
           run-id: ${{ github.event.workflow_run.id }}
           name: nightly-report-chromium
           path: site
