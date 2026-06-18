@@ -16,6 +16,8 @@
     "test:regression": "playwright test --grep @regression",
     "test:pr": "playwright test --project=unit && playwright test --project=api && playwright test --project=chromium --grep @smoke",
     "test:nightly": "playwright test --grep @regression",
+    "test:shard": "playwright test",
+    "test:shard:regression": "playwright test --grep @regression",
     "test:mock": "playwright test --grep @mock --project=api-mock --project=chromium-mock",
     "test:headed": "playwright test --headed",
     "test:debug": "playwright test --debug",
