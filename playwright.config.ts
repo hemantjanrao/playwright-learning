@@ -4,8 +4,19 @@ import { AUTH_STORAGE_PATH, TIMEOUTS } from '@utils/constants';
 
 const config = loadConfig();
 const useAllure = config.allureReport;
+const useBlobReport = process.env.PLAYWRIGHT_BLOB_REPORT === 'true';
 const isCi = !!process.env.CI;
 const isNightly = process.env.CI_TIER === 'nightly';
+
+/** CI defaults to 2 workers; override locally with PLAYWRIGHT_WORKERS=4 */
+function resolveWorkers(): number | undefined {
+  const fromEnv = process.env.PLAYWRIGHT_WORKERS;
+  if (fromEnv !== undefined && fromEnv !== '') {
+    const parsed = Number.parseInt(fromEnv, 10);
+    if (!Number.isNaN(parsed) && parsed > 0) return parsed;
+  }
+  return isCi ? 2 : undefined;
+}
 
 export default defineConfig({
   testDir: './tests',
@@ -13,18 +24,23 @@ export default defineConfig({
   forbidOnly: isCi,
   // PR/CI: zero retries — fix flakiness at the root. Nightly may retry once.
   retries: isNightly ? 1 : 0,
-  workers: isCi ? 2 : undefined,
+  workers: resolveWorkers(),
   timeout: TIMEOUTS.navigation,
   expect: {
     timeout: TIMEOUTS.expect,
   },
-  reporter: useAllure
+  reporter: useBlobReport
     ? [
         ['list'],
-        ['html', { open: 'never', outputFolder: 'reports/html' }],
-        ['allure-playwright', { resultsDir: 'reports/allure-results' }],
+        ['blob', { outputDir: 'reports/blob' }],
       ]
-    : [['list'], ['html', { open: 'never', outputFolder: 'reports/html' }]],
+    : useAllure
+      ? [
+          ['list'],
+          ['html', { open: 'never', outputFolder: 'reports/html' }],
+          ['allure-playwright', { resultsDir: 'reports/allure-results' }],
+        ]
+      : [['list'], ['html', { open: 'never', outputFolder: 'reports/html' }]],
   outputDir: 'test-results',
   use: {
     baseURL: config.baseUrl,

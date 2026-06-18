@@ -58,6 +58,7 @@ flowchart TB
 | `npm run test:pr`         | unit + api + `@smoke`       | Before every push         |
 | `npm run test:smoke`      | Critical path               | Quick confidence          |
 | `npm run test:regression` | Full `@regression`          | Pre-release               |
+| `npm run test:shard`      | Pass `--shard=i/N` + filters | Simulate CI sharding      |
 | `npm run test:mock`       | MSW + Docker + `page.route` | Mocking work              |
 | `npm run test:unit`       | Framework unit tests        | After utils changes       |
 | `npm run test:api`        | Live API contracts          | After API client changes  |

@@ -362,6 +362,83 @@ flowchart LR
 
 \*Run locally with `npm run test:mock`.
 
+### Parallelism and sharding
+
+Playwright uses two complementary strategies to run tests faster:
+
+```mermaid
+flowchart TB
+    subgraph MACHINE["One machine — workers"]
+        W1["Worker 1"]
+        W2["Worker 2"]
+        WN["Worker N"]
+        POOL["Test file pool<br/>fullyParallel: true"]
+        POOL --> W1
+        POOL --> W2
+        POOL --> WN
+    end
+
+    subgraph CI["Multiple machines — shards"]
+        S1["Runner shard 1/3"]
+        S2["Runner shard 2/3"]
+        S3["Runner shard 3/3"]
+        MERGE["merge-reports → single HTML"]
+        S1 --> MERGE
+        S2 --> MERGE
+        S3 --> MERGE
+    end
+```
+
+| Concept | What it splits | Config / flag | This repo |
+| ------- | -------------- | ------------- | --------- |
+| **Workers** | Tests across CPU cores on **one** runner | `workers` in `playwright.config.ts`, `--workers=N` | `2` in CI; local default = CPU cores |
+| **fullyParallel** | Tests **within** a file run concurrently | `fullyParallel: true` | Enabled globally |
+| **Sharding** | Test **files** across **multiple** CI runners | `--shard=i/N` | Nightly browsers (`shard_total` input) |
+| **CI job matrix** | Whole projects in parallel | GitHub `strategy.matrix` | PR: unit ∥ api ∥ smoke; Nightly: api + 3 browsers |
+
+**Workers (in-process parallelism)**
+
+```bash
+# Local: use all cores (default) or cap workers
+PLAYWRIGHT_WORKERS=4 npm run test:ui
+
+# CLI override
+npx playwright test --project=chromium --workers=4
+```
+
+`playwright.config.ts` sets `workers: 2` when `CI=true`. Override with `PLAYWRIGHT_WORKERS`.
+
+**Sharding (cross-runner parallelism)**
+
+Each shard runs a disjoint subset of test **files**. Playwright assigns files round-robin:
+
+```bash
+# Simulate CI shard 1 of 2 locally
+npm run test:shard:regression -- --project=chromium --shard=1/2
+
+# Shard 2 of 2 (different files)
+npm run test:shard:regression -- --project=chromium --shard=2/2
+```
+
+Nightly workflow (`playwright-nightly.yml`):
+
+1. `build-matrix` — generates `api` (1/1) + browser projects × `shard_total`
+2. Each shard runs with `PLAYWRIGHT_BLOB_REPORT=true` (blob reporter)
+3. `merge-reports` job downloads all blobs → `npx playwright merge-reports` → `nightly-report-merged` artifact
+
+**Parallel-safe test data**
+
+When multiple workers create data, use worker-scoped unique values:
+
+```typescript
+import { uniqueSuffix } from '@utils/test-data-factory';
+
+postBuilder().withUniqueTitle('regression-post').build();
+// → "regression-post-w2-1718…-a1b2c3"
+```
+
+`uniqueSuffix()` reads `TEST_PARALLEL_INDEX` (Playwright worker index) to avoid collisions.
+
 ### Reliability policies
 
 | Policy          | Value                                    |
