@@ -4,13 +4,14 @@ import { ApiUserSchema, ApiUsersSchema } from '@schemas/api.schemas';
 import { API_ENDPOINTS } from '@utils/constants';
 import { expectApiFailure } from '@utils/api-assertions';
 import { loadApiPayloads } from '@utils/test-data-factory';
+import { TAGS } from '@utils/tags';
 
 const apiPayloads = loadApiPayloads();
 
 test.describe('API - GET', () => {
   test(
     'should fetch users list and validate contract',
-    { tag: ['@smoke', '@regression'] },
+    { tag: [TAGS.smoke, TAGS.regression] },
     async ({ apiClient }) => {
       const users = await apiClient.getValidated(API_ENDPOINTS.users, ApiUsersSchema, 200);
       expect(users.length).toBeGreaterThan(0);
@@ -20,7 +21,7 @@ test.describe('API - GET', () => {
 
   test(
     'should fetch user by id with branded UserId',
-    { tag: '@regression' },
+    { tag: [TAGS.regression] },
     async ({ apiClient }) => {
       const userId = asUserId(apiPayloads.sampleUserId);
       const user = await apiClient.getValidated(API_ENDPOINTS.userById(userId), ApiUserSchema, 200);
@@ -30,7 +31,7 @@ test.describe('API - GET', () => {
 
   test(
     'should return ApiFailure for invalid path',
-    { tag: '@regression' },
+    { tag: [TAGS.regression] },
     async ({ apiClient }) => {
       const result = await apiClient.getResult('/users/99999/nonexistent');
       expectApiFailure(result);

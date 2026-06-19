@@ -93,7 +93,7 @@ See [pipeline-patterns.md](pipeline-patterns.md) for copy-paste workflow snippet
 - Report publish to GitHub Pages
 - Reusable workflow extraction
 
-When adding workflows, **match naming**: `playwright.yml`, `playwright-nightly.yml`, `playwright-mock.yml`, `publish-reports.yml`.
+When adding workflows, **match naming**: `playwright.yml`, `playwright-nightly.yml`, `playwright-mock.yml`.
 
 ## gh CLI reference
 

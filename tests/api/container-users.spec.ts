@@ -3,6 +3,7 @@ import { asUserId } from '@models/branded.types';
 import { ApiUserSchema, ApiUsersSchema } from '@schemas/api.schemas';
 import { API_ENDPOINTS } from '@utils/constants';
 import { isDockerAvailable } from '@utils/docker';
+import { TAGS } from '@utils/tags';
 
 test.describe('API - WireMock Testcontainers', () => {
   test.beforeEach(() => {
@@ -11,7 +12,7 @@ test.describe('API - WireMock Testcontainers', () => {
 
   test(
     'should return stubbed users from WireMock container',
-    { tag: ['@mock', '@regression'] },
+    { tag: [TAGS.mock, TAGS.regression] },
     async ({ mockApiClient }) => {
       const users = await mockApiClient.getValidated(API_ENDPOINTS.users, ApiUsersSchema, 200);
       expect(users).toHaveLength(1);
@@ -21,7 +22,7 @@ test.describe('API - WireMock Testcontainers', () => {
 
   test(
     'should return stubbed user by id from WireMock container',
-    { tag: ['@mock', '@regression'] },
+    { tag: [TAGS.mock, TAGS.regression] },
     async ({ mockApiClient }) => {
       const user = await mockApiClient.getValidated(
         API_ENDPOINTS.userById(asUserId(1)),

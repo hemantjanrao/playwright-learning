@@ -53,17 +53,17 @@ flowchart TB
 
 ## Running tests
 
-| Command                   | What runs                   | When to use               |
-| ------------------------- | --------------------------- | ------------------------- |
-| `npm run test:pr`         | unit + api + `@smoke`       | Before every push         |
-| `npm run test:smoke`      | Critical path               | Quick confidence          |
-| `npm run test:regression` | Full `@regression`          | Pre-release               |
+| Command                   | What runs                    | When to use               |
+| ------------------------- | ---------------------------- | ------------------------- |
+| `npm run test:pr`         | unit + api + `@smoke`        | Before every push         |
+| `npm run test:smoke`      | Critical path                | Quick confidence          |
+| `npm run test:regression` | Full `@regression`           | Pre-release               |
 | `npm run test:shard`      | Pass `--shard=i/N` + filters | Simulate CI sharding      |
-| `npm run test:mock`       | MSW + Docker + `page.route` | Mocking work              |
-| `npm run test:unit`       | Framework unit tests        | After utils changes       |
-| `npm run test:api`        | Live API contracts          | After API client changes  |
-| `npm run test:ui`         | UI E2E chromium             | After page object changes |
-| `npm run validate`        | typecheck + lint + format   | Quality gate              |
+| `npm run test:mock`       | MSW + Docker + `page.route`  | Mocking work              |
+| `npm run test:unit`       | Framework unit tests         | After utils changes       |
+| `npm run test:api`        | Live API contracts           | After API client changes  |
+| `npm run test:ui`         | UI E2E chromium              | After page object changes |
+| `npm run validate`        | typecheck + lint + format    | Quality gate              |
 
 ---
 
@@ -86,7 +86,7 @@ playwright-learning/
 │   ├── ui/                    # Browser E2E
 │   └── setup/                 # Auth storageState
 └── .github/
-    ├── workflows/             # PR, nightly, mock, publish-reports
+    ├── workflows/             # PR, nightly, mock
     └── actions/               # Reusable composite actions
 ```
 
@@ -119,12 +119,13 @@ flowchart TB
 
     subgraph NIGHTLY["Nightly — playwright-nightly.yml"]
         M["@regression matrix<br/>api · chromium · firefox · webkit"]
-        PUB["publish-reports.yml → GitHub Pages"]
-        M --> PUB
+        MERGE["merge sharded HTML report"]
+        PUB["publish-pages job → GitHub Pages<br/>ENABLE_GITHUB_PAGES=true"]
+        M --> MERGE --> PUB
     end
 
     subgraph MOCK["Mock — playwright-mock.yml"]
-        MK["@mock · MSW + Docker"]
+        MK["@mock · path-filtered PR only"]
     end
 
     PR -.->|path filter| MOCK
@@ -151,7 +152,7 @@ On `main`, require these status checks from the PR workflow:
 1. Failed PR → workflow run → **Artifacts** → `playwright-html-report-*`
 2. Open `index.html` locally: `npm run report`
 3. Traces: download `playwright-test-results-*` → [trace.playwright.dev](https://trace.playwright.dev)
-4. Nightly dashboard: **Settings → Pages → Source: GitHub Actions** (after first nightly run)
+4. Nightly dashboard: enable **Settings → Pages → Source: GitHub Actions**, set repo variable `ENABLE_GITHUB_PAGES=true`, then re-run nightly
 
 ```bash
 CI=true npm run test:pr    # reproduce PR tier locally

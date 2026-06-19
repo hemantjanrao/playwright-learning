@@ -181,49 +181,36 @@ jobs:
 
 ## Publish HTML report to GitHub Pages
 
-File: `.github/workflows/publish-reports.yml`
+File: `.github/workflows/playwright-nightly.yml` — `publish-pages` job (same workflow run, no cross-workflow artifact download).
 
-Runs after nightly or on `workflow_run` completion. See [reporting.md](reporting.md) for full Pages setup.
+Opt-in via repository variable `ENABLE_GITHUB_PAGES=true`. Requires **Settings → Pages → Source: GitHub Actions**.
 
 ```yaml
-name: Publish test report
-
-on:
-  workflow_run:
-    workflows: [Playwright Nightly (full regression)]
-    types: [completed]
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: pages
-  cancel-in-progress: false
-
-jobs:
-  publish:
-    if: github.event.workflow_run.conclusion != 'cancelled'
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - uses: actions/download-artifact@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          run-id: ${{ github.event.workflow_run.id }}
-          pattern: nightly-report-*
-          merge-multiple: true
-          path: reports/html
-
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: reports/html
-
-      - id: deployment
-        uses: actions/deploy-pages@v4
+publish-pages:
+  name: Deploy HTML report to GitHub Pages
+  needs: merge-reports
+  if: >-
+    always() &&
+    needs.merge-reports.result != 'cancelled' &&
+    vars.ENABLE_GITHUB_PAGES == 'true'
+  permissions:
+    contents: read
+    actions: read
+    pages: write
+    id-token: write
+  environment:
+    name: github-pages
+    url: ${{ steps.deployment.outputs.page_url }}
+  steps:
+    - uses: actions/download-artifact@v8
+      with:
+        name: nightly-report-merged
+        path: site
+    - uses: actions/upload-pages-artifact@v5
+      with:
+        path: site
+    - uses: actions/deploy-pages@v5
+      id: deployment
 ```
 
 **GitHub UI:** Settings → Pages → Build and deployment → Source: **GitHub Actions**.

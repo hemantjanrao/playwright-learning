@@ -13,8 +13,6 @@ import { ROUTES } from '@utils/constants';
 export class DashboardPage extends BasePage {
   readonly pageTitle: Locator;
   readonly inventoryList: Locator;
-  readonly shoppingCartLink: Locator;
-  readonly menuButton: Locator;
   readonly cartBadge: Locator;
 
   constructor(page: Page) {
@@ -22,9 +20,7 @@ export class DashboardPage extends BasePage {
     // Sauce Demo uses data-test="title" on a div — not a semantic heading
     this.pageTitle = page.getByTestId('title');
     this.inventoryList = page.getByTestId('inventory-list');
-    this.shoppingCartLink = page.getByTestId('shopping-cart-link');
     this.cartBadge = page.getByTestId('shopping-cart-badge');
-    this.menuButton = page.getByRole('button', { name: 'Open Menu' });
   }
 
   async open(): Promise<void> {
@@ -44,9 +40,5 @@ export class DashboardPage extends BasePage {
       .locator('[data-test^="inventory-item-"]')
       .filter({ hasText: productName });
     await product.getByRole('button', { name: 'Add to cart' }).click();
-  }
-
-  async getCartBadgeCount(): Promise<string | null> {
-    return this.cartBadge.textContent();
   }
 }
