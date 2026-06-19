@@ -49,20 +49,22 @@ Already implemented in `playwright.yml`:
 
 ### Workflow pattern
 
-Create `.github/workflows/publish-reports.yml` (see [pipeline-patterns.md](pipeline-patterns.md)).
+Publishing lives in `.github/workflows/playwright-nightly.yml` — see [pipeline-patterns.md](pipeline-patterns.md).
 
 Flow:
 
 ```mermaid
 flowchart LR
-    NIGHTLY["Nightly workflow"] --> ARTIFACT["Upload HTML artifact"]
-    ARTIFACT --> PUBLISH["publish-reports.yml on workflow_run"]
+    NIGHTLY["Nightly workflow"] --> MERGE["merge-reports job"]
+    MERGE --> PUBLISH["publish-pages job"]
     PUBLISH --> PAGES["GitHub Pages URL"]
 ```
 
+Set repository variable `ENABLE_GITHUB_PAGES=true` after enabling Pages (GitHub Actions source).
+
 ### Merging matrix reports
 
-When nightly runs a browser matrix, each leg uploads `nightly-report-<project>`. The publish job should `merge-multiple: true` or pick `chromium` as canonical dashboard.
+Nightly shards upload blob artifacts; `merge-reports` produces `nightly-report-merged` for Pages deploy.
 
 ### Custom subdirectory
 
@@ -104,7 +106,7 @@ env:
   id: deployment
 ```
 
-**Requirement:** Java not needed — `allure` CLI via `npx allure-commandline` if not in package.json; this repo uses `allure generate` via npm script.
+**Requirement:** `allure-commandline` is in devDependencies — `npm run report:allure` uses the local CLI.
 
 ### Allure in PRs
 

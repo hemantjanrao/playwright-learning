@@ -1,10 +1,11 @@
 import { test, expect } from '@fixtures/index';
 import { ERROR_MESSAGES } from '@utils/constants';
+import { TAGS } from '@utils/tags';
 
 test.describe('Negative login', () => {
   test(
     'should show error for invalid password',
-    { tag: '@regression' },
+    { tag: [TAGS.regression] },
     async ({ loginPage, loginTestData }) => {
       const { invalidPassword } = loginTestData;
 
@@ -17,7 +18,7 @@ test.describe('Negative login', () => {
 
   test(
     'should show error for locked out user',
-    { tag: '@regression' },
+    { tag: [TAGS.regression] },
     async ({ loginPage, loginTestData }) => {
       const { lockedUser } = loginTestData;
 
@@ -30,7 +31,7 @@ test.describe('Negative login', () => {
 
   test(
     'should show error when username is empty',
-    { tag: '@regression' },
+    { tag: [TAGS.regression] },
     async ({ loginPage }) => {
       await loginPage.open();
       await loginPage.fillCredentials('', 'secret_sauce');

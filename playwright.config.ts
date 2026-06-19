@@ -30,10 +30,7 @@ export default defineConfig({
     timeout: TIMEOUTS.expect,
   },
   reporter: useBlobReport
-    ? [
-        ['list'],
-        ['blob', { outputDir: 'reports/blob' }],
-      ]
+    ? [['list'], ['blob', { outputDir: 'reports/blob' }]]
     : useAllure
       ? [
           ['list'],

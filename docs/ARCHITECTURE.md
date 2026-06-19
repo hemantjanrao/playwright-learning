@@ -338,12 +338,12 @@ flowchart LR
         direction TB
         N1["@regression"]
         N2["api · chromium · firefox · webkit"]
-        N3["publish-reports.yml → Pages"]
+        N3["publish-pages job → Pages<br/>ENABLE_GITHUB_PAGES=true"]
         N1 --> N2 --> N3
     end
 
     subgraph MOCK["Mock — playwright-mock.yml"]
-        M1["@mock · path-filtered PR"]
+        M1["@mock · path-filtered PR only"]
     end
 
     PUSH["git push / PR"] --> PR
@@ -357,10 +357,10 @@ flowchart LR
 | ------------- | ---------------- | ------------ | --------------------------- |
 | `@smoke`      | Yes              | Yes          | Critical path               |
 | `@regression` | No               | Yes          | Full coverage               |
-| `@mock`       | Path-filtered PR | Yes\*        | MSW, Docker, page.route     |
+| `@mock`       | Path-filtered PR | No           | MSW, Docker, page.route     |
 | `@quarantine` | No               | No           | Flaky — under investigation |
 
-\*Run locally with `npm run test:mock`.
+Run `@mock` locally with `npm run test:mock` or via `playwright-mock.yml` on PRs that touch mock paths.
 
 ### Parallelism and sharding
 
@@ -389,12 +389,12 @@ flowchart TB
     end
 ```
 
-| Concept | What it splits | Config / flag | This repo |
-| ------- | -------------- | ------------- | --------- |
-| **Workers** | Tests across CPU cores on **one** runner | `workers` in `playwright.config.ts`, `--workers=N` | `2` in CI; local default = CPU cores |
-| **fullyParallel** | Tests **within** a file run concurrently | `fullyParallel: true` | Enabled globally |
-| **Sharding** | Test **files** across **multiple** CI runners | `--shard=i/N` | Nightly browsers (`shard_total` input) |
-| **CI job matrix** | Whole projects in parallel | GitHub `strategy.matrix` | PR: unit ∥ api ∥ smoke; Nightly: api + 3 browsers |
+| Concept           | What it splits                                | Config / flag                                      | This repo                                         |
+| ----------------- | --------------------------------------------- | -------------------------------------------------- | ------------------------------------------------- |
+| **Workers**       | Tests across CPU cores on **one** runner      | `workers` in `playwright.config.ts`, `--workers=N` | `2` in CI; local default = CPU cores              |
+| **fullyParallel** | Tests **within** a file run concurrently      | `fullyParallel: true`                              | Enabled globally                                  |
+| **Sharding**      | Test **files** across **multiple** CI runners | `--shard=i/N`                                      | Nightly browsers (`shard_total` input)            |
+| **CI job matrix** | Whole projects in parallel                    | GitHub `strategy.matrix`                           | PR: unit ∥ api ∥ smoke; Nightly: api + 3 browsers |
 
 **Workers (in-process parallelism)**
 

@@ -20,12 +20,10 @@
       "@pages/*": ["./pages/*"],
       "@fixtures/*": ["./fixtures/*"],
       "@utils/*": ["./utils/*"],
-      "@config/*": ["./config/*"],
       "@models/*": ["./types/*"],
       "@schemas/*": ["./schemas/*"],
       "@builders/*": ["./builders/*"],
-      "@mocks/*": ["./mocks/*"],
-      "@test-data/*": ["./test-data/*"]
+      "@mocks/*": ["./mocks/*"]
     }
   },
   "include": ["**/*.ts"],

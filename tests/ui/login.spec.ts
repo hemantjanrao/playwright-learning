@@ -1,10 +1,11 @@
 import { test, expect } from '@fixtures/index';
 import { ROUTES } from '@utils/constants';
+import { TAGS } from '@utils/tags';
 
 test.describe('Login', () => {
   test(
     'should login with valid credentials and land on inventory page',
-    { tag: ['@smoke', '@regression'] },
+    { tag: [TAGS.smoke, TAGS.regression] },
     async ({ page, loginPage, dashboardPage, config }) => {
       await loginPage.open();
       await loginPage.login(config.credentials.username, config.credentials.password);

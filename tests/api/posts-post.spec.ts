@@ -3,13 +3,14 @@ import { postBuilder } from '@builders/post.builder';
 import { ApiPostSchema } from '@schemas/api.schemas';
 import { API_ENDPOINTS } from '@utils/constants';
 import { loadApiPayloads } from '@utils/test-data-factory';
+import { TAGS } from '@utils/tags';
 
 const apiPayloads = loadApiPayloads();
 
 test.describe('API - POST', () => {
   test(
     'should create a post using fluent builder',
-    { tag: ['@smoke', '@regression'] },
+    { tag: [TAGS.smoke, TAGS.regression] },
     async ({ apiClient, generatedUser }) => {
       const payload = postBuilder()
         .withUserId(1)
@@ -31,7 +32,7 @@ test.describe('API - POST', () => {
 
   test(
     'should create a post with static payload',
-    { tag: '@regression' },
+    { tag: [TAGS.regression] },
     async ({ apiClient }) => {
       const created = await apiClient.postValidated(
         API_ENDPOINTS.posts,

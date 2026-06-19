@@ -1,10 +1,11 @@
 import { authenticatedTest as test, expect } from '@fixtures/authenticated.fixture';
 import { ROUTES } from '@utils/constants';
+import { TAGS } from '@utils/tags';
 
 test.describe('Authenticated session', () => {
   test(
     'should access dashboard using storageState without UI login',
-    { tag: ['@smoke', '@regression'] },
+    { tag: [TAGS.smoke, TAGS.regression] },
     async ({ page, dashboardPage }) => {
       await dashboardPage.open();
 
@@ -16,7 +17,7 @@ test.describe('Authenticated session', () => {
 
   test(
     'should logout from user menu',
-    { tag: '@regression' },
+    { tag: [TAGS.regression] },
     async ({ page, dashboardPage, userProfilePage }) => {
       await dashboardPage.open();
       await userProfilePage.logout();

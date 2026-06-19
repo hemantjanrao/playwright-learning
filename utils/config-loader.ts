@@ -87,7 +87,3 @@ export function loadConfig(overrides?: Partial<AppConfig>): AppConfig {
 
   return parsed.data;
 }
-
-export function getConfig(): AppConfig {
-  return loadConfig();
-}
