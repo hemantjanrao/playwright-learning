@@ -90,6 +90,20 @@ npm run validate            # typecheck + lint + format
 | Pipeline patterns         | `.cursor/skills/devops/pipeline-patterns.md`                                    |
 | Reporting (Pages, Allure) | `.cursor/skills/devops/reporting.md`                                            |
 
+## Agent skills
+
+### Issue tracker
+
+GitHub Issues in `hemantjanrao/playwright-learning`; external PRs are a triage surface. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Default vocabulary: `needs-triage`, `needs-info`, `ready-for-agent`, `ready-for-human`, `wontfix`. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+Multi-context layout via `CONTEXT-MAP.md` — framework, tests, and ci contexts. See `docs/agents/domain.md`.
+
 ## Safety
 
 - Never commit `.env`, credentials, or `auth/.auth/`
