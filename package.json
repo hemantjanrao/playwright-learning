@@ -41,9 +41,9 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@faker-js/faker": "^10.5.0",
-    "@playwright/test": "^1.52.0",
+    "@playwright/test": "^1.61.1",
     "@types/node": "^25.9.3",
-    "allure-playwright": "^3.2.2",
+    "allure-playwright": "^3.10.1",
     "allure-commandline": "^2.36.0",
     "cross-env": "^10.1.0",
     "dotenv": "^16.5.0",
