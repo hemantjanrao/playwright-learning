@@ -1,7 +1,19 @@
 import { http, HttpResponse } from 'msw';
 import { MOCK_USER, MOCK_USERS } from '@mocks/data/mock-users';
 
-/** Build handlers for a given API base URL (from config). */
+/**
+ * Builds MSW request handlers for the configured API base URL.
+ *
+ * Handlers mirror the live JSONPlaceholder-style contracts used by API tests:
+ * - `GET /users` → list
+ * - `GET /users/:id` → single user or 404
+ * - `POST /posts` → echoes body with a stub `id`
+ *
+ * Wired by {@link createMswServer} / the `mswServer` worker fixture.
+ * Keep payloads in sync with {@link MOCK_USER} and Zod schemas in `schemas/api.schemas.ts`.
+ *
+ * @param apiBaseUrl - Absolute API origin from config (trailing slash stripped).
+ */
 export function createApiHandlers(apiBaseUrl: string) {
   const base = apiBaseUrl.replace(/\/$/, '');
 

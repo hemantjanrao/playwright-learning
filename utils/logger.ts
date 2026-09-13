@@ -7,6 +7,16 @@ const LEVEL_ORDER: Record<LogLevel, number> = {
   error: 40,
 };
 
+/**
+ * Framework logger — level-filtered console output for clients, fixtures, and page errors.
+ *
+ * **Level selection**
+ * - `LOG_LEVEL` env (`debug` | `info` | `warn` | `error`) overrides defaults
+ * - CI defaults to `warn` (less noise); local defaults to `info`
+ *
+ * Prefer this over raw `console.log` so debug spam can be gated in PR logs.
+ */
+
 function getMinLevel(): LogLevel {
   const fromEnv = process.env.LOG_LEVEL?.toLowerCase();
   if (fromEnv === 'debug' || fromEnv === 'info' || fromEnv === 'warn' || fromEnv === 'error') {
@@ -28,6 +38,7 @@ function formatMessage(level: LogLevel, message: string, context?: unknown): str
   return `${prefix} ${message} ${JSON.stringify(context)}`;
 }
 
+/** Shared logger instance used across utils and fixtures. */
 export const logger = {
   debug(message: string, context?: unknown): void {
     if (shouldLog('debug')) {
