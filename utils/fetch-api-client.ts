@@ -5,21 +5,52 @@ import { ApiParseError, ApiRequestError, ApiValidationError } from '@utils/api-e
 import { logger } from '@utils/logger';
 
 /**
- * HTTP client using native `fetch` — required for MSW interception in Node.
- * Playwright's `request` fixture uses a separate network stack MSW cannot patch.
+ * HTTP client that uses Node's native `fetch`.
+ *
+ * **Why a separate client?**
+ * MSW intercepts Node `fetch`. Playwright's `request` fixture uses a different
+ * network stack that MSW cannot patch — so MSW specs must call this client.
+ *
+ * **When to use**
+ * - Specs under `tests/api/msw-*.spec.ts`
+ * - Import `mswTest` from `@fixtures/msw.fixture` and use `fetchApiClient`
+ *
+ * **When not to use**
+ * - Live API or WireMock tests — use {@link ApiClient} (`apiClient` / `mockApiClient`)
+ *
+ * Public surface mirrors {@link ApiClient} (`getValidated`, `postValidated`, `getResult`)
+ * so contract assertions stay consistent across transport layers.
+ *
+ * @example
+ * ```ts
+ * import { mswTest as test, expect } from '@fixtures/msw.fixture';
+ * const users = await fetchApiClient.getValidated('/users', ApiUsersSchema);
+ * ```
  */
 export class FetchApiClient {
+  /**
+   * @param baseUrl - API origin (usually `config.apiBaseUrl`).
+   * @param extraHeaders - Optional headers merged into every request.
+   */
   constructor(
     private readonly baseUrl: string,
     private readonly extraHeaders?: Record<string, string>,
   ) {}
 
+  /** Joins `baseUrl` and path, normalizing trailing/leading slashes. */
   buildUrl(path: string): string {
     const base = this.baseUrl.replace(/\/$/, '');
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
     return `${base}${normalizedPath}`;
   }
 
+  /**
+   * Contract-driven GET via `fetch` — status + Zod validation.
+   *
+   * @throws {ApiRequestError} Status mismatch.
+   * @throws {ApiValidationError} Body fails schema.
+   * @throws {ApiParseError} Body is not JSON.
+   */
   async getValidated<S extends z.ZodType>(
     path: string,
     schema: S,
@@ -31,6 +62,11 @@ export class FetchApiClient {
     return this.parseValidated(url, 'GET', response, schema, expectedStatus);
   }
 
+  /**
+   * Contract-driven POST via `fetch` — status + Zod validation.
+   *
+   * @param expectedStatus - Defaults to 201 (created).
+   */
   async postValidated<S extends z.ZodType, B>(
     path: string,
     body: B,
@@ -47,6 +83,10 @@ export class FetchApiClient {
     return this.parseValidated(url, 'POST', response, schema, expectedStatus);
   }
 
+  /**
+   * GET that never throws on HTTP error status.
+   * Returns {@link ApiResult} for negative / exploratory MSW tests.
+   */
   async getResult<T = unknown>(path: string): Promise<ApiResult<T>> {
     const url = this.buildUrl(path);
     const response = await fetch(url, { headers: this.extraHeaders });

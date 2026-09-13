@@ -5,6 +5,10 @@ import type { AppConfig, ConfigValidationError, EnvironmentName } from '@models/
 import { AppConfigSchema } from '@schemas/config.schemas';
 import { ENVIRONMENTS } from '@utils/constants';
 
+/**
+ * Resolves which env file to load for a given `TEST_ENV` name.
+ * Prefers `.env.<envName>`, falls back to `.env`.
+ */
 function resolveEnvFile(envName: string): string {
   const root = process.cwd();
   const candidates = [`.env.${envName}`, '.env'];
@@ -43,8 +47,25 @@ function validateRequired(
 }
 
 /**
- * Loads and validates environment configuration.
- * Two validation layers: required env vars, then Zod schema (URLs, types).
+ * Loads and validates environment configuration for the active `TEST_ENV`.
+ *
+ * **Two validation layers**
+ * 1. Required env vars present (baseUrl, apiBaseUrl, credentials)
+ * 2. Zod {@link AppConfigSchema} (URL shapes, types, enums)
+ *
+ * **Env selection:** `process.env.TEST_ENV` (default `dev`) → loads `.env.<env>` then `.env`.
+ *
+ * **Overrides:** pass a `Partial<AppConfig>` in unit tests to avoid real env files.
+ *
+ * Called by Playwright config at startup and by the `config` fixture per test.
+ *
+ * @throws {Error} Invalid `TEST_ENV`, missing required vars, or schema failure.
+ *
+ * @example
+ * ```ts
+ * const config = loadConfig();
+ * const local = loadConfig({ headless: false });
+ * ```
  */
 export function loadConfig(overrides?: Partial<AppConfig>): AppConfig {
   const envName = (process.env.TEST_ENV ?? 'dev').toLowerCase();

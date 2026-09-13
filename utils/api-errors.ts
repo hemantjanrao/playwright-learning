@@ -1,9 +1,28 @@
 import type { ZodError } from 'zod';
 
-/** Thrown when HTTP status code does not match expected value. */
+/**
+ * Typed API failure hierarchy used by {@link ApiClient} and {@link FetchApiClient}.
+ *
+ * Catch or assert with `instanceof` in unit/diagnostic helpers:
+ * - {@link ApiRequestError} — wrong HTTP status
+ * - {@link ApiValidationError} — JSON shape failed Zod contract
+ * - {@link ApiParseError} — body was not valid JSON
+ *
+ * Happy-path helpers (`getValidated`) throw these; negative helpers (`getResult`)
+ * return {@link ApiResult} instead of throwing on 4xx/5xx.
+ */
+
+/** Thrown when the HTTP status code does not match the expected value. */
 export class ApiRequestError extends Error {
   readonly name = 'ApiRequestError';
 
+  /**
+   * @param method - HTTP method used for the request.
+   * @param url - Absolute request URL.
+   * @param expectedStatus - Status the test required.
+   * @param actualStatus - Status returned by the server / stub.
+   * @param body - Raw response body for debugging in CI logs.
+   */
   constructor(
     readonly method: string,
     readonly url: string,
@@ -17,7 +36,10 @@ export class ApiRequestError extends Error {
   }
 }
 
-/** Thrown when response JSON fails Zod contract validation. */
+/**
+ * Thrown when response JSON fails Zod contract validation.
+ * Inspect `zodError` for field-level issues and `rawBody` for the payload received.
+ */
 export class ApiValidationError extends Error {
   readonly name = 'ApiValidationError';
 
@@ -31,7 +53,7 @@ export class ApiValidationError extends Error {
   }
 }
 
-/** Thrown when response body is not valid JSON. */
+/** Thrown when the response body cannot be parsed as JSON. */
 export class ApiParseError extends Error {
   readonly name = 'ApiParseError';
 

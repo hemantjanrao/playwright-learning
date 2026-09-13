@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+/**
+ * Zod schema for {@link AppConfig} produced by `loadConfig()`.
+ * Enforces URL shapes and non-empty credentials after env vars are loaded.
+ */
 const EnvironmentNameSchema = z.enum(['dev', 'qa', 'staging', 'prod']);
 
 export const AppConfigSchema = z.object({
@@ -14,4 +18,5 @@ export const AppConfigSchema = z.object({
   allureReport: z.boolean(),
 });
 
+/** Inferred config type after successful Zod parse (mirrors `AppConfig`). */
 export type ParsedAppConfig = z.infer<typeof AppConfigSchema>;

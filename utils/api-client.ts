@@ -8,20 +8,43 @@ import { logger } from '@utils/logger';
 type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 
 /**
- * Typed HTTP client for API contract tests.
+ * Typed HTTP client for live API and WireMock contract tests.
  *
- * Design:
- * - `getValidated` / `postValidated` — happy-path tests with Zod contract checks
- * - `getResult` — negative tests via discriminated union (no throw)
- * - Uses Playwright `request` fixture (no browser overhead)
+ * **Transport:** Playwright {@link APIRequestContext} (`request` fixture).
+ * No browser is required. Prefer this for `api` and `container` projects.
+ *
+ * **Do not use with MSW** — MSW patches Node `fetch`, not Playwright's network stack.
+ * For MSW specs, use {@link FetchApiClient} via the `fetchApiClient` fixture.
+ *
+ * **Method choice**
+ * | Method | When |
+ * |--------|------|
+ * | `getValidated` / `postValidated` / `putValidated` | Happy path — status + Zod contract |
+ * | `getResult` | Negative / exploratory — returns `ApiResult` (no throw on 4xx/5xx) |
+ * | `getRaw` | Escape hatch for custom header/status assertions |
+ * | `delete` | Status-only DELETE (throws on mismatch) |
+ *
+ * Injected as `apiClient` from `@fixtures/index`, or as `mockApiClient`
+ * from `@fixtures/container.fixture` (base URL points at WireMock).
+ *
+ * @example
+ * ```ts
+ * const users = await apiClient.getValidated(API_ENDPOINTS.users, ApiUsersSchema, 200);
+ * const result = await apiClient.getResult('/users/99999');
+ * expectApiFailure(result);
+ * ```
  */
 export class ApiClient {
+  /**
+   * @param request - Playwright API request context from the `request` fixture.
+   * @param options - Base URL and optional extra headers (auth tokens, etc.).
+   */
   constructor(
     private readonly request: APIRequestContext,
     private readonly options: ApiClientOptions,
   ) {}
 
-  /** Joins base URL and path, normalizing slashes. */
+  /** Joins `baseUrl` and path, normalizing trailing/leading slashes. */
   buildUrl(path: string): string {
     const base = this.options.baseUrl.replace(/\/$/, '');
     const normalizedPath = path.startsWith('/') ? path : `/${path}`;
@@ -35,7 +58,16 @@ export class ApiClient {
     });
   }
 
-  /** Contract-driven GET — validates response body against a Zod schema. */
+  /**
+   * Contract-driven GET — asserts status, parses JSON, validates against Zod.
+   *
+   * @param path - Path relative to `apiBaseUrl` (e.g. `/users`).
+   * @param schema - Zod schema; return type is `z.infer<S>`.
+   * @param expectedStatus - Defaults to 200.
+   * @throws {ApiRequestError} Status mismatch.
+   * @throws {ApiValidationError} Body fails schema.
+   * @throws {ApiParseError} Body is not JSON.
+   */
   async getValidated<S extends z.ZodType>(
     path: string,
     schema: S,
@@ -44,7 +76,11 @@ export class ApiClient {
     return this.requestValidated('GET', path, schema, expectedStatus);
   }
 
-  /** Contract-driven POST — validates response body against a Zod schema. */
+  /**
+   * Contract-driven POST — asserts status, parses JSON, validates against Zod.
+   *
+   * @param expectedStatus - Defaults to 201 (created).
+   */
   async postValidated<S extends z.ZodType, B>(
     path: string,
     body: B,
@@ -54,7 +90,11 @@ export class ApiClient {
     return this.requestValidated('POST', path, schema, expectedStatus, body);
   }
 
-  /** Contract-driven PUT — validates response body against a Zod schema. */
+  /**
+   * Contract-driven PUT — asserts status, parses JSON, validates against Zod.
+   *
+   * @param expectedStatus - Defaults to 200.
+   */
   async putValidated<S extends z.ZodType, B>(
     path: string,
     body: B,
@@ -65,8 +105,11 @@ export class ApiClient {
   }
 
   /**
-   * Returns discriminated union `ApiResult<T>` — use for negative / exploratory tests.
-   * Narrow with `result.ok` or the `expectApiFailure()` helper.
+   * GET that never throws on HTTP error status.
+   * Returns discriminated union {@link ApiResult} — narrow with `result.ok`
+   * or {@link expectApiFailure}.
+   *
+   * Use for negative and exploratory API tests.
    */
   async getResult<T = unknown>(path: string): Promise<ApiResult<T>> {
     const url = this.buildUrl(path);
@@ -75,6 +118,11 @@ export class ApiClient {
     return this.toApiResult<T>(response);
   }
 
+  /**
+   * DELETE that asserts status only (no body validation).
+   *
+   * @throws {ApiRequestError} When status does not match `expectedStatus`.
+   */
   async delete(path: string, expectedStatus = 200): Promise<void> {
     const url = this.buildUrl(path);
     const response = await this.request.delete(url, { headers: this.options.extraHeaders });
@@ -86,7 +134,10 @@ export class ApiClient {
     }
   }
 
-  /** Escape hatch — raw Playwright response for custom assertions. */
+  /**
+   * Escape hatch — returns the raw Playwright {@link APIResponse}.
+   * Prefer `getValidated` / `getResult` unless you need headers or streaming details.
+   */
   async getRaw(path: string): Promise<APIResponse> {
     const url = this.buildUrl(path);
     const response = await this.request.get(url, { headers: this.options.extraHeaders });

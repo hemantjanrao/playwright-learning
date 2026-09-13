@@ -1,6 +1,11 @@
 import type { ApiUser } from '@schemas/api.schemas';
 
-/** Shared mock payloads — used by MSW handlers and WireMock mappings. */
+/**
+ * Shared mock user payloads for MSW handlers and (conceptually) WireMock mappings.
+ *
+ * Keep `id` / shape aligned with {@link ApiUserSchema} so mocked and live contract
+ * tests exercise the same Zod validations.
+ */
 export const MOCK_USER: ApiUser = {
   id: 1,
   name: 'Mock SDET User',
@@ -22,4 +27,5 @@ export const MOCK_USER: ApiUser = {
   },
 };
 
+/** Default list response for `GET /users` mocks. */
 export const MOCK_USERS: ApiUser[] = [MOCK_USER];
