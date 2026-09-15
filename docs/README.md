@@ -8,6 +8,7 @@
 | ------------------------------------------ | ---------------------------------------------------------------- |
 | Understand how the framework fits together | [ARCHITECTURE.md](./ARCHITECTURE.md)                             |
 | Learn Playwright + TypeScript hands-on     | [LEARNING.md](./LEARNING.md)                                     |
+| Work practical tickets in this repo        | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md)                     |
 | See all diagrams in one place              | [ARCHITECTURE.md#diagram-index](./ARCHITECTURE.md#diagram-index) |
 | Onboard a Cursor agent                     | [../AGENTS.md](../AGENTS.md)                                     |
 | Run tests quickly                          | [../README.md#running-tests](../README.md#running-tests)         |

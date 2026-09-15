@@ -91,6 +91,16 @@ After completing the curriculum, you should be able to:
 
 ---
 
+## Hands-on tickets
+
+Curriculum lessons teach the map. Tickets apply it to real gaps in this repo:
+
+**[LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md)** — T-01–T-12 (locators, cart, auth specs, traces, MSW 404, projects, checkout, sort, env isolation, popups, trace practice).
+
+Work one ticket at a time with the Senior SDET mentor. Current next ticket: **T-01**.
+
+---
+
 ## Start
 
 Open **[Lesson 01 — Framework Map](./lessons/01-framework-map.md)** or say:
