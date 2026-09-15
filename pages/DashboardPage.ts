@@ -43,7 +43,7 @@ export class DashboardPage extends BasePage {
    * Useful for smoke checks that the catalog loaded.
    */
   async getProductCount(): Promise<number> {
-    return this.page.locator('[data-test^="inventory-item-"]').count();
+    return this.page.getByTestId('inventory-item').count();
   }
 
   /**
@@ -54,7 +54,7 @@ export class DashboardPage extends BasePage {
    */
   async addProductToCartByName(productName: string): Promise<void> {
     const product = this.page
-      .locator('[data-test^="inventory-item-"]')
+      .getByTestId('inventory-item')
       .filter({ hasText: productName });
     await product.getByRole('button', { name: 'Add to cart' }).click();
   }
