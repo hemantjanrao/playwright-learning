@@ -57,9 +57,7 @@ export class DashboardPage extends BasePage {
    * @param productName - Visible product title text (e.g. "Sauce Labs Backpack").
    */
   async addProductToCartByName(productName: string): Promise<void> {
-    const product = this.page
-      .getByTestId('inventory-item')
-      .filter({ hasText: productName });
+    const product = this.page.getByTestId('inventory-item').filter({ hasText: productName });
     await product.getByRole('button', { name: 'Add to cart' }).click();
   }
 }

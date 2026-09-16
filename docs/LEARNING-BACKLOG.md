@@ -14,10 +14,7 @@ Playwright lockfile version: **1.61.0**. Check compatibility before using APIs n
 
 ---
 
-
-
 ## Status
-
 
 | ID                                                              | Title                                           | Priority | Effort    | Type         | Status   |
 | --------------------------------------------------------------- | ----------------------------------------------- | -------- | --------- | ------------ | -------- |
@@ -34,14 +31,11 @@ Playwright lockfile version: **1.61.0**. Check compatibility before using APIs n
 | [T-11](#t-11--new-window-from-the-sauce-demo-footer)            | New window from Sauce Demo footer               | P2       | 60 min    | Repo need    | Open     |
 | [T-12](#t-12--practice-diagnose-a-forced-failure-with-trace)    | Diagnose a forced failure with trace            | P2       | 45–60 min | **Practice** | Open     |
 
-
 Update **Status** to `In progress` / `Done` as you close tickets. Concepts practiced independently are tracked at the [bottom](#concepts-tracker).
 
 **Suggested order:** T-01 → T-02 → T-03 → T-04 → T-05 → T-06 → T-07, then T-08–T-12 as time allows. T-05 and T-10 can slot in earlier if you want a short config/unit ticket between UI work.
 
 ---
-
-
 
 ## Inspection snapshot (why these tickets exist)
 
@@ -71,10 +65,7 @@ Grounded in files, not curriculum wish-lists. Distinguishes confirmed issues fro
 
 ---
 
-
-
 ## T-01 — Inventory locators and product-count assertion
-
 
 | Field          | Value                 |
 | -------------- | --------------------- |
@@ -82,7 +73,6 @@ Grounded in files, not curriculum wish-lists. Distinguishes confirmed issues fro
 | **Difficulty** | Beginner–intermediate |
 | **Effort**     | 45–60 min             |
 | **Type**       | Repo need             |
-
 
 **Evidence**
 
@@ -137,10 +127,7 @@ Replace remaining CSS in this page object. If any CSS remains, add a one-line co
 
 ---
 
-
-
 ## T-02 — Assert the cart, not only the badge
-
 
 | Field          | Value        |
 | -------------- | ------------ |
@@ -148,7 +135,6 @@ Replace remaining CSS in this page object. If any CSS remains, add a one-line co
 | **Difficulty** | Intermediate |
 | **Effort**     | 60–75 min    |
 | **Type**       | Repo need    |
-
 
 **Evidence**
 
@@ -199,10 +185,7 @@ Add “Remove” and assert the badge is hidden (`toHaveCount(0)` / `not.toBeVis
 
 ---
 
-
-
 ## T-03 — Negative login: empty password + fixture data
-
 
 | Field          | Value     |
 | -------------- | --------- |
@@ -210,7 +193,6 @@ Add “Remove” and assert the badge is hidden (`toHaveCount(0)` / `not.toBeVis
 | **Difficulty** | Beginner  |
 | **Effort**     | 45 min    |
 | **Type**       | Repo need |
-
 
 **Evidence**
 
@@ -262,10 +244,7 @@ Parameterize invalid / locked / empty with `test.each` **only** if the spec stay
 
 ---
 
-
-
 ## T-04 — One job per spec: login vs session vs catalog
-
 
 | Field          | Value        |
 | -------------- | ------------ |
@@ -273,7 +252,6 @@ Parameterize invalid / locked / empty with `test.each` **only** if the spec stay
 | **Difficulty** | Intermediate |
 | **Effort**     | 45–60 min    |
 | **Type**       | Repo need    |
-
 
 **Evidence**
 
@@ -328,10 +306,7 @@ Rename `UserProfilePage` if you can justify it (it is the burger menu, not a pro
 
 ---
 
-
-
 ## T-05 — Make local failures debuggable
-
 
 | Field          | Value     |
 | -------------- | --------- |
@@ -339,7 +314,6 @@ Rename `UserProfilePage` if you can justify it (it is the burger menu, not a pro
 | **Difficulty** | Beginner  |
 | **Effort**     | 45 min    |
 | **Type**       | Repo need |
-
 
 **Evidence**
 
@@ -389,10 +363,7 @@ Time a local smoke with `trace: 'on'` vs `retain-on-failure`.
 
 ---
 
-
-
 ## T-06 — Test the MSW 404 already stubbed
-
 
 | Field          | Value        |
 | -------------- | ------------ |
@@ -400,7 +371,6 @@ Time a local smoke with `trace: 'on'` vs `retain-on-failure`.
 | **Difficulty** | Intermediate |
 | **Effort**     | 45–60 min    |
 | **Type**       | Repo need    |
-
 
 **Evidence**
 
@@ -453,10 +423,7 @@ Tighten the live negative test to a status the public API actually returns — o
 
 ---
 
-
-
 ## T-07 — Align Firefox/WebKit with the chromium-mock split
-
 
 | Field          | Value        |
 | -------------- | ------------ |
@@ -464,7 +431,6 @@ Tighten the live negative test to a status the public API actually returns — o
 | **Difficulty** | Intermediate |
 | **Effort**     | 45–60 min    |
 | **Type**       | Repo need    |
-
 
 **Evidence**
 
@@ -513,10 +479,7 @@ Add `utils/fetch-api-client.ts` to the mock path filter only if you can argue a 
 
 ---
 
-
-
 ## T-08 — Checkout happy path
-
 
 | Field          | Value        |
 | -------------- | ------------ |
@@ -524,7 +487,6 @@ Add `utils/fetch-api-client.ts` to the mock path filter only if you can argue a 
 | **Difficulty** | Intermediate |
 | **Effort**     | 75–90 min    |
 | **Type**       | Repo need    |
-
 
 **Evidence**
 
@@ -573,10 +535,7 @@ First-name required negative case only — do not expand into a full negative ma
 
 ---
 
-
-
 ## T-09 — Sort catalog with parameterized tests
-
 
 | Field          | Value        |
 | -------------- | ------------ |
@@ -584,7 +543,6 @@ First-name required negative case only — do not expand into a full negative ma
 | **Difficulty** | Intermediate |
 | **Effort**     | 60 min       |
 | **Type**       | Repo need    |
-
 
 **Evidence**
 
@@ -631,10 +589,7 @@ Do **not** add `performance_glitch_user` unless you first measure that `standard
 
 ---
 
-
-
 ## T-10 — Unit tests must not leak `process.env`
-
 
 | Field          | Value     |
 | -------------- | --------- |
@@ -642,7 +597,6 @@ Do **not** add `performance_glitch_user` unless you first measure that `standard
 | **Difficulty** | Beginner  |
 | **Effort**     | 45 min    |
 | **Type**       | Repo need |
-
 
 **Evidence**
 
@@ -689,10 +643,7 @@ Scan other unit tests for env mutation. Only change them if you find a real leak
 
 ---
 
-
-
 ## T-11 — New window from the Sauce Demo footer
-
 
 | Field          | Value        |
 | -------------- | ------------ |
@@ -700,7 +651,6 @@ Scan other unit tests for env mutation. Only change them if you find a real leak
 | **Difficulty** | Intermediate |
 | **Effort**     | 60 min       |
 | **Type**       | Repo need    |
-
 
 **Evidence**
 
@@ -750,10 +700,7 @@ Same pattern with a second link using `test.each` — only if the first test is 
 
 ---
 
-
-
 ## T-12 — Practice: diagnose a forced failure with trace
-
 
 | Field          | Value                                                         |
 | -------------- | ------------------------------------------------------------- |
@@ -761,7 +708,6 @@ Same pattern with a second link using `test.each` — only if the first test is 
 | **Difficulty** | Beginner–intermediate                                         |
 | **Effort**     | 45–60 min                                                     |
 | **Type**       | **Practice exercise** (do not merge a permanent failing test) |
-
 
 **Evidence**
 
@@ -803,15 +749,19 @@ Mentor reviews the diagnosis against the trace/screenshot you describe. Command 
 
 ```markdown
 ## Failure
+
 [One-line summary]
 
 ## Evidence
+
 [Trace step, screenshot, or log excerpt]
 
 ## Root cause
+
 [locator | assertion | env | data | app] — [explanation]
 
 ## Fix
+
 [Concrete change — then revert the practice break]
 ```
 
@@ -825,12 +775,9 @@ Run the same failing test with `--repeat-each=5` and confirm it fails **every** 
 
 ---
 
-
-
 ## Concepts tracker
 
 Mark when you can **explain** the concept from this repo’s files, then when you have **implemented** it yourself on a ticket.
-
 
 | Concept                                                 | Ticket     | Explained | Implemented independently | Needs reinforcement |
 | ------------------------------------------------------- | ---------- | --------- | ------------------------- | ------------------- |
@@ -846,14 +793,10 @@ Mark when you can **explain** the concept from this repo’s files, then when yo
 | Worker isolation vs `process.env`                       | T-10       |           |                           |                     |
 | Multiple pages / popup                                  | T-11       |           |                           |                     |
 
-
 ---
-
-
 
 ## Related docs
 
 - [LEARNING.md](./LEARNING.md) — curriculum index (lessons 01–11)
 - [ARCHITECTURE.md](./ARCHITECTURE.md) — projects, fixtures, mocking, CI
 - [README.md](../README.md) — commands
-
