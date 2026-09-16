@@ -25,12 +25,16 @@ export class DashboardPage extends BasePage {
   /** Shopping-cart badge with item count (visible only when cart is non-empty). */
   readonly cartBadge: Locator;
 
+  /** Container for the product cards. */
+  readonly productCards: Locator;
+
   constructor(page: Page) {
     super(page);
     // Sauce Demo uses data-test="title" on a div — not a semantic heading
     this.pageTitle = page.getByTestId('title');
     this.inventoryList = page.getByTestId('inventory-list');
     this.cartBadge = page.getByTestId('shopping-cart-badge');
+    this.productCards = page.getByTestId('inventory-item');
   }
 
   /** Navigates directly to the inventory route (requires an authenticated session). */
