@@ -23,10 +23,14 @@ test.describe('Dashboard', () => {
   test(
     'should add a product to cart',
     { tag: [TAGS.smoke, TAGS.regression] },
-    async ({ dashboardPage }) => {
+    async ({ page, dashboardPage }) => {
       await dashboardPage.addProductToCartByName('Sauce Labs Backpack');
       await expect(dashboardPage.productCards).toHaveCount(6);
       await expect(dashboardPage.cartBadge).toHaveText('1');
+
+      await dashboardPage.cartBadge.click();
+      await expect(page).toHaveURL(new RegExp(ROUTES.cart.replace('.', '\\.')));
+      await expect(dashboardPage.productCards).toHaveCount(1); // Only the added product should be in the cart
     },
   );
 });
