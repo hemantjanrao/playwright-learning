@@ -26,6 +26,7 @@ test.describe('Dashboard', () => {
     async ({ dashboardPage }) => {
       await dashboardPage.addProductToCartByName('Sauce Labs Backpack');
       await expect(dashboardPage.productCards).toHaveCount(6);
+      await expect(dashboardPage.cartBadge).toHaveText('1');
     },
   );
 });
