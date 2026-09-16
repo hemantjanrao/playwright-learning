@@ -25,7 +25,7 @@ test.describe('Dashboard', () => {
     { tag: [TAGS.smoke, TAGS.regression] },
     async ({ dashboardPage }) => {
       await dashboardPage.addProductToCartByName('Sauce Labs Backpack');
-      await expect(dashboardPage.cartBadge).toHaveText('1');
+      await expect(dashboardPage.productCards).toHaveCount(6);
     },
   );
 });
