@@ -112,10 +112,10 @@ None.
 
 **Acceptance criteria**
 
-- [ ] Count locator matches **product cards**, not name/desc/price nodes.
-- [ ] Assertion is specific (known `standard_user` catalog size, or `toHaveCount` on the card locator).
-- [ ] Add-to-cart still clicks the button for “Sauce Labs Backpack” without a child-prefix CSS locator.
-- [ ] No `waitForTimeout` / hard-coded sleeps.
+- [x] Count locator matches **product cards**, not name/desc/price nodes.
+- [x] Assertion is specific (known `standard_user` catalog size, or `toHaveCount` on the card locator).
+- [x] Add-to-cart still clicks the button for “Sauce Labs Backpack” without a child-prefix CSS locator.
+- [x] No `waitForTimeout` / hard-coded sleeps.
 
 **Verification**
 
@@ -179,10 +179,10 @@ T-01 (inventory locators must be trustworthy).
 
 **Acceptance criteria**
 
-- [ ] Cart URL is asserted (`ROUTES.cart`).
-- [ ] Named product is visible on the cart page.
-- [ ] Badge is still checked.
-- [ ] Isolated: empty cart at start (fresh browser context / `storageState` snapshot without cart items).
+- [x] Cart URL is asserted (`ROUTES.cart`).
+- [x] Named product is visible on the cart page.
+- [x] Badge is still checked.
+- [x] Isolated: empty cart at start (fresh browser context / `storageState` snapshot without cart items).
 
 **Verification**
 
