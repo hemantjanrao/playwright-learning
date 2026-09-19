@@ -34,11 +34,15 @@ const cases = [
 
 test.describe('Negative login', () => {
   for (const testCase of cases) {
-    test(`should show error when ${testCase.name}`, { tag: [TAGS.regression] }, async ({ loginPage }) => {
-      await loginPage.open();
-      await loginPage.fillCredentials(testCase.username, testCase.password);
-      await loginPage.submit();
-      await expect(loginPage.errorMessage).toContainText(testCase.expected);
-    });
+    test(
+      `should show error when ${testCase.name}`,
+      { tag: [TAGS.regression] },
+      async ({ loginPage }) => {
+        await loginPage.open();
+        await loginPage.fillCredentials(testCase.username, testCase.password);
+        await loginPage.submit();
+        await expect(loginPage.errorMessage).toContainText(testCase.expected);
+      },
+    );
   }
 });
