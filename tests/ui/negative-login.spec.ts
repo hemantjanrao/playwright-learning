@@ -1,43 +1,44 @@
 import { test, expect } from '@fixtures/index';
 import { ERROR_MESSAGES } from '@utils/constants';
 import { TAGS } from '@utils/tags';
+import { loadLoginTestData } from '@utils/test-data-factory';
+
+const loginTestData = loadLoginTestData();
+
+const cases = [
+  {
+    name: 'invalid password',
+    username: loginTestData.invalidPassword.username,
+    password: loginTestData.invalidPassword.password,
+    expected: ERROR_MESSAGES.invalidCredentials,
+  },
+  {
+    name: 'locked out user',
+    username: loginTestData.lockedUser.username,
+    password: loginTestData.lockedUser.password,
+    expected: ERROR_MESSAGES.lockedOut,
+  },
+  {
+    name: 'username is empty',
+    username: '',
+    password: loginTestData.validUser.password,
+    expected: ERROR_MESSAGES.requiredUsername,
+  },
+  {
+    name: 'password is empty',
+    username: loginTestData.validUser.username,
+    password: '',
+    expected: ERROR_MESSAGES.requiredPassword,
+  },
+] as const;
 
 test.describe('Negative login', () => {
-  test(
-    'should show error for invalid password',
-    { tag: [TAGS.regression] },
-    async ({ loginPage, loginTestData }) => {
-      const { invalidPassword } = loginTestData;
-
+  for (const testCase of cases) {
+    test(`should show error when ${testCase.name}`, { tag: [TAGS.regression] }, async ({ loginPage }) => {
       await loginPage.open();
-      await loginPage.login(invalidPassword.username, invalidPassword.password);
-
-      await expect(loginPage.errorMessage).toContainText(ERROR_MESSAGES.invalidCredentials);
-    },
-  );
-
-  test(
-    'should show error for locked out user',
-    { tag: [TAGS.regression] },
-    async ({ loginPage, loginTestData }) => {
-      const { lockedUser } = loginTestData;
-
-      await loginPage.open();
-      await loginPage.login(lockedUser.username, lockedUser.password);
-
-      await expect(loginPage.errorMessage).toContainText(ERROR_MESSAGES.lockedOut);
-    },
-  );
-
-  test(
-    'should show error when username is empty',
-    { tag: [TAGS.regression] },
-    async ({ loginPage }) => {
-      await loginPage.open();
-      await loginPage.fillCredentials('', 'secret_sauce');
+      await loginPage.fillCredentials(testCase.username, testCase.password);
       await loginPage.submit();
-
-      await expect(loginPage.errorMessage).toContainText(ERROR_MESSAGES.requiredUsername);
-    },
-  );
+      await expect(loginPage.errorMessage).toContainText(testCase.expected);
+    });
+  }
 });
