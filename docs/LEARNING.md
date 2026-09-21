@@ -93,11 +93,14 @@ After completing the curriculum, you should be able to:
 
 ## Hands-on tickets
 
-Curriculum lessons teach the map. Tickets apply it to real gaps in this repo:
+Curriculum lessons teach the map. Tickets apply it in two tracks:
 
-**[LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md)** — T-01–T-12 (locators, cart, auth specs, traces, MSW 404, projects, checkout, sort, env isolation, popups, trace practice).
+| Track | File | Start here |
+| ----- | ---- | ---------- |
+| Warmup / repo gaps (beginner–intermediate) | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | **T-01** |
+| **Medium–hard SDET tasks** | **[LEARNING-TASKS.md](./LEARNING-TASKS.md)** | **H-01** |
 
-Work one ticket at a time with the Senior SDET mentor. Current next ticket: **T-01**.
+Work one ticket at a time with the Senior SDET mentor (DevOps mentor for H-11 / H-12).
 
 ---
 

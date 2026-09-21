@@ -1,6 +1,8 @@
 # Hands-on learning backlog
 
-Practical tickets for this repository. Work them **one at a time** with the Senior SDET mentor in chat. Do not implement a ticket until you have proposed an approach and been challenged on it.
+Practical **beginner–intermediate** tickets for this repository. Medium–hard SDET tasks (fixtures, dual HTTP clients, Zod, branded types, sharding, CI) live in **[LEARNING-TASKS.md](./LEARNING-TASKS.md)**.
+
+Work them **one at a time** with the Senior SDET mentor in chat. Do not implement a ticket until you have proposed an approach and been challenged on it.
 
 **How we work**
 
