@@ -26,14 +26,17 @@ export class LoginPage extends BasePage {
   /** Primary submit control. */
   readonly loginButton: Locator;
   /** Inline error banner shown on failed login (`data-test="error"`). */
-  readonly errorMessage: Locator;
+  readonly emailErrorMessage: Locator;
+  /** Inline error banner shown on failed login (`data-test="error"`). */
+  readonly passwordErrorMessage: Locator;
 
   constructor(page: Page) {
     super(page);
-    this.usernameInput = page.getByPlaceholder('Username');
-    this.passwordInput = page.getByPlaceholder('Password');
-    this.loginButton = page.getByRole('button', { name: 'Login' });
-    this.errorMessage = page.getByTestId('error');
+    this.usernameInput = page.getByTestId('email');
+    this.passwordInput = page.getByTestId('password');
+    this.loginButton = page.getByTestId('login-submit');
+    this.emailErrorMessage = page.getByTestId('email-error');
+    this.passwordErrorMessage = page.getByTestId('password-error');
   }
 
   /** Opens the login page (root route). */

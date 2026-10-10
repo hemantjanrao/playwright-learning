@@ -25,7 +25,8 @@ export const ENVIRONMENTS = [
 
 /** UI routes for Sauce Demo (relative to Playwright `baseURL`). */
 export const ROUTES = {
-  login: '/',
+  login: '/auth/login',
+  account: '/account',
   inventory: '/inventory.html',
   cart: '/cart.html',
 } as const satisfies Record<string, `/${string}` | string>;

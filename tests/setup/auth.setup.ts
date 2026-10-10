@@ -17,6 +17,6 @@ mkdirSync(dirname(AUTH_STORAGE_PATH), { recursive: true });
 setup('authenticate and persist storage state', async ({ page, config, loginPage }) => {
   await loginPage.open();
   await loginPage.login(config.credentials.username, config.credentials.password);
-  await expect(page).toHaveURL(new RegExp(ROUTES.inventory.replace('.', '\\.')));
+  await expect(page).toHaveURL(ROUTES.account);
   await page.context().storageState({ path: AUTH_STORAGE_PATH });
 });
