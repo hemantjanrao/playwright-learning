@@ -4,14 +4,15 @@
 
 ## Start here
 
-| I want to…                                 | Go to                                                            |
-| ------------------------------------------ | ---------------------------------------------------------------- |
-| Understand how the framework fits together | [ARCHITECTURE.md](./ARCHITECTURE.md)                             |
-| Learn Playwright + TypeScript hands-on     | [LEARNING.md](./LEARNING.md)                                     |
-| Work practical tickets in this repo        | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) (warmup) · [LEARNING-TASKS.md](./LEARNING-TASKS.md) (**medium–hard**) |
-| See all diagrams in one place              | [ARCHITECTURE.md#diagram-index](./ARCHITECTURE.md#diagram-index) |
-| Onboard a Cursor agent                     | [../AGENTS.md](../AGENTS.md)                                     |
-| Run tests quickly                          | [../README.md#running-tests](../README.md#running-tests)         |
+| I want to…                                  | Go to                                                                                                              |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Understand how the framework fits together  | [ARCHITECTURE.md](./ARCHITECTURE.md)                                                                               |
+| Learn Playwright + TypeScript hands-on      | [LEARNING.md](./LEARNING.md)                                                                                       |
+| Work practical tickets in this repo         | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) (warmup) · [LEARNING-TASKS.md](./LEARNING-TASKS.md) (**medium–hard**) |
+| Plan the move to agentic QA (tickets AQ-xx) | [AGENTIC-QA-ROADMAP.md](./AGENTIC-QA-ROADMAP.md)                                                                   |
+| See all diagrams in one place               | [ARCHITECTURE.md#diagram-index](./ARCHITECTURE.md#diagram-index)                                                   |
+| Onboard a Cursor agent                      | [../AGENTS.md](../AGENTS.md)                                                                                       |
+| Run tests quickly                           | [../README.md#running-tests](../README.md#running-tests)                                                           |
 
 ## Document map
 
