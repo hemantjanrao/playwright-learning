@@ -1,2 +1,14 @@
 {
-}
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug current test (qa)",
+        "type": "node",
+        "request": "launch",
+        "runtimeExecutable": "npx",
+        "runtimeArgs": ["playwright", "test", "--debug", "${relativeFile}"],
+        "env": { "TEST_ENV": "qa" },
+        "console": "integratedTerminal"
+      }
+    ]
+  }

@@ -12,6 +12,10 @@ Production-ready Playwright TypeScript framework. Use this file as the project b
 
 ## Documentation (read first)
 
+For review with just-in-time teaching, use `/review-coach` or
+`@.cursor/agents/review-coach.md`. It checks ticket completeness, assertion quality,
+and TypeScript lab evidence, then gives precise next steps without implementing fixes.
+
 | Doc                                          | Purpose                      |
 | -------------------------------------------- | ---------------------------- |
 | [docs/README.md](docs/README.md)             | Documentation hub            |
