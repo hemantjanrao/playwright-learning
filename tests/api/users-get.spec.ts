@@ -10,7 +10,7 @@ const apiPayloads = loadApiPayloads();
 
 test.describe('API - GET', () => {
   test(
-    'should fetch users list and validate contract',
+    'should fetch post by id with branded PostId',
     { tag: [TAGS.smoke, TAGS.regression] },
     async ({ apiClient }) => {
       const users = await apiClient.getValidated(API_ENDPOINTS.users, ApiUsersSchema, 200);
