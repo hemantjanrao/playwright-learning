@@ -98,6 +98,7 @@ Curriculum lessons teach the map. Tickets apply it in two tracks:
 | Track | File | Start here |
 | ----- | ---- | ---------- |
 | Warmup / repo gaps (beginner–intermediate) | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | **T-01** |
+| API + UI automation set | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | **T-13** → T-14 → T-15 |
 | **Medium–hard SDET tasks** | **[LEARNING-TASKS.md](./LEARNING-TASKS.md)** | **H-01** |
 
 Work one ticket at a time with the Senior SDET mentor (DevOps mentor for H-11 / H-12).

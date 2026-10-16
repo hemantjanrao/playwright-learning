@@ -32,10 +32,13 @@ Playwright lockfile version: **1.61.0**. Check compatibility before using APIs n
 | [T-10](#t-10--unit-tests-must-not-leak-processenv)              | Unit test env isolation (`try/finally`)         | P2       | 45 min    | Repo need    | Open     |
 | [T-11](#t-11--new-window-from-the-sauce-demo-footer)            | New window from Sauce Demo footer               | P2       | 60 min    | Repo need    | Open     |
 | [T-12](#t-12--practice-diagnose-a-forced-failure-with-trace)    | Diagnose a forced failure with trace            | P2       | 45–60 min | **Practice** | Open     |
+| [T-13](#t-13--get-one-post-by-branded-id)                       | GET one post by branded id                      | P1       | 45–60 min | Repo need    | **Next** |
+| [T-14](#t-14--update-then-delete-a-post)                        | Update then delete a post                       | P1       | 60 min    | Repo need    | Open     |
+| [T-15](#t-15--product-detail-name-price-and-back)               | Product detail: name, price, and back           | P1       | 60–75 min | Repo need    | Open     |
 
 Update **Status** to `In progress` / `Done` as you close tickets. Concepts practiced independently are tracked at the [bottom](#concepts-tracker).
 
-**Suggested order:** T-01 → T-02 → T-03 → T-04 → T-05 → T-06 → T-07, then T-08–T-12 as time allows. T-05 and T-10 can slot in earlier if you want a short config/unit ticket between UI work.
+**Suggested order:** T-13 → T-14 → T-15 for the API + UI automation set (they do not depend on T-01–T-12). Earlier tickets stay in their own order: T-01 → T-02 → T-03 → T-04 → T-05 → T-06 → T-07, then T-08–T-12 as time allows.
 
 ---
 
@@ -777,6 +780,196 @@ Run the same failing test with `--repeat-each=5` and confirm it fails **every** 
 
 ---
 
+## T-13 — GET one post by branded id
+
+| Field          | Value        |
+| -------------- | ------------ |
+| **Priority**   | P1           |
+| **Difficulty** | Intermediate |
+| **Effort**     | 45–60 min    |
+| **Type**       | Repo need    |
+| **Layer**      | `api`        |
+
+**Evidence**
+
+- `utils/constants.ts` — `API_ENDPOINTS.postById` is unused by any spec
+- `types/branded.types.ts` — `asPostId` / `PostId`
+- `schemas/api.schemas.ts` — `ApiPostSchema` (used only on `POST /posts`)
+- `tests/api/posts-post.spec.ts` — creates posts; never reads one
+- `tests/api/users-get.spec.ts` — the pattern to copy (`getValidated` + branded id)
+
+**Problem**
+
+The posts contract is write-only. A handler or schema that accepts creates but returns a broken `GET /posts/:id` would still pass CI.
+
+**Concepts**
+
+`api` project, `apiClient.getValidated`, Zod on the response, branded `PostId` (not a raw number, not a `UserId`), `@regression` vs `@smoke`.
+
+**Scope**
+
+One live test: `GET` a known post id, validate `ApiPostSchema`, assert `id` matches. One negative test: a missing post via `getResult` + `expectApiFailure`. **Observe the real status** on JSONPlaceholder before locking it (do not copy the loose `>= 400` user-path test unless that is what this endpoint returns).
+
+**Files**
+
+- `tests/api/posts-get.spec.ts` (new)
+- `test-data/api-payloads.json` only if you add a `samplePostId`
+
+**Prerequisites**
+
+None. Do not start H-02 (dual HTTP clients) inside this ticket.
+
+**Acceptance criteria**
+
+- [ ] Happy path uses `asPostId` and `API_ENDPOINTS.postById`.
+- [ ] Response passes `ApiPostSchema` and the asserted `id` equals the requested id.
+- [ ] Missing post asserts the **observed** status, not `>= 400`.
+- [ ] Happy path `@regression` only. Do not add `@smoke` (PR already smokes `POST /posts`).
+- [ ] No new client method.
+
+**Verification**
+
+```bash
+npx playwright test --project=api tests/api/posts-get.spec.ts
+```
+
+Point the happy-path id assertion at a different id and confirm it fails, then revert.
+
+**Design decisions to explain**
+
+- Why this is the `api` project, not `api-mock`.
+- Why `PostId` must not be passed to `userById`.
+
+---
+
+## T-14 — Update then delete a post
+
+| Field          | Value        |
+| -------------- | ------------ |
+| **Priority**   | P1           |
+| **Difficulty** | Intermediate |
+| **Effort**     | 60 min       |
+| **Type**       | Repo need    |
+| **Layer**      | `api`        |
+
+**Evidence**
+
+- `utils/api-client.ts` — `putValidated` and `delete` have no callers under `tests/`
+- `builders/post.builder.ts` — payload shape for a post body
+- `tests/api/posts-post.spec.ts` — create only
+
+**Problem**
+
+Update and delete are implemented on the client and untested. A status or schema break on `PUT` / `DELETE` never fails a spec.
+
+**Concepts**
+
+`putValidated` (status + Zod) vs `delete` (status only, no body schema), JSONPlaceholder does **not** persist writes, `@regression`.
+
+**Scope**
+
+Two tests in one spec, known post id (reuse T-13’s id if that ticket landed):
+
+1. `PUT` a builder payload whose title is unique per run; assert **200**, schema, and that the **response** title equals the sent title.
+2. `DELETE` that same id; assert the client’s expected status (default 200).
+
+Do **not** `GET` afterward to prove the server stored the change. JSONPlaceholder echoes the write and then forgets it.
+
+**Files**
+
+- `tests/api/posts-write.spec.ts` (new) or extend the posts spec if it stays readable
+
+**Prerequisites**
+
+T-13 is helpful (`postById`, branded id) and not blocking. You can call `postById(asPostId(1))` here either way.
+
+**Acceptance criteria**
+
+- [ ] `PUT` goes through `putValidated` + `ApiPostSchema`.
+- [ ] Title assertion is on the response body, not a follow-up `GET`.
+- [ ] `DELETE` uses `apiClient.delete` and does not parse a body.
+- [ ] Both tagged `@regression` only.
+- [ ] No new HTTP verb helpers. Fetch client stays untouched (that is H-02).
+
+**Verification**
+
+```bash
+npx playwright test --project=api tests/api/posts-write.spec.ts
+```
+
+Break the expected `PUT` title and confirm the test fails, then revert.
+
+**Design decisions to explain**
+
+- Why a follow-up `GET` would be a false failure on this API.
+- Why `delete` does not take a Zod schema.
+
+---
+
+## T-15 — Product detail: name, price, and back
+
+| Field          | Value        |
+| -------------- | ------------ |
+| **Priority**   | P1           |
+| **Difficulty** | Intermediate |
+| **Effort**     | 60–75 min    |
+| **Type**       | Repo need    |
+| **Layer**      | `ui`         |
+
+**Evidence**
+
+- `pages/DashboardPage.ts` — inventory cards only; no navigation into an item
+- `tests/ui/dashboard.spec.ts` — catalog count and add-to-cart; never opens a product
+- `utils/constants.ts` — `ROUTES` has login, inventory, and cart; no item route
+- Checkout, sort, and cart-line assertions are already T-08, T-09, and T-02 — do not rebuild them here
+
+**Problem**
+
+Opening a product is a separate journey from the grid. A broken item page (wrong name, missing price, dead back link) is invisible to current UI specs.
+
+**Concepts**
+
+`authenticatedTest`, page object per screen, `getByRole` / `getByTestId`, assert the **detail** URL and visible name/price, assertions stay in the spec.
+
+**Scope**
+
+Inspect the live item page first. Then one authenticated test: from inventory, open **Sauce Labs Backpack**, assert its name and price on the detail view, go back, assert inventory URL. Add a route constant only if you navigate by URL.
+
+**Files**
+
+- New page object (e.g. `pages/ProductDetailPage.ts`)
+- `fixtures/index.ts` — wire the page object the same way as `dashboardPage`
+- `tests/ui/product-detail.spec.ts`
+- `utils/constants.ts` only if you add a route
+
+**Prerequisites**
+
+None. Inventory card locator is already `getByTestId('inventory-item')`.
+
+**Acceptance criteria**
+
+- [ ] Uses `authenticatedTest` (no UI login in the spec).
+- [ ] Detail page shows the clicked product’s name and its price.
+- [ ] Back returns to inventory (`ROUTES.inventory`).
+- [ ] Locators are role or `data-test`. No `nth-child`, no `waitForTimeout`.
+- [ ] `@regression` only.
+- [ ] `expect` stays in the spec, not the page object.
+
+**Verification**
+
+```bash
+npx playwright test --project=chromium tests/ui/product-detail.spec.ts
+```
+
+Expect a different product name and confirm the assertion fails, then revert.
+
+**Design decisions to explain**
+
+- Why this is UI, not API (Sauce Demo has no product API in this framework).
+- Why a `ProductDetailPage` instead of more methods on `DashboardPage`.
+
+---
+
 ## Concepts tracker
 
 Mark when you can **explain** the concept from this repo’s files, then when you have **implemented** it yourself on a ticket.
@@ -794,6 +987,9 @@ Mark when you can **explain** the concept from this repo’s files, then when yo
 | `test.each`, asserting order                            | T-09       |           |                           |                     |
 | Worker isolation vs `process.env`                       | T-10       |           |                           |                     |
 | Multiple pages / popup                                  | T-11       |           |                           |                     |
+| API read contract, branded `PostId`                     | T-13       |           |                           |                     |
+| `putValidated` vs status-only `delete`                  | T-14       |           |                           |                     |
+| Second screen POM, authenticated UI journey            | T-15       |           |                           |                     |
 
 ---
 
