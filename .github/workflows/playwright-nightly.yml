@@ -86,7 +86,7 @@ jobs:
           results-name: nightly-results-${{ matrix.project }}-${{ matrix.shardIndex }}-${{ matrix.shardTotal }}
       - name: Upload blob report for merge
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nightly-blob-${{ matrix.project }}-${{ matrix.shardIndex }}-${{ matrix.shardTotal }}
           path: reports/blob/
@@ -118,7 +118,7 @@ jobs:
           cp -R playwright-report/* reports/html/
       - name: Upload merged HTML report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nightly-report-merged
           path: reports/html/
