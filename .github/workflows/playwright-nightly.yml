@@ -63,7 +63,7 @@ jobs:
       matrix: ${{ fromJson(needs.build-matrix.outputs.matrix) }}
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-node-playwright
         with:
           browsers: all
@@ -99,7 +99,7 @@ jobs:
     needs: regression
     if: always() && needs.regression.result != 'cancelled'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: ./.github/actions/setup-node-playwright
       - name: Download blob reports from all shards
         uses: actions/download-artifact@v8
