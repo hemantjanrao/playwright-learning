@@ -49,16 +49,17 @@ flowchart TB
     TESTS --> FW
 ```
 
-## Playwright projects (8 total)
+## Playwright projects (11 total)
 
-| Project                           | Purpose               |
-| --------------------------------- | --------------------- |
-| `unit`                            | Framework unit tests  |
-| `api`                             | Live API contracts    |
-| `api-mock`                        | MSW + Testcontainers  |
-| `setup`                           | Auth storageState     |
-| `chromium` / `firefox` / `webkit` | UI E2E                |
-| `chromium-mock`                   | `page.route` UI mocks |
+| Project                                             | Purpose                                   |
+| --------------------------------------------------- | ----------------------------------------- |
+| `unit`                                              | Framework unit tests                      |
+| `api`                                               | Live API contracts                        |
+| `api-mock`                                          | MSW + Testcontainers                      |
+| `setup`                                             | Auth storageState                         |
+| `chromium` / `firefox` / `webkit`                   | UI E2E                                    |
+| `chromium-guest` / `firefox-guest` / `webkit-guest` | Login and guest access without auth setup |
+| `chromium-mock`                                     | `page.route` UI mocks                     |
 
 ## Key commands
 

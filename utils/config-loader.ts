@@ -74,7 +74,7 @@ export function loadConfig(overrides?: Partial<AppConfig>): AppConfig {
     throw new Error(`Invalid TEST_ENV "${envName}". Expected one of: ${ENVIRONMENTS.join(', ')}`);
   }
 
-  loadDotenv({ path: resolveEnvFile(envName), override: true });
+  loadDotenv({ path: resolveEnvFile(envName), override: false });
 
   const rawConfig: AppConfig = {
     env: envName,

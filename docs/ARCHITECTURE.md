@@ -137,7 +137,7 @@ flowchart TB
 
 ## 2. Playwright projects
 
-Eight projects. Each has a single responsibility.
+Eleven projects. Each has a single responsibility.
 
 ```mermaid
 flowchart TB
@@ -164,15 +164,16 @@ flowchart TB
     style SETUP fill:#e3f2fd
 ```
 
-| Project              | `testMatch`                        | Depends on | Browser | Typical runtime |
-| -------------------- | ---------------------------------- | ---------- | ------- | --------------- |
-| `unit`               | `tests/unit/**`                    | —          | No      | ~2s             |
-| `api`                | `tests/api/**` (excl. mock)        | —          | No\*    | ~2s             |
-| `api-mock`           | `msw-*`, `container-*`             | —          | No\*    | ~5–40s          |
-| `setup`              | `auth.setup.ts`                    | —          | Yes     | ~2s             |
-| `chromium`           | `tests/ui/**` (excl. network-mock) | `setup`    | Yes     | ~5s             |
-| `chromium-mock`      | `network-mock.spec.ts`             | —          | Yes     | ~2s             |
-| `firefox` / `webkit` | `tests/ui/**`                      | `setup`    | Yes     | nightly         |
+| Project              | `testMatch`                         | Depends on | Browser          | Typical runtime          |
+| -------------------- | ----------------------------------- | ---------- | ---------------- | ------------------------ |
+| `unit`               | `tests/unit/**`                     | —          | No               | ~2s                      |
+| `api`                | `tests/api/**` (excl. mock)         | —          | No\*             | ~2s                      |
+| `api-mock`           | `msw-*`, `container-*`              | —          | No\*             | ~5–40s                   |
+| `setup`              | `auth.setup.ts`                     | —          | Yes              | ~2s                      |
+| `chromium`           | `tests/ui/**` (excl. network-mock)  | `setup`    | Yes              | ~5s                      |
+| `chromium-mock`      | `network-mock.spec.ts`              | —          | Yes              | ~2s                      |
+| `*-guest`            | login, negative-login, guest-access | —          | selected browser | nightly + Chromium smoke |
+| `firefox` / `webkit` | `tests/ui/**`                       | `setup`    | Yes              | nightly                  |
 
 \*Uses Playwright `request` or Node `fetch` — no browser window.
 
@@ -343,7 +344,7 @@ flowchart LR
     end
 
     subgraph MOCK["Mock — playwright-mock.yml"]
-        M1["@mock · path-filtered PR only"]
+        M1["@mock · every PR and main/master push"]
     end
 
     PUSH["git push / PR"] --> PR
@@ -353,14 +354,14 @@ flowchart LR
 
 ### Test tags
 
-| Tag           | Runs on PR       | Runs nightly | Purpose                     |
-| ------------- | ---------------- | ------------ | --------------------------- |
-| `@smoke`      | Yes              | Yes          | Critical path               |
-| `@regression` | No               | Yes          | Full coverage               |
-| `@mock`       | Path-filtered PR | No           | MSW, Docker, page.route     |
-| `@quarantine` | No               | No           | Flaky — under investigation |
+| Tag           | Runs on PR | Runs nightly | Purpose                     |
+| ------------- | ---------- | ------------ | --------------------------- |
+| `@smoke`      | Yes        | Yes          | Critical path               |
+| `@regression` | No         | Yes          | Full coverage               |
+| `@mock`       | Every PR   | No           | MSW, Docker, page.route     |
+| `@quarantine` | No         | No           | Flaky — under investigation |
 
-Run `@mock` locally with `npm run test:mock` or via `playwright-mock.yml` on PRs that touch mock paths.
+Run `@mock` locally with `npm run test:mock` or via `playwright-mock.yml` on every PR.
 
 ### Parallelism and sharding
 
@@ -389,12 +390,12 @@ flowchart TB
     end
 ```
 
-| Concept           | What it splits                                | Config / flag                                      | This repo                                         |
-| ----------------- | --------------------------------------------- | -------------------------------------------------- | ------------------------------------------------- |
-| **Workers**       | Tests across CPU cores on **one** runner      | `workers` in `playwright.config.ts`, `--workers=N` | `2` in CI; local default = CPU cores              |
-| **fullyParallel** | Tests **within** a file run concurrently      | `fullyParallel: true`                              | Enabled globally                                  |
-| **Sharding**      | Test **files** across **multiple** CI runners | `--shard=i/N`                                      | Nightly browsers (`shard_total` input)            |
-| **CI job matrix** | Whole projects in parallel                    | GitHub `strategy.matrix`                           | PR: unit ∥ api ∥ smoke; Nightly: api + 3 browsers |
+| Concept           | What it splits                           | Config / flag                                      | This repo                                         |
+| ----------------- | ---------------------------------------- | -------------------------------------------------- | ------------------------------------------------- |
+| **Workers**       | Tests across CPU cores on **one** runner | `workers` in `playwright.config.ts`, `--workers=N` | `2` in CI; local default = CPU cores              |
+| **fullyParallel** | Tests **within** a file run concurrently | `fullyParallel: true`                              | Enabled globally                                  |
+| **Sharding**      | Tests across **multiple** CI runners     | `--shard=i/N`                                      | Nightly browsers (`shard_total` input)            |
+| **CI job matrix** | Whole projects in parallel               | GitHub `strategy.matrix`                           | PR: unit ∥ api ∥ smoke; Nightly: api + 3 browsers |
 
 **Workers (in-process parallelism)**
 
@@ -410,13 +411,13 @@ npx playwright test --project=chromium --workers=4
 
 **Sharding (cross-runner parallelism)**
 
-Each shard runs a disjoint subset of test **files**. Playwright assigns files round-robin:
+With `fullyParallel: true`, sharding distributes individual tests across runners:
 
 ```bash
 # Simulate CI shard 1 of 2 locally
 npm run test:shard:regression -- --project=chromium --shard=1/2
 
-# Shard 2 of 2 (different files)
+# Shard 2 of 2 (different tests)
 npm run test:shard:regression -- --project=chromium --shard=2/2
 ```
 
@@ -511,3 +512,21 @@ Sauce Demo uses `data-test` attributes — configured via `testIdAttribute: 'dat
 - [LEARNING.md](./LEARNING.md) — hands-on curriculum
 - [lessons/11-mocking-strategies.md](./lessons/11-mocking-strategies.md) — mocking deep dive
 - [../README.md](../README.md) — quick start
+
+## Hardening and coverage
+
+Authenticated browser projects exclude guest and synthetic network-mock specs. The three
+`*-guest` projects have no setup dependency, so negative-login and protected-route checks
+can run even when auth setup fails. Network demonstrations run in `chromium-mock`.
+
+Environment variables supplied by the shell or CI take precedence over dotenv files.
+Actual `.env.*` files remain local; copy `.env.example` when setting up a checkout.
+All layers currently require the full configuration; layer-specific configuration is a
+future improvement. Traces are retained on failures locally and in CI.
+
+Mocks run on every PR and main/master push. Missing Docker fails CI instead of silently
+skipping coverage; local Docker absence still skips container tests. MSW overrides reset
+after every test. `@quarantine` is excluded by default; run `npm run test:quarantine`
+explicitly to investigate. Quarantined tests must record an owner and tracking issue.
+
+See [COVERAGE.md](./COVERAGE.md) for implemented scenarios and remaining product risks.

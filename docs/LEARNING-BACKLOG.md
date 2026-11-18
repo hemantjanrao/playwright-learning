@@ -989,7 +989,7 @@ Mark when you can **explain** the concept from this repo’s files, then when yo
 | Multiple pages / popup                                  | T-11       |           |                           |                     |
 | API read contract, branded `PostId`                     | T-13       |           |                           |                     |
 | `putValidated` vs status-only `delete`                  | T-14       |           |                           |                     |
-| Second screen POM, authenticated UI journey            | T-15       |           |                           |                     |
+| Second screen POM, authenticated UI journey             | T-15       |           |                           |                     |
 
 ---
 

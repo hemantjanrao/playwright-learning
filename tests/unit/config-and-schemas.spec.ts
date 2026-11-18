@@ -19,11 +19,24 @@ test.describe('Unit — config loader', () => {
 
   test('loadConfig rejects invalid TEST_ENV', () => {
     const original = process.env.TEST_ENV;
-    process.env.TEST_ENV = 'invalid-env';
+    try {
+      process.env.TEST_ENV = 'invalid-env';
+      expect(() => loadConfig()).toThrow(/Invalid TEST_ENV/);
+    } finally {
+      if (original === undefined) delete process.env.TEST_ENV;
+      else process.env.TEST_ENV = original;
+    }
+  });
 
-    expect(() => loadConfig()).toThrow(/Invalid TEST_ENV/);
-
-    process.env.TEST_ENV = original;
+  test('explicit environment takes precedence over dotenv files', () => {
+    const original = process.env.BASE_URL;
+    try {
+      process.env.BASE_URL = 'https://override.example.com';
+      expect(loadConfig().baseUrl).toBe('https://override.example.com');
+    } finally {
+      if (original === undefined) delete process.env.BASE_URL;
+      else process.env.BASE_URL = original;
+    }
   });
 
   test('loadConfig rejects missing credentials', () => {

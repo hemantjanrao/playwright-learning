@@ -15,22 +15,25 @@ test.describe('Dashboard', () => {
       await expect(page).toHaveURL(new RegExp(ROUTES.inventory.replace('.', '\\.')));
       await expect(dashboardPage.pageTitle).toHaveText('Products');
 
-      const productCount = await dashboardPage.getProductCount();
-      expect(productCount).toBeGreaterThan(0);
+      await expect(dashboardPage.productCards).toHaveCount(6);
     },
   );
 
   test(
     'should add a product to cart',
     { tag: [TAGS.smoke, TAGS.regression] },
-    async ({ page, dashboardPage }) => {
+    async ({ page, dashboardPage, cartPage }) => {
       await dashboardPage.addProductToCartByName('Sauce Labs Backpack');
       await expect(dashboardPage.productCards).toHaveCount(6);
       await expect(dashboardPage.cartBadge).toHaveText('1');
 
       await dashboardPage.cartBadge.click();
       await expect(page).toHaveURL(new RegExp(ROUTES.cart.replace('.', '\\.')));
-      await expect(dashboardPage.productCards).toHaveCount(1); // Only the added product should be in the cart
+      await expect(cartPage.items).toHaveCount(1);
+      const item = cartPage.item('Sauce Labs Backpack');
+      await expect(item.getByTestId('inventory-item-name')).toHaveText('Sauce Labs Backpack');
+      await expect(item.getByTestId('inventory-item-price')).toHaveText('$29.99');
+      await expect(item.getByTestId('item-quantity')).toHaveText('1');
     },
   );
 });
