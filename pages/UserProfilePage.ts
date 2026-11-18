@@ -9,21 +9,21 @@ import { BasePage } from '@pages/BasePage';
  * - Menu-related navigation that is not on the inventory grid itself
  *
  * The burger menu is a third-party component (`react-burger-menu`).
- * Prefer `getByRole` for the open button and logout link so tests stay resilient
+ * Prefer `getByRole` for the open button and logout button so tests stay resilient
  * to CSS class churn.
  *
  * Injected via the `userProfilePage` fixture from `@fixtures/index`.
  */
 export class UserProfilePage extends BasePage {
-  /** Link that ends the session and returns to login. Visible after the menu opens. */
-  readonly logoutLink: Locator;
+  /** Button that ends the session and returns to login. Visible after the menu opens. */
+  readonly logoutButton: Locator;
   /** Burger-menu toggle ("Open Menu"). */
   readonly menuButton: Locator;
 
   constructor(page: Page) {
     super(page);
     this.menuButton = page.getByRole('button', { name: 'Open Menu' });
-    this.logoutLink = page.getByRole('link', { name: 'Logout' });
+    this.logoutButton = page.getByRole('button', { name: 'Logout', exact: true });
   }
 
   /**
@@ -32,7 +32,7 @@ export class UserProfilePage extends BasePage {
    */
   async openMenu(): Promise<void> {
     await this.menuButton.click();
-    await this.logoutLink.waitFor({ state: 'visible' });
+    await this.logoutButton.waitFor({ state: 'visible' });
   }
 
   /**
@@ -41,6 +41,6 @@ export class UserProfilePage extends BasePage {
    */
   async logout(): Promise<void> {
     await this.openMenu();
-    await this.logoutLink.click();
+    await this.logoutButton.click();
   }
 }

@@ -44,7 +44,7 @@ jobs:
           SHARD_TOTAL: ${{ github.event.inputs.shard_total || '2' }}
         run: |
           INCLUDE='[{"project":"api","shardIndex":1,"shardTotal":1}'
-          for project in chromium firefox webkit; do
+          for project in chromium firefox webkit chromium-guest firefox-guest webkit-guest; do
             for ((shard=1; shard<=SHARD_TOTAL; shard++)); do
               INCLUDE+=",{\"project\":\"$project\",\"shardIndex\":$shard,\"shardTotal\":$SHARD_TOTAL}"
             done

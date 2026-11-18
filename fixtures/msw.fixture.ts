@@ -4,6 +4,7 @@ import { FetchApiClient } from '@utils/fetch-api-client';
 import { loadConfig } from '@utils/config-loader';
 
 type MswTestFixtures = {
+  resetMswHandlers: void;
   /**
    * HTTP client over Node `fetch` — the only client MSW can intercept.
    * Do not use `apiClient` (Playwright `request`) in MSW specs.
@@ -43,6 +44,14 @@ export const mswTest = base.extend<MswTestFixtures, MswWorkerFixtures>({
       server.close();
     },
     { scope: 'worker', auto: true },
+  ],
+
+  resetMswHandlers: [
+    async ({ mswServer }, use) => {
+      await use();
+      mswServer.resetHandlers();
+    },
+    { auto: true },
   ],
 
   fetchApiClient: async ({ config }, use) => {

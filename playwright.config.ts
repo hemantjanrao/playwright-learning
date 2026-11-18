@@ -21,6 +21,7 @@ function resolveWorkers(): number | undefined {
 export default defineConfig({
   testDir: './tests',
   fullyParallel: true,
+  grepInvert: process.env.RUN_QUARANTINE === 'true' ? undefined : /@quarantine/,
   forbidOnly: isCi,
   // PR/CI: zero retries — fix flakiness at the root. Nightly may retry once.
   retries: isNightly ? 1 : 0,
@@ -44,7 +45,7 @@ export default defineConfig({
     headless: config.headless,
     // Sauce Demo uses data-test (not data-testid) — enables getByTestId()
     testIdAttribute: 'data-test',
-    trace: isCi ? 'retain-on-failure' : 'on-first-retry',
+    trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
     video: 'retain-on-failure',
     actionTimeout: TIMEOUTS.action,
@@ -75,6 +76,11 @@ export default defineConfig({
         ...devices['Desktop Chrome'],
       },
     },
+    ...(['chromium', 'firefox', 'webkit'] as const).map((browserName) => ({
+      name: `${browserName}-guest`,
+      testMatch: /tests\/ui\/(?:login|negative-login|guest-access)\.spec\.ts/,
+      use: { browserName, storageState: { cookies: [], origins: [] } },
+    })),
     // ── UI auth: runs once, saves storageState ─────────────────────────────
     {
       name: 'setup',
@@ -84,7 +90,7 @@ export default defineConfig({
     {
       name: 'chromium',
       testMatch: /tests\/ui\/.*\.spec\.ts/,
-      testIgnore: /network-mock\.spec\.ts/,
+      testIgnore: /(?:network-mock|login|negative-login|guest-access)\.spec\.ts/,
       use: { ...devices['Desktop Chrome'] },
       dependencies: ['setup'],
     },
@@ -96,12 +102,14 @@ export default defineConfig({
     {
       name: 'firefox',
       testMatch: /tests\/ui\/.*\.spec\.ts/,
+      testIgnore: /(?:network-mock|login|negative-login|guest-access)\.spec\.ts/,
       use: { ...devices['Desktop Firefox'] },
       dependencies: ['setup'],
     },
     {
       name: 'webkit',
       testMatch: /tests\/ui\/.*\.spec\.ts/,
+      testIgnore: /(?:network-mock|login|negative-login|guest-access)\.spec\.ts/,
       use: { ...devices['Desktop Safari'] },
       dependencies: ['setup'],
     },

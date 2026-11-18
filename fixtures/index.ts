@@ -1,6 +1,8 @@
 import { test as base, expect } from '@playwright/test';
 import type { AppConfig } from '@models/config.types';
 import type { GeneratedUserProfile } from '@models/test-data.types';
+import { CartPage } from '@pages/CartPage';
+import { CheckoutPage } from '@pages/CheckoutPage';
 import { LoginPage } from '@pages/LoginPage';
 import { DashboardPage } from '@pages/DashboardPage';
 import { UserProfilePage } from '@pages/UserProfilePage';
@@ -31,6 +33,8 @@ import { logger } from '@utils/logger';
  * Destructuring a typo'd fixture name in a test fails at typecheck.
  */
 export type TestFixtures = {
+  cartPage: CartPage;
+  checkoutPage: CheckoutPage;
   /** Validated env config from `loadConfig()` (URLs, credentials, flags). */
   config: AppConfig;
   /** Sauce Demo login screen page object. */
@@ -56,6 +60,13 @@ export const test = base.extend<TestFixtures>({
   config: async ({}, use) => {
     const config = loadConfig();
     await use(config);
+  },
+
+  cartPage: async ({ page }, use) => {
+    await use(new CartPage(page));
+  },
+  checkoutPage: async ({ page }, use) => {
+    await use(new CheckoutPage(page));
   },
 
   loginPage: async ({ page }, use) => {

@@ -10,6 +10,7 @@ export default tseslint.config(
   {
     ignores: [
       'node_modules/**',
+      'workbench-site/**',
       'reports/**',
       'test-results/**',
       'playwright-report/**',

@@ -14,6 +14,8 @@ export function isDockerAvailable(): boolean {
     execSync('docker info', { stdio: 'ignore' });
     return true;
   } catch {
+    if (process.env.CI)
+      throw new Error('Docker is required in CI; container coverage must not silently skip.');
     return false;
   }
 }

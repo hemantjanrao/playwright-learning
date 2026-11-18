@@ -81,7 +81,7 @@ Lessons **03–10** — invoke Framework Coach: `/framework-coach Teach me Lesso
 
 After completing the curriculum, you should be able to:
 
-- [ ] Draw the 8 Playwright projects from memory
+- [ ] Draw the 11 Playwright projects from memory
 - [ ] Explain when to use `test` vs `authenticatedTest` vs `mswTest`
 - [ ] Write a Page Object with role/testId locators
 - [ ] Write an API test with `getValidated` + Zod
@@ -95,11 +95,11 @@ After completing the curriculum, you should be able to:
 
 Curriculum lessons teach the map. Tickets apply it in two tracks:
 
-| Track | File | Start here |
-| ----- | ---- | ---------- |
-| Warmup / repo gaps (beginner–intermediate) | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | **T-01** |
-| API + UI automation set | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | **T-13** → T-14 → T-15 |
-| **Medium–hard SDET tasks** | **[LEARNING-TASKS.md](./LEARNING-TASKS.md)** | **H-01** |
+| Track                                      | File                                         | Start here             |
+| ------------------------------------------ | -------------------------------------------- | ---------------------- |
+| Warmup / repo gaps (beginner–intermediate) | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | **T-01**               |
+| API + UI automation set                    | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | **T-13** → T-14 → T-15 |
+| **Medium–hard SDET tasks**                 | **[LEARNING-TASKS.md](./LEARNING-TASKS.md)** | **H-01**               |
 
 Work one ticket at a time with the Senior SDET mentor (DevOps mentor for H-11 / H-12).
 

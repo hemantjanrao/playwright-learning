@@ -24,6 +24,9 @@ test.describe('Authenticated session', () => {
 
       await expect(page).toHaveURL(/\/$/);
       await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
+      await dashboardPage.open();
+      await expect(page).toHaveURL(/\/$/);
+      await expect(page.getByRole('button', { name: 'Login' })).toBeVisible();
     },
   );
 });

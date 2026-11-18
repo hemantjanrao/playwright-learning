@@ -125,7 +125,7 @@ flowchart TB
     end
 
     subgraph MOCK["Mock — playwright-mock.yml"]
-        MK["@mock · path-filtered PR only"]
+        MK["@mock · every PR and main/master push"]
     end
 
     PR -.->|path filter| MOCK
@@ -186,3 +186,14 @@ Open **[docs/LEARNING.md](docs/LEARNING.md)** or ask the agent:
 ## License
 
 Private — learning / internal use.
+
+### Review hardening
+
+Shell/CI environment variables override local dotenv files. Environment files are ignored;
+copy `.env.example` for each environment you need. Browser commands include their guest
+projects; direct `--project=chromium` selects only the authenticated browser project.
+Use `--project=chromium-guest` to run login and guest-access checks without auth setup.
+
+Mock tests run on every PR and main/master push. Quarantined tests are excluded by default;
+use `npm run test:quarantine` for an explicit investigation run.
+See [coverage and remaining risks](docs/COVERAGE.md).

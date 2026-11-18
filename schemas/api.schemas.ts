@@ -48,12 +48,11 @@ export const ApiUserSchema = z.object({
 });
 
 /**
- * Post resource. `id` is optional on create responses that echo the client payload
- * before the server assigns an id (or when testing request shapes).
+ * Post response resource. Persisted and created resources must have a server ID.
  */
 export const ApiPostSchema = z.object({
   userId: z.number().int().positive(),
-  id: z.number().int().positive().optional(),
+  id: z.number().int().positive(),
   title: z.string().min(1),
   body: z.string().min(1),
 });

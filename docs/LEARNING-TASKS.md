@@ -2,10 +2,10 @@
 
 Hands-on **SDET** work for this repository. These tickets assume you already know the map (lessons 01–11) and can complete a 45-minute UI spec. They are **not** a replacement for [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md).
 
-| Track | File | Difficulty | Purpose |
-| ----- | ---- | ---------- | ------- |
-| Warmup / repo gaps | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | Beginner–intermediate | Fix real Sauce Demo holes; 45–90 min |
-| **This file** | `LEARNING-TASKS.md` | **Medium–hard** | Build and defend framework, Playwright, TypeScript, and CI skills |
+| Track              | File                                         | Difficulty            | Purpose                                                           |
+| ------------------ | -------------------------------------------- | --------------------- | ----------------------------------------------------------------- |
+| Warmup / repo gaps | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | Beginner–intermediate | Fix real Sauce Demo holes; 45–90 min                              |
+| **This file**      | `LEARNING-TASKS.md`                          | **Medium–hard**       | Build and defend framework, Playwright, TypeScript, and CI skills |
 
 Playwright lockfile version: **1.61.0**. Check compatibility before using APIs newer than that.
 
@@ -17,20 +17,20 @@ They are **not** complex enough to teach this framework, Playwright, TypeScript,
 
 They **are** a strong warmup: locators, a second page object, thinning duplicate specs, a config one-liner, one MSW 404, `test.each`, `try/finally`, a popup, and a practice trace. Almost every ticket is a **small repo-need**, scoped so you cannot gold-plate. That is good for T-01. It is the wrong altitude for “I want to learn this stack.”
 
-| What you need for an SDET job | What T-01–T-12 actually force you to do |
-| ----------------------------- | --------------------------------------- |
-| Write a typed fixture layer | Forbidden (T-04: do not invent a fixture) |
-| Dual HTTP clients (`request` vs `fetch`) | Consume `getResult` once (T-06) |
-| Error taxonomy + `instanceof` | Never |
-| `z.infer`, `omit`, contract drift | Never design a schema |
-| Branded types | Unused (and `userById` still accepts `number`) |
-| Worker vs test fixture scope | Never |
-| Testcontainers **mappings** | Never (only call existing stubs) |
-| `waitForResponse` / route 500 | `page.route` exists; no ticket |
-| `storageState` for a second persona | Thin specs only (T-04) |
-| Workers vs shards vs blob merge | T-07 is `testIgnore` + path filter |
-| Composite GitHub Actions | Never |
-| Throw vs `Result`, DRY, isolation | One `try/finally` (T-10) |
+| What you need for an SDET job            | What T-01–T-12 actually force you to do        |
+| ---------------------------------------- | ---------------------------------------------- |
+| Write a typed fixture layer              | Forbidden (T-04: do not invent a fixture)      |
+| Dual HTTP clients (`request` vs `fetch`) | Consume `getResult` once (T-06)                |
+| Error taxonomy + `instanceof`            | Never                                          |
+| `z.infer`, `omit`, contract drift        | Never design a schema                          |
+| Branded types                            | Unused (and `userById` still accepts `number`) |
+| Worker vs test fixture scope             | Never                                          |
+| Testcontainers **mappings**              | Never (only call existing stubs)               |
+| `waitForResponse` / route 500            | `page.route` exists; no ticket                 |
+| `storageState` for a second persona      | Thin specs only (T-04)                         |
+| Workers vs shards vs blob merge          | T-07 is `testIgnore` + path filter             |
+| Composite GitHub Actions                 | Never                                          |
+| Throw vs `Result`, DRY, isolation        | One `try/finally` (T-10)                       |
 
 **How to use both files:** finish or skip warmup tickets that unblock a task (noted per ticket). Do **not** grind all twelve T-tickets first if you already understand locators and `authenticatedTest`.
 
@@ -53,37 +53,48 @@ Every ticket below uses this template. Use it if you add more tasks.
 | **Mentor** | Senior SDET · Framework Coach · DevOps |
 
 ### You will be able to
+
 Measurable outcomes (explain + implement).
 
 ### Why this is hard
+
 The trap a junior hits. Read this before coding.
 
 ### Evidence
+
 Real files in this repo (not a blog).
 
 ### Mentor gate (chat, before any code)
+
 Questions you must answer. Mentor challenges the design; does not paste the solution.
 
 ### Constraints
+
 Out of scope + instant-reject anti-patterns.
 
 ### Scope
+
 What to change. Smallest design that proves the concept.
 
 ### Files you may touch
+
 Allow-list. If you need another file, justify it in the gate.
 
 ### Prerequisites
+
 Lessons and/or warmup tickets.
 
 ### Acceptance criteria
+
 Implementation + **red-first proof** + oral exam.
 
 ### Verification
+
 Exact commands. Paste output in chat. Do not claim green without evidence.
 
 ### Design decisions (oral exam)
-If you cannot answer these from *this repo’s files*, the ticket is not done.
+
+If you cannot answer these from _this repo’s files_, the ticket is not done.
 ```
 
 **How we work**
@@ -99,22 +110,22 @@ Do not implement until the mentor has challenged the design.
 
 ## Status
 
-| ID | Title | Difficulty | Tracks | Status |
-| -- | ----- | ---------- | ------ | ------ |
-| [H-01](#h-01--prove-throw-vs-result-on-apiclient) | Prove throw vs Result on `ApiClient` | Medium | TS · Programming · Framework | **Next** |
-| [H-02](#h-02--close-the-dual-http-client-contract) | Close the dual HTTP-client contract | Hard | Framework · TS · Programming | Open |
-| [H-03](#h-03--prove-msw-worker-scope-cannot-leak-handlers) | Prove MSW worker-scope cannot leak handlers | Hard | Playwright · Framework | Open |
-| [H-04](#h-04--wiremock-must-stub-the-same-post-posts-contract) | WireMock must stub `POST /posts` | Hard | Framework · Playwright | Open |
-| [H-05](#h-05--wait-on-the-response-not-the-clock) | Wait on the response, not the clock | Medium | Playwright | Open |
-| [H-06](#h-06--evolve-a-zod-contract-without-lying-to-typescript) | Evolve a Zod contract without lying to TypeScript | Hard | TS · Framework | Open |
-| [H-07](#h-07--branded-ids-must-reject-the-wrong-resource) | Branded IDs must reject the wrong resource | Medium | TS · Programming | Open |
-| [H-08](#h-08--compose-a-typed-ui-fixture-layer) | Compose a typed UI fixture layer | Hard | Framework · Playwright · TS | Open |
-| [H-09](#h-09--second-persona-storagestate) | Second-persona `storageState` | Hard | Playwright · Framework | Open |
-| [H-10](#h-10--prove-parallel-workers-cannot-collide) | Prove parallel workers cannot collide | Medium | Programming · Playwright | Open |
-| [H-11](#h-11--reproduce-nightly-sharding-locally) | Reproduce nightly sharding locally | Hard | DevOps · Playwright | Open |
-| [H-12](#h-12--make-mock-ci-honest) | Make mock CI honest | Hard | DevOps | Open |
-| [H-13](#h-13--capstone-wrong-layer-pr-review) | Capstone: wrong-layer PR review | Hard | All mentors | Open |
-| [H-14](#h-14--capstone-glitch-user-without-sleeps) | Capstone: glitch user without sleeps | Hard | Playwright · SDET | Open |
+| ID                                                               | Title                                             | Difficulty | Tracks                       | Status   |
+| ---------------------------------------------------------------- | ------------------------------------------------- | ---------- | ---------------------------- | -------- |
+| [H-01](#h-01--prove-throw-vs-result-on-apiclient)                | Prove throw vs Result on `ApiClient`              | Medium     | TS · Programming · Framework | **Next** |
+| [H-02](#h-02--close-the-dual-http-client-contract)               | Close the dual HTTP-client contract               | Hard       | Framework · TS · Programming | Open     |
+| [H-03](#h-03--prove-msw-worker-scope-cannot-leak-handlers)       | Prove MSW worker-scope cannot leak handlers       | Hard       | Playwright · Framework       | Open     |
+| [H-04](#h-04--wiremock-must-stub-the-same-post-posts-contract)   | WireMock must stub `POST /posts`                  | Hard       | Framework · Playwright       | Open     |
+| [H-05](#h-05--wait-on-the-response-not-the-clock)                | Wait on the response, not the clock               | Medium     | Playwright                   | Open     |
+| [H-06](#h-06--evolve-a-zod-contract-without-lying-to-typescript) | Evolve a Zod contract without lying to TypeScript | Hard       | TS · Framework               | Open     |
+| [H-07](#h-07--branded-ids-must-reject-the-wrong-resource)        | Branded IDs must reject the wrong resource        | Medium     | TS · Programming             | Open     |
+| [H-08](#h-08--compose-a-typed-ui-fixture-layer)                  | Compose a typed UI fixture layer                  | Hard       | Framework · Playwright · TS  | Open     |
+| [H-09](#h-09--second-persona-storagestate)                       | Second-persona `storageState`                     | Hard       | Playwright · Framework       | Open     |
+| [H-10](#h-10--prove-parallel-workers-cannot-collide)             | Prove parallel workers cannot collide             | Medium     | Programming · Playwright     | Open     |
+| [H-11](#h-11--reproduce-nightly-sharding-locally)                | Reproduce nightly sharding locally                | Hard       | DevOps · Playwright          | Open     |
+| [H-12](#h-12--make-mock-ci-honest)                               | Make mock CI honest                               | Hard       | DevOps                       | Open     |
+| [H-13](#h-13--capstone-wrong-layer-pr-review)                    | Capstone: wrong-layer PR review                   | Hard       | All mentors                  | Open     |
+| [H-14](#h-14--capstone-glitch-user-without-sleeps)               | Capstone: glitch user without sleeps              | Hard       | Playwright · SDET            | Open     |
 
 **Suggested order:** H-01 → H-07 → H-02 → H-03 → H-05 → H-04 → H-06 → H-10 → H-08 → H-09 → H-11 → H-12 → H-13 → H-14.
 
@@ -124,24 +135,24 @@ Update **Status** to `In progress` / `Done` as you close tickets. Concepts are t
 
 ## Coverage matrix (curriculum → this file)
 
-What “learn everything in *this* repo” actually means. Items marked **warmup only** are T-tickets; do not redo them here.
+What “learn everything in _this_ repo” actually means. Items marked **warmup only** are T-tickets; do not redo them here.
 
-| Concept | Lesson / doc | Ticket | Notes |
-| ------- | ------------ | ------ | ----- |
-| Repo map, 8 projects | L01–L02 | H-11, H-12 | Warmup T-07 is `testIgnore` only |
-| Fixtures, `extend`, scopes | L03, ARCH §3 | H-03, H-08, H-09 | **Missing from warmup** |
-| POM + locators | L04–L05 | H-08 | Warmup T-01, T-02, T-08 |
-| `storageState` | L06 | H-09 | Warmup T-04 is thinning, not design |
-| API contracts, clients | L07, ARCH §5 | H-01, H-02 | Warmup T-06 is one 404 |
-| Zod, `z.infer`, branded types | L08, `typescript-concepts.md` | H-06, H-07 | **Missing from warmup** |
-| Tags, PR vs nightly | L09 | H-11, H-12 | Warmup T-07 path filter |
-| Traces, failure class | L10 | H-14 | Warmup T-05, T-12 |
-| MSW / WireMock / `page.route` | L11, ARCH §6 | H-03, H-04, H-05 | Warmup never writes a mapping |
-| Generics, unions, `asserts` | `typescript-concepts.md` | H-01, H-02 | |
-| Workers, shards, blobs | ARCH §7 | H-10, H-11 | **Missing from warmup** |
-| Composite Actions, secrets | DevOps skill | H-12 | |
-| Throw vs Result, DRY, isolation | Programming | H-01, H-02, H-03, H-10 | Warmup T-10 only |
-| Risk-based layer choice | ARCH §8 | H-13 | |
+| Concept                         | Lesson / doc                  | Ticket                 | Notes                               |
+| ------------------------------- | ----------------------------- | ---------------------- | ----------------------------------- |
+| Repo map, 8 projects            | L01–L02                       | H-11, H-12             | Warmup T-07 is `testIgnore` only    |
+| Fixtures, `extend`, scopes      | L03, ARCH §3                  | H-03, H-08, H-09       | **Missing from warmup**             |
+| POM + locators                  | L04–L05                       | H-08                   | Warmup T-01, T-02, T-08             |
+| `storageState`                  | L06                           | H-09                   | Warmup T-04 is thinning, not design |
+| API contracts, clients          | L07, ARCH §5                  | H-01, H-02             | Warmup T-06 is one 404              |
+| Zod, `z.infer`, branded types   | L08, `typescript-concepts.md` | H-06, H-07             | **Missing from warmup**             |
+| Tags, PR vs nightly             | L09                           | H-11, H-12             | Warmup T-07 path filter             |
+| Traces, failure class           | L10                           | H-14                   | Warmup T-05, T-12                   |
+| MSW / WireMock / `page.route`   | L11, ARCH §6                  | H-03, H-04, H-05       | Warmup never writes a mapping       |
+| Generics, unions, `asserts`     | `typescript-concepts.md`      | H-01, H-02             |                                     |
+| Workers, shards, blobs          | ARCH §7                       | H-10, H-11             | **Missing from warmup**             |
+| Composite Actions, secrets      | DevOps skill                  | H-12                   |                                     |
+| Throw vs Result, DRY, isolation | Programming                   | H-01, H-02, H-03, H-10 | Warmup T-10 only                    |
+| Risk-based layer choice         | ARCH §8                       | H-13                   |                                     |
 
 Out of scope for the whole curriculum (do not invent tickets): file upload, download, iframes, visual snapshots against Sauce Demo, a fourth mock tool.
 
@@ -149,13 +160,13 @@ Out of scope for the whole curriculum (do not invent tickets): file upload, down
 
 ## H-01 — Prove throw vs Result on `ApiClient`
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Medium |
-| **Effort** | 2–3 h |
-| **Tracks** | TypeScript · Programming · Framework |
-| **Layer** | `unit` |
-| **Mentor** | Senior SDET (implement) · Framework Coach (generics / unions) |
+| Field          | Value                                                         |
+| -------------- | ------------------------------------------------------------- |
+| **Difficulty** | Medium                                                        |
+| **Effort**     | 2–3 h                                                         |
+| **Tracks**     | TypeScript · Programming · Framework                          |
+| **Layer**      | `unit`                                                        |
+| **Mentor**     | Senior SDET (implement) · Framework Coach (generics / unions) |
 
 ### You will be able to
 
@@ -232,13 +243,13 @@ npx tsc --noEmit
 
 ## H-02 — Close the dual HTTP-client contract
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Hard |
-| **Effort** | 3–4 h |
-| **Tracks** | Framework · TypeScript · Programming |
-| **Layer** | unit + api-mock |
-| **Mentor** | Senior SDET |
+| Field          | Value                                |
+| -------------- | ------------------------------------ |
+| **Difficulty** | Hard                                 |
+| **Effort**     | 3–4 h                                |
+| **Tracks**     | Framework · TypeScript · Programming |
+| **Layer**      | unit + api-mock                      |
+| **Mentor**     | Senior SDET                          |
 
 ### You will be able to
 
@@ -313,13 +324,13 @@ npm run validate
 
 ## H-03 — Prove MSW worker-scope cannot leak handlers
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Hard |
-| **Effort** | 3–4 h |
-| **Tracks** | Playwright · Framework |
-| **Layer** | `api-mock` |
-| **Mentor** | Senior SDET · Framework Coach (fixture lifecycle) |
+| Field          | Value                                             |
+| -------------- | ------------------------------------------------- |
+| **Difficulty** | Hard                                              |
+| **Effort**     | 3–4 h                                             |
+| **Tracks**     | Playwright · Framework                            |
+| **Layer**      | `api-mock`                                        |
+| **Mentor**     | Senior SDET · Framework Coach (fixture lifecycle) |
 
 ### You will be able to
 
@@ -390,13 +401,13 @@ npx playwright test --project=api-mock tests/api/msw-isolation.spec.ts --workers
 
 ## H-04 — WireMock must stub the same `POST /posts` contract
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Hard |
-| **Effort** | 3–4 h |
-| **Tracks** | Framework · Playwright |
-| **Layer** | `api-mock` (Testcontainers) |
-| **Mentor** | Senior SDET |
+| Field          | Value                       |
+| -------------- | --------------------------- |
+| **Difficulty** | Hard                        |
+| **Effort**     | 3–4 h                       |
+| **Tracks**     | Framework · Playwright      |
+| **Layer**      | `api-mock` (Testcontainers) |
+| **Mentor**     | Senior SDET                 |
 
 ### You will be able to
 
@@ -470,13 +481,13 @@ SKIP_DOCKER_TESTS=true npx playwright test --project=api-mock tests/api/containe
 
 ## H-05 — Wait on the response, not the clock
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Medium |
-| **Effort** | 2–3 h |
-| **Tracks** | Playwright |
-| **Layer** | `chromium-mock` |
-| **Mentor** | Senior SDET |
+| Field          | Value           |
+| -------------- | --------------- |
+| **Difficulty** | Medium          |
+| **Effort**     | 2–3 h           |
+| **Tracks**     | Playwright      |
+| **Layer**      | `chromium-mock` |
+| **Mentor**     | Senior SDET     |
 
 ### You will be able to
 
@@ -544,13 +555,13 @@ npx playwright test --project=chromium-mock
 
 ## H-06 — Evolve a Zod contract without lying to TypeScript
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Hard |
-| **Effort** | 3–4 h |
-| **Tracks** | TypeScript · Framework |
-| **Layer** | unit + api |
-| **Mentor** | Framework Coach (schema) · Senior SDET (live compatibility) |
+| Field          | Value                                                       |
+| -------------- | ----------------------------------------------------------- |
+| **Difficulty** | Hard                                                        |
+| **Effort**     | 3–4 h                                                       |
+| **Tracks**     | TypeScript · Framework                                      |
+| **Layer**      | unit + api                                                  |
+| **Mentor**     | Framework Coach (schema) · Senior SDET (live compatibility) |
 
 ### You will be able to
 
@@ -624,13 +635,13 @@ npm run validate
 
 ## H-07 — Branded IDs must reject the wrong resource
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Medium |
-| **Effort** | 2–3 h |
-| **Tracks** | TypeScript · Programming |
-| **Layer** | unit (compile-time) + api |
-| **Mentor** | Framework Coach · Senior SDET |
+| Field          | Value                         |
+| -------------- | ----------------------------- |
+| **Difficulty** | Medium                        |
+| **Effort**     | 2–3 h                         |
+| **Tracks**     | TypeScript · Programming      |
+| **Layer**      | unit (compile-time) + api     |
+| **Mentor**     | Framework Coach · Senior SDET |
 
 ### You will be able to
 
@@ -706,13 +717,13 @@ Show the `@ts-expect-error` (or equivalent) in chat.
 
 ## H-08 — Compose a typed UI fixture layer
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Hard |
-| **Effort** | 4–5 h |
-| **Tracks** | Framework · Playwright · TypeScript |
-| **Layer** | ui + fixtures |
-| **Mentor** | Senior SDET · Framework Coach (L03–L04) |
+| Field          | Value                                   |
+| -------------- | --------------------------------------- |
+| **Difficulty** | Hard                                    |
+| **Effort**     | 4–5 h                                   |
+| **Tracks**     | Framework · Playwright · TypeScript     |
+| **Layer**      | ui + fixtures                           |
+| **Mentor**     | Senior SDET · Framework Coach (L03–L04) |
 
 ### You will be able to
 
@@ -788,13 +799,13 @@ npx tsc --noEmit
 
 ## H-09 — Second-persona `storageState`
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Hard |
-| **Effort** | 4–5 h |
-| **Tracks** | Playwright · Framework |
-| **Layer** | setup + ui |
-| **Mentor** | Senior SDET |
+| Field          | Value                  |
+| -------------- | ---------------------- |
+| **Difficulty** | Hard                   |
+| **Effort**     | 4–5 h                  |
+| **Tracks**     | Playwright · Framework |
+| **Layer**      | setup + ui             |
+| **Mentor**     | Senior SDET            |
 
 ### You will be able to
 
@@ -871,13 +882,13 @@ Confirm `git status` does not list `auth/.auth/`.
 
 ## H-10 — Prove parallel workers cannot collide
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Medium |
-| **Effort** | 2–3 h |
-| **Tracks** | Programming · Playwright |
-| **Layer** | unit + api |
-| **Mentor** | Senior SDET |
+| Field          | Value                    |
+| -------------- | ------------------------ |
+| **Difficulty** | Medium                   |
+| **Effort**     | 2–3 h                    |
+| **Tracks**     | Programming · Playwright |
+| **Layer**      | unit + api               |
+| **Mentor**     | Senior SDET              |
 
 ### You will be able to
 
@@ -946,13 +957,13 @@ npx playwright test --project=api tests/api/posts-post.spec.ts --workers=2
 
 ## H-11 — Reproduce nightly sharding locally
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Hard |
-| **Effort** | 3–5 h |
-| **Tracks** | DevOps · Playwright |
-| **Layer** | ci (local simulation) |
-| **Mentor** | DevOps · Senior SDET |
+| Field          | Value                 |
+| -------------- | --------------------- |
+| **Difficulty** | Hard                  |
+| **Effort**     | 3–5 h                 |
+| **Tracks**     | DevOps · Playwright   |
+| **Layer**      | ci (local simulation) |
+| **Mentor**     | DevOps · Senior SDET  |
 
 ### You will be able to
 
@@ -1032,13 +1043,13 @@ Adjust paths if CI uses a different blob dir (`reports/blob`).
 
 ## H-12 — Make mock CI honest
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Hard |
-| **Effort** | 3–4 h |
-| **Tracks** | DevOps |
-| **Layer** | ci |
-| **Mentor** | DevOps |
+| Field          | Value  |
+| -------------- | ------ |
+| **Difficulty** | Hard   |
+| **Effort**     | 3–4 h  |
+| **Tracks**     | DevOps |
+| **Layer**      | ci     |
+| **Mentor**     | DevOps |
 
 ### You will be able to
 
@@ -1114,14 +1125,14 @@ If `gh` is not authenticated, show the YAML diff and a table of “edit this fil
 
 ## H-13 — Capstone: wrong-layer PR review
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Hard |
-| **Effort** | 2–3 h (writing, not a large diff) |
-| **Tracks** | Framework · Playwright · TypeScript · DevOps |
-| **Layer** | review (practice) |
-| **Mentor** | Senior SDET + DevOps |
-| **Type** | Practice — do not merge the broken example |
+| Field          | Value                                        |
+| -------------- | -------------------------------------------- |
+| **Difficulty** | Hard                                         |
+| **Effort**     | 2–3 h (writing, not a large diff)            |
+| **Tracks**     | Framework · Playwright · TypeScript · DevOps |
+| **Layer**      | review (practice)                            |
+| **Mentor**     | Senior SDET + DevOps                         |
+| **Type**       | Practice — do not merge the broken example   |
 
 ### You will be able to
 
@@ -1183,13 +1194,13 @@ Mentor scores the review against the planted bugs. Missing a planted Blocker = t
 
 ## H-14 — Capstone: glitch user without sleeps
 
-| Field | Value |
-| ----- | ----- |
-| **Difficulty** | Hard |
-| **Effort** | 3–4 h |
-| **Tracks** | Playwright · SDET |
-| **Layer** | ui |
-| **Mentor** | Senior SDET |
+| Field          | Value             |
+| -------------- | ----------------- |
+| **Difficulty** | Hard              |
+| **Effort**     | 3–4 h             |
+| **Tracks**     | Playwright · SDET |
+| **Layer**      | ui                |
+| **Mentor**     | Senior SDET       |
 
 ### You will be able to
 
@@ -1262,22 +1273,22 @@ If you declined to add a spec, still run a **temporary** experiment, then revert
 
 Mark when you can **explain from this repo’s files** and when you have **implemented independently**.
 
-| Concept | Ticket | Explained | Implemented independently |
-| ------- | ------ | --------- | ------------------------- |
-| Throw vs `ApiResult`, error classes, `asserts` | H-01 | | |
-| Dual clients, DRY vs two transports | H-02 | | |
-| Worker-scoped fixtures, MSW reset | H-03 | | |
-| WireMock mappings + `mockApiClient` | H-04 | | |
-| `page.route` + `waitForResponse` | H-05 | | |
-| Zod evolution, `z.infer`, mock parity | H-06 | | |
-| Branded types at API boundaries | H-07 | | |
-| Typed fixture composition, POM SRP | H-08 | | |
-| Multi-persona `storageState` / setup projects | H-09 | | |
-| Workers, `uniqueSuffix`, vs shards | H-10 | | |
-| Blob reports, merge, nightly matrix | H-11 | | |
-| Path filters, composite actions, secrets | H-12 | | |
-| Layering + review severity | H-13 | | |
-| Slowness vs flake, traces, tags | H-14 | | |
+| Concept                                        | Ticket | Explained | Implemented independently |
+| ---------------------------------------------- | ------ | --------- | ------------------------- |
+| Throw vs `ApiResult`, error classes, `asserts` | H-01   |           |                           |
+| Dual clients, DRY vs two transports            | H-02   |           |                           |
+| Worker-scoped fixtures, MSW reset              | H-03   |           |                           |
+| WireMock mappings + `mockApiClient`            | H-04   |           |                           |
+| `page.route` + `waitForResponse`               | H-05   |           |                           |
+| Zod evolution, `z.infer`, mock parity          | H-06   |           |                           |
+| Branded types at API boundaries                | H-07   |           |                           |
+| Typed fixture composition, POM SRP             | H-08   |           |                           |
+| Multi-persona `storageState` / setup projects  | H-09   |           |                           |
+| Workers, `uniqueSuffix`, vs shards             | H-10   |           |                           |
+| Blob reports, merge, nightly matrix            | H-11   |           |                           |
+| Path filters, composite actions, secrets       | H-12   |           |                           |
+| Layering + review severity                     | H-13   |           |                           |
+| Slowness vs flake, traces, tags                | H-14   |           |                           |
 
 Warmup concepts (locators, cart POM, negative login, spec thinning, local traces, MSW 404, `testIgnore`, checkout, `test.each`, `try/finally`, popups) stay in [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md).
 

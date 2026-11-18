@@ -115,12 +115,11 @@ export class FetchApiClient {
   ): Promise<z.infer<S>> {
     const status = response.status;
     const bodyText = await response.text();
-    const parsed = this.parseJsonStrict(bodyText, url, status);
-
     if (status !== expectedStatus) {
       throw new ApiRequestError(method, url, expectedStatus, status, bodyText);
     }
 
+    const parsed = this.parseJsonStrict(bodyText, url, status);
     const result = schema.safeParse(parsed);
     if (!result.success) {
       throw new ApiValidationError(url, status, result.error, parsed);
