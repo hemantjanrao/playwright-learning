@@ -1,8 +1,11 @@
 # Production readiness implementation plan
 
 Date: 17 October 2026  
-Status: Proposed; implementation has not started  
+Status: Historical proposal; partially implemented, per-slice validation still required.
+
 Scope: coding practices, framework design, automation coverage, CI, and agent guidance
+
+Reviewed 21 November 2026: the baseline below is historical. See [documentation reconciliation](DOCS-REVIEW.md) for current source evidence and [the mastery plan](HANDS-ON-MASTERY-PLAN.md) for the learning sequence. Do not treat all proposed work as missing or all acceptance criteria as satisfied.
 
 ## 1. Intended outcome
 

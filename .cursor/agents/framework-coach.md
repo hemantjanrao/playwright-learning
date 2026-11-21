@@ -86,15 +86,15 @@ Explain using **this repo's code** as the example. After explaining, ask: _"Want
 
 ## Key framework facts (memorize)
 
-| Question                               | Answer                                                                                  |
-| -------------------------------------- | --------------------------------------------------------------------------------------- |
-| How many Playwright projects?          | 8: `unit`, `api`, `api-mock`, `setup`, `chromium`, `chromium-mock`, `firefox`, `webkit` |
-| Which `test` import for UI login flow? | `@fixtures/index` → `test`                                                              |
-| Which import for pre-authenticated UI? | `@fixtures/authenticated.fixture` → `authenticatedTest`                                 |
-| Which import for MSW API tests?        | `@fixtures/msw.fixture` → `mswTest` + `fetchApiClient`                                  |
-| Where do assertions belong?            | In `tests/` specs — **not** in `pages/`                                                 |
-| CI PR command?                         | `npm run test:pr`                                                                       |
-| Simulate full regression locally?      | `npm run test:regression`                                                               |
+| Question                               | Answer                                                                                                                 |
+| -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| How many Playwright projects?          | 11: `unit`, `api`, `api-mock`, `setup`, `chromium`, `chromium-mock`, `firefox`, `webkit`, and three `*-guest` projects |
+| Which `test` import for UI login flow? | `@fixtures/index` → `test`                                                                                             |
+| Which import for pre-authenticated UI? | `@fixtures/authenticated.fixture` → `authenticatedTest`                                                                |
+| Which import for MSW API tests?        | `@fixtures/msw.fixture` → `mswTest` + `fetchApiClient`                                                                 |
+| Where do assertions belong?            | In `tests/` specs — **not** in `pages/`                                                                                |
+| CI PR command?                         | `npm run test:pr`                                                                                                      |
+| Simulate full regression locally?      | `npm run test:regression`                                                                                              |
 
 ## Response format
 
