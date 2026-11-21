@@ -1,5 +1,10 @@
 # Medium–hard learning tasks
 
+> **Current practice route:** [Hands-on mastery plan](HANDS-ON-MASTERY-PLAN.md).
+> Original problem/evidence sections below describe an earlier repository snapshot.
+> Consult [the 21 November reconciliation](DOCS-REVIEW.md) before changing code.
+> Ticket status and checkboxes are historical implementation notes, not learner mastery.
+
 Hands-on **SDET** work for this repository. These tickets assume you already know the map (lessons 01–11) and can complete a 45-minute UI spec. They are **not** a replacement for [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md).
 
 | Track              | File                                         | Difficulty            | Purpose                                                           |
@@ -7,7 +12,7 @@ Hands-on **SDET** work for this repository. These tickets assume you already kno
 | Warmup / repo gaps | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | Beginner–intermediate | Fix real Sauce Demo holes; 45–90 min                              |
 | **This file**      | `LEARNING-TASKS.md`                          | **Medium–hard**       | Build and defend framework, Playwright, TypeScript, and CI skills |
 
-Playwright lockfile version: **1.61.0**. Check compatibility before using APIs newer than that.
+Playwright lockfile version checked on 21 November 2026: **1.65.0**. Check compatibility before using APIs newer than that.
 
 ---
 
@@ -15,7 +20,7 @@ Playwright lockfile version: **1.61.0**. Check compatibility before using APIs n
 
 They are **not** complex enough to teach this framework, Playwright, TypeScript, or programming in depth.
 
-They **are** a strong warmup: locators, a second page object, thinning duplicate specs, a config one-liner, one MSW 404, `test.each`, `try/finally`, a popup, and a practice trace. Almost every ticket is a **small repo-need**, scoped so you cannot gold-plate. That is good for T-01. It is the wrong altitude for “I want to learn this stack.”
+They **are** a strong warmup: locators, a second page object, thinning duplicate specs, a config one-liner, one MSW 404, `for...of` over scenario data, `try/finally`, a popup, and a practice trace. Almost every ticket is a **small repo-need**, scoped so you cannot gold-plate. That is good for T-01. It is the wrong altitude for “I want to learn this stack.”
 
 | What you need for an SDET job            | What T-01–T-12 actually force you to do        |
 | ---------------------------------------- | ---------------------------------------------- |
@@ -139,7 +144,7 @@ What “learn everything in _this_ repo” actually means. Items marked **warmup
 
 | Concept                         | Lesson / doc                  | Ticket                 | Notes                               |
 | ------------------------------- | ----------------------------- | ---------------------- | ----------------------------------- |
-| Repo map, 8 projects            | L01–L02                       | H-11, H-12             | Warmup T-07 is `testIgnore` only    |
+| Repo map, 11 projects           | L01–L02                       | H-11, H-12             | Warmup T-07 is `testIgnore` only    |
 | Fixtures, `extend`, scopes      | L03, ARCH §3                  | H-03, H-08, H-09       | **Missing from warmup**             |
 | POM + locators                  | L04–L05                       | H-08                   | Warmup T-01, T-02, T-08             |
 | `storageState`                  | L06                           | H-09                   | Warmup T-04 is thinning, not design |
@@ -154,7 +159,7 @@ What “learn everything in _this_ repo” actually means. Items marked **warmup
 | Throw vs Result, DRY, isolation | Programming                   | H-01, H-02, H-03, H-10 | Warmup T-10 only                    |
 | Risk-based layer choice         | ARCH §8                       | H-13                   |                                     |
 
-Out of scope for the whole curriculum (do not invent tickets): file upload, download, iframes, visual snapshots against Sauce Demo, a fourth mock tool.
+Out of scope for these original Sauce Demo tickets (the new mastery plan covers appropriate topics in a separate local lab): file upload, download, iframes, visual snapshots against Sauce Demo, a fourth mock tool.
 
 ---
 
@@ -461,7 +466,7 @@ Lesson 11. H-01 helpful. Docker running locally.
 - [ ] Spec uses `containerTest` + `mockApiClient` + `postBuilder` + `ApiPostSchema`.
 - [ ] Tagged `@mock` `@regression`.
 - [ ] Red-first: wrong status in the mapping (200) → `ApiRequestError` (or equivalent); restore.
-- [ ] Skips cleanly when Docker is missing (`SKIP_DOCKER_TESTS` or `isDockerAvailable`).
+- [ ] Local Docker absence is classified explicitly; required CI execution must not silently pass through skips.
 
 ### Verification
 
@@ -520,7 +525,7 @@ SKIP_DOCKER_TESTS=true npx playwright test --project=api-mock tests/api/containe
 
 ### Scope
 
-One new test (or a tight `test.each`): fulfill `**/users/1` with `status: 500` and a JSON body; wait for that response; assert UI error **and** `response.status() === 500`. Reuse `clearRoutes` in `afterEach`.
+One new test (or a tight `for...of` over scenario data): fulfill `**/users/1` with `status: 500` and a JSON body; wait for that response; assert UI error **and** `response.status() === 500`. Reuse `clearRoutes` in `afterEach`.
 
 ### Files you may touch
 
@@ -1016,7 +1021,7 @@ Lesson 09. H-10. Warmup T-07 useful.
 
 ### Acceptance criteria
 
-- [ ] `--list` output for shard 1/2 and 2/2 pasted in chat; no duplicate spec files.
+- [ ] `--list` output for shard 1/2 and 2/2 pasted in chat; no overlapping application test identities (project + file + test title). Files may occur in both shards with `fullyParallel`; setup dependencies may repeat.
 - [ ] Merge produces HTML you opened (`reports/html` or `playwright-report`).
 - [ ] Written explanation: API `1/1` vs browsers sharded; `fail-fast: false`.
 - [ ] If you added a script: `npm run validate` still green.
@@ -1086,7 +1091,7 @@ Adjust paths if CI uses a different blob dir (`reports/blob`).
 
 ### Scope
 
-Fix path filters (include T-07’s `route-mocks` plus any H-02/H-04 files you now know matter). Align `SKIP_DOCKER` documentation with actual skip behavior. Optional: one-line job summary when Docker tests skipped.
+Inspect the current unconditional triggers and prove shared-code changes cannot bypass the mock tier. The original path-filter repair is already superseded. Align `SKIP_DOCKER` documentation with actual skip behavior. Optional: one-line job summary when Docker tests skipped.
 
 ### Files you may touch
 
@@ -1101,8 +1106,8 @@ Lesson 09. Warmup T-07. H-04/H-05 useful so you know which files are load-bearin
 
 ### Acceptance criteria
 
-- [ ] Path list includes route mocks and the HTTP clients/containers that `@mock` tests import.
-- [ ] You demonstrate with `gh` (or a dry explanation of GitHub path filters) that a docs-only change does **not** need mock CI.
+- [ ] Current workflow triggers cover every PR and main/master push, including shared-client and dependency changes; no path-filter addition is needed.
+- [ ] Explain that the current unconditional policy also runs mocks for docs-only PRs. Assess selective execution only as an alternative, including required-check implications.
 - [ ] PR workflow still `retries: 0` / `CI_TIER=pr`.
 - [ ] Secrets remain names-only in docs.
 
@@ -1290,7 +1295,7 @@ Mark when you can **explain from this repo’s files** and when you have **imple
 | Layering + review severity                     | H-13   |           |                           |
 | Slowness vs flake, traces, tags                | H-14   |           |                           |
 
-Warmup concepts (locators, cart POM, negative login, spec thinning, local traces, MSW 404, `testIgnore`, checkout, `test.each`, `try/finally`, popups) stay in [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md).
+Warmup concepts (locators, cart POM, negative login, spec thinning, local traces, MSW 404, `testIgnore`, checkout, `for...of` over scenario data, `try/finally`, popups) stay in [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md).
 
 ---
 
