@@ -23,10 +23,10 @@ Full diagrams: [ARCHITECTURE.md](../ARCHITECTURE.md)
 ## 4. Run each layer
 
 ```bash
-npm run test:unit    # 12 tests · ~2s · no browser
-npm run test:api     #  5 tests · ~2s · HTTP only
-npm run test:ui      #  7 tests · ~5s · browser + auth setup
-npm run test:mock    #  6 tests · MSW + Docker + page.route
+npm run test:unit    # Framework tests, including loopback HTTP contracts
+npm run test:api     # Live HTTP contracts; internet required
+npm run test:ui      # Chromium authenticated + guest projects
+npm run test:mock    # MSW + Docker + browser routes
 ```
 
 ## 5. Good vs bad

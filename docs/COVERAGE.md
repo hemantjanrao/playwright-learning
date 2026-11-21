@@ -1,5 +1,7 @@
 # Automation coverage and remaining risks
 
+Scope note: this file describes implemented Sauce Demo/JSONPlaceholder reference tests. The [Toolshop learning plan](HANDS-ON-MASTERY-PLAN.md) and [exercise briefs](TOOLSHOP-EXERCISE-BRIEFS.md) describe planned work, not current Toolshop coverage.
+
 This repository tests a demo storefront and a separate demo API. Framework tests do not
 measure application unit coverage, and JSONPlaceholder write responses do not prove persistence.
 No claim of exhaustive business coverage is made.

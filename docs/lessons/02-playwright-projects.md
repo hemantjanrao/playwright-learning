@@ -10,6 +10,8 @@ One `playwright.config.ts` can run unit tests without a browser, API tests witho
 
 ## 3. Project graph (current)
 
+There are 11 projects. Guest login and protected-access tests do not depend on setup.
+
 ```mermaid
 flowchart TB
     subgraph FAST["No auth dependency"]
@@ -17,6 +19,9 @@ flowchart TB
         API["api"]
         MOCK["api-mock"]
         CHM["chromium-mock"]
+        CG["chromium-guest"]
+        FG["firefox-guest"]
+        WG["webkit-guest"]
     end
 
     subgraph UI["UI with auth"]
@@ -36,6 +41,7 @@ projects: [
   { name: 'unit', testMatch: /tests\/unit\// },
   { name: 'api', testMatch: /tests\/api\//, testIgnore: /(msw|container)-/ },
   { name: 'api-mock', testMatch: /(msw|container)-/ },
+  { name: 'chromium-guest', testMatch: /(?:login|negative-login|guest-access)\.spec\.ts/ },
   { name: 'setup', testMatch: /auth\.setup\.ts/ },
   { name: 'chromium', dependencies: ['setup'] },
 ];
@@ -52,8 +58,9 @@ projects: [
 ## 6. Mini exercise
 
 ```bash
-time npm run test:api     # should be ~2s
-time npm test             # full suite — much longer
+npx playwright test --project=chromium-guest --list
+npx playwright test --project=chromium --list
+npx playwright test --project=api-mock --list
 ```
 
 Open `playwright.config.ts` and find `testIgnore` on the `api` project — why exclude `msw-*` and `container-*`?

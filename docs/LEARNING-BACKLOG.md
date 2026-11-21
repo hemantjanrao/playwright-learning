@@ -1,5 +1,10 @@
 # Hands-on learning backlog
 
+> **Current practice route:** [Hands-on mastery plan](HANDS-ON-MASTERY-PLAN.md).
+> Original problem/evidence sections below describe an earlier repository snapshot.
+> Consult [the 21 November reconciliation](DOCS-REVIEW.md) before changing code.
+> Ticket status and checkboxes are historical implementation notes, not learner mastery.
+
 Practical **beginner–intermediate** tickets for this repository. Medium–hard SDET tasks (fixtures, dual HTTP clients, Zod, branded types, sharding, CI) live in **[LEARNING-TASKS.md](./LEARNING-TASKS.md)**.
 
 Work them **one at a time** with the Senior SDET mentor in chat. Do not implement a ticket until you have proposed an approach and been challenged on it.
@@ -12,7 +17,7 @@ Work them **one at a time** with the Senior SDET mentor in chat. Do not implemen
 4. Explain the design and show that the test fails for the intended bug.
 5. Close with a recap; pick the next ticket.
 
-Playwright lockfile version: **1.61.0**. Check compatibility before using APIs newer than that.
+Playwright lockfile version checked on 21 November 2026: **1.65.0**. Check compatibility before using APIs newer than that.
 
 ---
 
@@ -28,7 +33,7 @@ Playwright lockfile version: **1.61.0**. Check compatibility before using APIs n
 | [T-06](#t-06--test-the-msw-404-already-stubbed)                 | MSW 404 path already in handlers                | P1       | 45–60 min | Repo need    | Open     |
 | [T-07](#t-07--align-firefoxwebkit-with-the-chromium-mock-split) | Firefox/WebKit vs `chromium-mock` project split | P1       | 45–60 min | Repo need    | Open     |
 | [T-08](#t-08--checkout-happy-path)                              | Checkout happy path                             | P2       | 75–90 min | Repo need    | Open     |
-| [T-09](#t-09--sort-catalog-with-parameterized-tests)            | Product sort with `test.each`                   | P2       | 60 min    | Repo need    | Open     |
+| [T-09](#t-09--sort-catalog-with-parameterized-tests)            | Product sort with `for...of` over scenario data | P2       | 60 min    | Repo need    | Open     |
 | [T-10](#t-10--unit-tests-must-not-leak-processenv)              | Unit test env isolation (`try/finally`)         | P2       | 45 min    | Repo need    | Open     |
 | [T-11](#t-11--new-window-from-the-sauce-demo-footer)            | New window from Sauce Demo footer               | P2       | 60 min    | Repo need    | Open     |
 | [T-12](#t-12--practice-diagnose-a-forced-failure-with-trace)    | Diagnose a forced failure with trace            | P2       | 45–60 min | **Practice** | Open     |
@@ -236,7 +241,7 @@ None. Prefer after T-01 so the first ticket stays locator-focused.
 **Verification**
 
 ```bash
-npx playwright test tests/ui/negative-login.spec.ts --project=chromium
+npx playwright test tests/ui/negative-login.spec.ts --project=chromium-guest
 ```
 
 **Design decisions to explain**
@@ -245,7 +250,7 @@ Why empty username and empty password are different product branches, not two co
 
 **Stretch**
 
-Parameterize invalid / locked / empty with `test.each` **only** if the spec stays readable.
+Parameterize invalid / locked / empty with `for...of` over scenario data **only** if the spec stays readable.
 
 ---
 
@@ -416,7 +421,7 @@ Read [ARCHITECTURE.md — Mocking strategies](./ARCHITECTURE.md#6-mocking-strate
 npm run test:mock
 ```
 
-Use `--project=api-mock` if Docker is noisy. Flip the handler to 200 and confirm the new test fails, then restore.
+For MSW only, run `npx playwright test --project=api-mock tests/api/msw-users.spec.ts`; the api-mock project also contains Docker tests. Flip the handler to 200 and confirm the new test fails, then restore.
 
 **Design decisions to explain**
 
@@ -468,7 +473,7 @@ Align firefox/webkit ignores with chromium. Decide whether nightly should includ
 
 - [ ] `npx playwright test --project=firefox --list` does **not** list `network-mock`.
 - [ ] `--project=chromium-mock --list` **does** list it.
-- [ ] Mock workflow paths include `utils/route-mocks.ts`.
+- [ ] Current unconditional mock-workflow triggers cover route-helper changes. Do not reintroduce path filters merely to satisfy the original ticket.
 
 **Verification**
 
@@ -559,7 +564,7 @@ Catalog order regressions would go unnoticed.
 
 **Concepts**
 
-`getByRole` / `selectOption`, `test.each`, asserting order from visible names/prices (not CSS nth-child).
+`getByRole` / `selectOption`, `for...of` over scenario data, asserting order from visible names/prices (not CSS nth-child).
 
 **Scope**
 
@@ -586,7 +591,7 @@ Chromium. Fail by expecting the opposite order and confirm the test catches it.
 
 **Design decisions to explain**
 
-When `test.each` helps vs when it hides a single unclear assertion.
+When `for...of` over scenario data helps vs when it hides a single unclear assertion.
 
 **Stretch**
 
@@ -701,7 +706,7 @@ Why we do not scrape the third-party social page, and why this is still a useful
 
 **Stretch**
 
-Same pattern with a second link using `test.each` — only if the first test is stable.
+Same pattern with a second link using `for...of` over scenario data — only if the first test is stable.
 
 ---
 
@@ -984,7 +989,7 @@ Mark when you can **explain** the concept from this repo’s files, then when yo
 | API mocking, `fetch` vs `request`, negative HTTP        | T-06       |           |                           |                     |
 | Projects, `testIgnore`, CI path filters                 | T-07       |           |                           |                     |
 | Multi-step UI journey, tags (`@smoke` vs `@regression`) | T-08       |           |                           |                     |
-| `test.each`, asserting order                            | T-09       |           |                           |                     |
+| `for...of` over scenario data, asserting order          | T-09       |           |                           |                     |
 | Worker isolation vs `process.env`                       | T-10       |           |                           |                     |
 | Multiple pages / popup                                  | T-11       |           |                           |                     |
 | API read contract, branded `PostId`                     | T-13       |           |                           |                     |
