@@ -1,5 +1,7 @@
 # Learning Path
 
+See the [Toolshop documentation review and hands-on capability map](TOOLSHOP-HANDS-ON-CAPABILITIES.md), including GraphQL, TOTP, postcode mocking and version differences.
+
 **Recommended starting point:** [four-week Toolshop senior SDET plan](HANDS-ON-MASTERY-PLAN.md) — build, debug, design, and review using this framework. Track your own evidence in [PRACTICE-TRACKER.md](PRACTICE-TRACKER.md). Read [DOCS-REVIEW.md](DOCS-REVIEW.md) before treating older tickets as missing work.
 
 **Primary learning target: Toolshop.** Follow the [environment/integration guide](TOOLSHOP-PRACTICE-GUIDE.md) and [practical exercise briefs](TOOLSHOP-EXERCISE-BRIEFS.md). The existing framework still targets Sauce Demo/JSONPlaceholder; adapting it is a day-3 assignment, not a completed change. Historical T/H tickets remain concept references.
