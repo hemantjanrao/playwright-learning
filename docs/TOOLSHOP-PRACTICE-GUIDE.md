@@ -1,5 +1,7 @@
 # Toolshop practice environment and framework integration
 
+See the [Toolshop documentation review and hands-on capability map](TOOLSHOP-HANDS-ON-CAPABILITIES.md), including GraphQL, TOTP, postcode mocking and version differences.
+
 Status: **planned exercises; no Toolshop installation or test integration has been performed by this documentation update**. Follow the [28-day plan](HANDS-ON-MASTERY-PLAN.md); setup is day 2 and integration is day 3.
 
 ## Targets and versions
