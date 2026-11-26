@@ -1,0 +1,39 @@
+import { authenticatedTest as test, expect } from '@fixtures/authenticated.fixture';
+import { ROUTES } from '@utils/constants';
+import { TAGS } from '@utils/tags';
+
+test.describe('Dashboard', () => {
+  test.beforeEach(async ({ dashboardPage }) => {
+    // Uses storageState from authenticatedTest — no UI login per test
+    await dashboardPage.open();
+  });
+
+  test(
+    'should display inventory items after successful login',
+    { tag: [TAGS.regression] },
+    async ({ page, dashboardPage }) => {
+      await expect(page).toHaveURL(new RegExp(ROUTES.inventory.replace('.', '\\.')));
+      await expect(dashboardPage.pageTitle).toHaveText('Products');
+
+      await expect(dashboardPage.productCards).toHaveCount(6);
+    },
+  );
+
+  test(
+    'should add a product to cart',
+    { tag: [TAGS.smoke, TAGS.regression] },
+    async ({ page, dashboardPage, cartPage }) => {
+      await dashboardPage.addProductToCartByName('Sauce Labs Backpack');
+      await expect(dashboardPage.productCards).toHaveCount(6);
+      await expect(dashboardPage.cartBadge).toHaveText('1');
+
+      await dashboardPage.cartBadge.click();
+      await expect(page).toHaveURL(new RegExp(ROUTES.cart.replace('.', '\\.')));
+      await expect(cartPage.items).toHaveCount(1);
+      const item = cartPage.item('Sauce Labs Backpack');
+      await expect(item.getByTestId('inventory-item-name')).toHaveText('Sauce Labs Backpack');
+      await expect(item.getByTestId('inventory-item-price')).toHaveText('$29.99');
+      await expect(item.getByTestId('item-quantity')).toHaveText('1');
+    },
+  );
+});

@@ -1,0 +1,32 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/users/1"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "id": 1,
+      "name": "Container Mock User",
+      "username": "container_user",
+      "email": "container@framework.test",
+      "phone": "555-0200",
+      "website": "framework.test",
+      "address": {
+        "street": "2 Docker Lane",
+        "suite": "Suite TC",
+        "city": "Testcontainers",
+        "zipcode": "54321",
+        "geo": { "lat": "1", "lng": "1" }
+      },
+      "company": {
+        "name": "WireMock Corp",
+        "catchPhrase": "Stubbed for speed",
+        "bs": "isolated integration tests"
+      }
+    }
+  }
+}

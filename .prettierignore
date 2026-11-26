@@ -1,0 +1,8 @@
+node_modules
+reports
+test-results
+playwright-report
+auth/.auth
+package-lock.json
+
+workbench-site

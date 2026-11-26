@@ -1,0 +1,31 @@
+name: Setup Node and Playwright
+description: Install npm dependencies and optional Playwright browsers for CI
+
+inputs:
+  browsers:
+    description: 'Browser install scope — none | chromium | all'
+    required: false
+    default: none
+
+runs:
+  using: composite
+  steps:
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+        cache: npm
+
+    - name: Install dependencies
+      run: npm ci
+      shell: bash
+
+    - name: Install Playwright Chromium
+      if: inputs.browsers == 'chromium'
+      run: npx playwright install --with-deps chromium
+      shell: bash
+
+    - name: Install all Playwright browsers
+      if: inputs.browsers == 'all'
+      run: npx playwright install --with-deps
+      shell: bash

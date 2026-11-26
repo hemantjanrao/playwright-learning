@@ -1,0 +1,120 @@
+# Learning Path
+
+See the [Toolshop documentation review and hands-on capability map](TOOLSHOP-HANDS-ON-CAPABILITIES.md), including GraphQL, TOTP, postcode mocking and version differences.
+
+**Start here — hands-on:** [30-day Toolshop challenges](TOOLSHOP-30-DAY-CHALLENGES.md) — 20 coding challenges that migrate this framework from Sauce Demo to the local Toolshop; you write every line.
+
+**Recommended starting point:** [four-week Toolshop senior SDET plan](HANDS-ON-MASTERY-PLAN.md) — build, debug, design, and review using this framework. Track your own evidence in [PRACTICE-TRACKER.md](PRACTICE-TRACKER.md). Read [DOCS-REVIEW.md](DOCS-REVIEW.md) before treating older tickets as missing work.
+
+**Primary learning target: Toolshop.** Follow the [environment/integration guide](TOOLSHOP-PRACTICE-GUIDE.md) and [practical exercise briefs](TOOLSHOP-EXERCISE-BRIEFS.md). The existing framework still targets Sauce Demo/JSONPlaceholder; adapting it is a day-3 assignment, not a completed change. Historical T/H tickets remain concept references.
+
+Hands-on curriculum for **Playwright + TypeScript SDET** skills — every lesson maps to real code in this repository.
+
+---
+
+## How to learn
+
+```mermaid
+flowchart LR
+    READ["1. Read lesson"] --> OPEN["2. Open referenced files"]
+    OPEN --> RUN["3. Run tests"]
+    RUN --> EXERCISE["4. Do exercise"]
+    EXERCISE --> CHECK["5. Answer checkpoints"]
+    CHECK --> NEXT["Next lesson"]
+```
+
+Ask the **Framework Coach** at any step: `/framework-coach Teach me Lesson 03` or _"Review my checkpoint answers"_.
+
+Invoke: `/framework-coach` · `@.cursor/skills/framework-coach/SKILL.md`
+
+---
+
+## Curriculum map
+
+```mermaid
+flowchart TD
+    L01["01 · Framework map"] --> L02["02 · Playwright projects"]
+    L02 --> L03["03 · Fixtures"]
+    L03 --> L04["04 · Page Objects"]
+    L04 --> L05["05 · Locators"]
+    L05 --> L06["06 · Auth storageState"]
+    L06 --> L07["07 · API contracts"]
+    L07 --> L08["08 · Zod + TypeScript"]
+    L08 --> L09["09 · CI tiers & tags"]
+    L09 --> L10["10 · Debugging"]
+    L10 --> L11["11 · Mocking strategies"]
+
+    style L01 fill:#e8f5e9
+    style L11 fill:#fff8e1
+```
+
+---
+
+## Lesson index
+
+| #   | Topic                                                      | Key files                           | Command              |
+| --- | ---------------------------------------------------------- | ----------------------------------- | -------------------- |
+| 01  | [Framework map](./lessons/01-framework-map.md)             | `docs/ARCHITECTURE.md`              | `npm test`           |
+| 02  | [Playwright projects](./lessons/02-playwright-projects.md) | `playwright.config.ts`              | `npm run test:api`   |
+| 03  | Fixtures                                                   | `fixtures/index.ts`                 | `npm run test:ui`    |
+| 04  | Page Object Model                                          | `pages/BasePage.ts`                 | `npm run test:ui`    |
+| 05  | Locator strategy                                           | `pages/DashboardPage.ts`            | `npm run test:ui`    |
+| 06  | Auth optimization                                          | `fixtures/authenticated.fixture.ts` | `npm run test:ui`    |
+| 07  | API contracts                                              | `utils/api-client.ts`               | `npm run test:api`   |
+| 08  | Zod + TypeScript                                           | `schemas/`, `types/`                | `npm run test:unit`  |
+| 09  | CI tiers & tags                                            | `.github/workflows/`                | `npm run test:pr`    |
+| 10  | Debugging                                                  | `playwright.config.ts`              | `npm run test:debug` |
+| 11  | [Mocking strategies](./lessons/11-mocking-strategies.md)   | `mocks/`, `utils/route-mocks.ts`    | `npm run test:mock`  |
+
+Lessons **03–10** — invoke Framework Coach: `/framework-coach Teach me Lesson N` (read the [full lesson text](../.cursor/skills/framework-coach/curriculum.md)).
+
+---
+
+## Commands cheat sheet
+
+| Goal            | Command                                      |
+| --------------- | -------------------------------------------- |
+| Simulate CI PR  | `npm run test:pr`                            |
+| Smoke only      | `npm run test:smoke`                         |
+| Full regression | `npm run test:regression`                    |
+| Mocking suite   | `npm run test:mock`                          |
+| By layer        | `npm run test:unit` / `test:api` / `test:ui` |
+| Debug           | `npm run test:debug`                         |
+| Report          | `npm run report`                             |
+| Quality gate    | `npm run validate`                           |
+
+---
+
+## Self-assessment
+
+After completing the curriculum, you should be able to:
+
+- [ ] Draw the 11 Playwright projects from memory
+- [ ] Explain when to use `test` vs `authenticatedTest` vs `mswTest`
+- [ ] Write a Page Object with role/testId locators
+- [ ] Write an API test with `getValidated` + Zod
+- [ ] Choose MSW vs Testcontainers vs `page.route`
+- [ ] Tag a test and run the matching CI tier locally
+- [ ] Read a trace and find the failing step in under 30 seconds
+
+---
+
+## Hands-on tickets
+
+Curriculum lessons teach the map. Tickets apply it in two tracks:
+
+| Track                                      | File                                         | Start here             |
+| ------------------------------------------ | -------------------------------------------- | ---------------------- |
+| Warmup / repo gaps (beginner–intermediate) | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | **T-01**               |
+| API + UI automation set                    | [LEARNING-BACKLOG.md](./LEARNING-BACKLOG.md) | **T-13** → T-14 → T-15 |
+| **Medium–hard SDET tasks**                 | **[LEARNING-TASKS.md](./LEARNING-TASKS.md)** | **H-01**               |
+
+Work one ticket at a time with the Senior SDET mentor (DevOps mentor for H-11 / H-12).
+
+---
+
+## Start
+
+Open **[Lesson 01 — Framework Map](./lessons/01-framework-map.md)** or say:
+
+> "Teach me Lesson 01"

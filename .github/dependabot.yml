@@ -1,0 +1,22 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    groups:
+      playwright:
+        patterns:
+          - '@playwright/*'
+          - 'playwright'
+          - 'allure-playwright'
+      eslint:
+        patterns:
+          - 'eslint*'
+          - '@eslint/*'
+          - 'typescript-eslint'
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
