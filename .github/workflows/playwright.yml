@@ -84,13 +84,23 @@ jobs:
       - uses: ./.github/actions/setup-node-playwright
         with:
           browsers: chromium
+      - name: Start Toolshop
+        run: |
+          compose="docker compose -f docker/toolshop/docker-compose.yml"
+          $compose up -d --quiet-pull
+          for i in $(seq 1 30); do $compose exec -T laravel-api php artisan migrate:fresh --seed --force && break; sleep 5; done
+          curl -sf --retry 30 --retry-delay 5 --retry-all-errors -o /dev/null http://localhost:8091/products
+          curl -sf --retry 60 --retry-delay 5 --retry-all-errors -o /dev/null http://localhost:4200
       - uses: ./.github/actions/configure-test-env
         env:
-          BASE_URL: ${{ secrets.BASE_URL }}
+          BASE_URL: http://localhost:4200
           API_BASE_URL: ${{ secrets.API_BASE_URL }}
           E2E_USERNAME: ${{ secrets.E2E_USERNAME }}
           E2E_PASSWORD: ${{ secrets.E2E_PASSWORD }}
       - run: npx playwright test --project=chromium --project=chromium-guest --grep @smoke
+      - name: Toolshop logs
+        if: failure()
+        run: docker compose -f docker/toolshop/docker-compose.yml logs --tail=100
       - uses: ./.github/actions/upload-playwright-artifacts
         if: failure()
         with:
