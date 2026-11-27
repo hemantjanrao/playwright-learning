@@ -42,16 +42,16 @@ await page.fill('#user-name', 'standard_user');
 **Good** — framework layers:
 
 ```typescript
-test('should login...', { tag: '@smoke' }, async ({ loginPage, dashboardPage, config }) => {
+test('should login...', { tag: '@smoke' }, async ({ loginPage, page, config }) => {
   await loginPage.open();
   await loginPage.login(config.credentials.username, config.credentials.password);
-  await expect(dashboardPage.pageTitle).toHaveText('Products');
+  await expect(page).toHaveURL(/\/account/);
 });
 ```
 
 ## 6. Mini exercise
 
-1. Open [ARCHITECTURE.md §2](../ARCHITECTURE.md#2-playwright-projects) — list all 8 Playwright projects
+1. Open [ARCHITECTURE.md §2](../ARCHITECTURE.md#2-playwright-projects) — list all 11 Playwright projects (including the guest projects)
 2. Run `npm run test:pr` and note the three stages (unit → api → smoke)
 3. Find where `BASE_URL` is loaded (`utils/config-loader.ts`)
 
