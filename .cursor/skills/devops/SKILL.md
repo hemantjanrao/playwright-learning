@@ -47,7 +47,7 @@ description: >-
 1. Create GitHub Environment: Settings → Environments → New.
 2. Add environment-scoped secrets (`BASE_URL`, etc.).
 3. Add `workflow_dispatch` input or branch/tag trigger.
-4. Bind the test job to the environment (required to read environment-scoped secrets) and pass them to the test process. Branch/tag triggers have no `inputs`, so fall back to a fixed environment:
+4. Bind the test job to the environment (required to read environment-scoped secrets) and pass them to the test process. Branch/tag triggers have no `inputs`, so fall back to a fixed environment — replace both `'qa'` values with the environment you are adding, or the job silently runs against `qa`:
 
    ```yaml
    test:
