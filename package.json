@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=20.0.0"
+    "node": "^20.19.0 || ^22.13.0 || >=24"
   },
   "scripts": {
     "test": "playwright test",
@@ -44,8 +44,8 @@
     "@faker-js/faker": "^10.5.0",
     "@playwright/test": "^1.65.0",
     "@types/node": "^25.9.3",
-    "allure-playwright": "^3.2.2",
     "allure-commandline": "^2.36.0",
+    "allure-playwright": "^3.2.2",
     "cross-env": "^10.1.0",
     "dotenv": "^16.5.0",
     "eslint": "^10.5.0",

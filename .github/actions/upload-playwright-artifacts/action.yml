@@ -17,7 +17,7 @@ runs:
   using: composite
   steps:
     - name: Upload HTML report
-      if: inputs.upload-report == 'always' || failure()
+      if: always() && (inputs.upload-report == 'always' || job.status == 'failure')
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.report-name }}
@@ -26,7 +26,7 @@ runs:
         if-no-files-found: ignore
 
     - name: Upload traces and screenshots
-      if: failure()
+      if: always() && job.status == 'failure'
       uses: actions/upload-artifact@v4
       with:
         name: ${{ inputs.results-name }}
