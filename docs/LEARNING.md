@@ -1,5 +1,13 @@
 # Learning Path
 
+See the [Toolshop documentation review and hands-on capability map](TOOLSHOP-HANDS-ON-CAPABILITIES.md), including GraphQL, TOTP, postcode mocking and version differences.
+
+**Start here — hands-on:** [30-day Toolshop challenges](TOOLSHOP-30-DAY-CHALLENGES.md) — 20 coding challenges that migrate this framework from Sauce Demo to the local Toolshop; you write every line.
+
+**Recommended starting point:** [four-week Toolshop senior SDET plan](HANDS-ON-MASTERY-PLAN.md) — build, debug, design, and review using this framework. Track your own evidence in [PRACTICE-TRACKER.md](PRACTICE-TRACKER.md). Read [DOCS-REVIEW.md](DOCS-REVIEW.md) before treating older tickets as missing work.
+
+**Primary learning target: Toolshop.** Follow the [environment/integration guide](TOOLSHOP-PRACTICE-GUIDE.md) and [practical exercise briefs](TOOLSHOP-EXERCISE-BRIEFS.md). The existing framework still targets Sauce Demo/JSONPlaceholder; adapting it is a day-3 assignment, not a completed change. Historical T/H tickets remain concept references.
+
 Hands-on curriculum for **Playwright + TypeScript SDET** skills — every lesson maps to real code in this repository.
 
 ---
@@ -58,7 +66,7 @@ flowchart TD
 | 10  | Debugging                                                  | `playwright.config.ts`              | `npm run test:debug` |
 | 11  | [Mocking strategies](./lessons/11-mocking-strategies.md)   | `mocks/`, `utils/route-mocks.ts`    | `npm run test:mock`  |
 
-Lessons **03–10** — invoke Framework Coach: `/framework-coach Teach me Lesson N` (content in `.cursor/skills/framework-coach/curriculum.md`).
+Lessons **03–10** — invoke Framework Coach: `/framework-coach Teach me Lesson N` (read the [full lesson text](../.cursor/skills/framework-coach/curriculum.md)).
 
 ---
 

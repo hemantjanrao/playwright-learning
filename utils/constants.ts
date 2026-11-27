@@ -23,11 +23,20 @@ export const ENVIRONMENTS = [
   'prod',
 ] as const satisfies readonly EnvironmentName[];
 
-/** UI routes for Sauce Demo (relative to Playwright `baseURL`). */
+/** UI routes for Toolshop (relative to Playwright `baseURL`). */
 export const ROUTES = {
-  login: '/',
-  inventory: '/inventory.html',
-  cart: '/cart.html',
+  home: '/',
+  categories: '/categories',
+  contact: '/contact',
+  signIn: '/auth/login',
+  signOut: '/sign-out',
+  cart: '/cart',
+  checkout: '/checkout',
+  account: '/account',
+  orderConfirmation: '/order-confirmation',
+  orderHistory: '/order-history',
+  orderDetails: '/order-details',
+  orderTracking: '/order-tracking',
 } as const satisfies Record<string, `/${string}` | string>;
 
 /**

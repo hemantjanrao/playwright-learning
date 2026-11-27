@@ -23,10 +23,10 @@ Full diagrams: [ARCHITECTURE.md](../ARCHITECTURE.md)
 ## 4. Run each layer
 
 ```bash
-npm run test:unit    # 12 tests · ~2s · no browser
-npm run test:api     #  5 tests · ~2s · HTTP only
-npm run test:ui      #  7 tests · ~5s · browser + auth setup
-npm run test:mock    #  6 tests · MSW + Docker + page.route
+npm run test:unit    # Framework tests, including loopback HTTP contracts
+npm run test:api     # Live HTTP contracts; internet required
+npm run test:ui      # Chromium authenticated + guest projects
+npm run test:mock    # MSW + Docker + browser routes
 ```
 
 ## 5. Good vs bad
@@ -42,16 +42,16 @@ await page.fill('#user-name', 'standard_user');
 **Good** — framework layers:
 
 ```typescript
-test('should login...', { tag: '@smoke' }, async ({ loginPage, dashboardPage, config }) => {
+test('should login...', { tag: '@smoke' }, async ({ loginPage, page, config }) => {
   await loginPage.open();
   await loginPage.login(config.credentials.username, config.credentials.password);
-  await expect(dashboardPage.pageTitle).toHaveText('Products');
+  await expect(page).toHaveURL(/\/account/);
 });
 ```
 
 ## 6. Mini exercise
 
-1. Open [ARCHITECTURE.md §2](../ARCHITECTURE.md#2-playwright-projects) — list all 8 Playwright projects
+1. Open [ARCHITECTURE.md §2](../ARCHITECTURE.md#2-playwright-projects) — list all 11 Playwright projects (including the guest projects)
 2. Run `npm run test:pr` and note the three stages (unit → api → smoke)
 3. Find where `BASE_URL` is loaded (`utils/config-loader.ts`)
 

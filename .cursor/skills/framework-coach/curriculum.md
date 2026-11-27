@@ -357,11 +357,11 @@ forbidOnly: isCi,
 
 ### Tag guide
 
-| Tag           | Meaning                      | Typical tier        |
-| ------------- | ---------------------------- | ------------------- |
-| `@smoke`      | Critical path                | PR                  |
-| `@regression` | Broader coverage             | Nightly             |
-| `@mock`       | Needs MSW/Docker/route mocks | On demand / nightly |
+| Tag           | Meaning                      | Typical tier         |
+| ------------- | ---------------------------- | -------------------- |
+| `@smoke`      | Critical path                | PR                   |
+| `@regression` | Broader coverage             | Nightly              |
+| `@mock`       | Needs MSW/Docker/route mocks | Every PR / main push |
 
 ### Try it
 
@@ -374,7 +374,7 @@ time npm run test:regression
 ### Checkpoint
 
 1. How many stages does `test:pr` run, and in what order?
-2. Why are mock tests tagged `@mock` instead of running on every PR?
+2. Why do `@mock` tests run in a separate workflow (`playwright-mock.yml`) on every PR instead of inside `test:pr`?
 3. What happens if you commit `test.only` to CI?
 
 **Next:** Lesson 10 — Debugging
@@ -395,7 +395,7 @@ Re-running tests blindly wastes time. Traces show exact DOM state, network calls
 
 ```typescript
 // playwright.config.ts
-trace: isCi ? 'retain-on-failure' : 'on-first-retry',
+trace: 'retain-on-failure',
 screenshot: 'only-on-failure',
 video: 'retain-on-failure',
 ```
@@ -437,7 +437,7 @@ npx playwright test --repeat-each=20  # reproduce flakes
 2. Where do browser console errors appear in this framework?
 3. What command helps reproduce intermittent failures?
 
-**Next:** [Lesson 11 — Mocking Strategies](../../docs/lessons/11-mocking-strategies.md)
+**Next:** [Lesson 11 — Mocking Strategies](../../../docs/lessons/11-mocking-strategies.md)
 
 ---
 

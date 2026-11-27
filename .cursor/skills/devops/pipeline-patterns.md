@@ -268,7 +268,7 @@ jobs:
           node-version: '20'
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps ${{ inputs.tier == 'pr' && 'chromium' || '' }}
       - run: ${{ inputs.tier == 'pr' && 'npm run test:pr' || 'npm run test:nightly' }}
         env:
           CI: true
@@ -297,13 +297,13 @@ jobs:
   unit-api:
     needs: quality
     steps:
-      - run: playwright test --project=unit
-      - run: playwright test --project=api
+      - run: npx playwright test --project=unit
+      - run: npx playwright test --project=api
   smoke-ui:
     needs: quality
     steps:
       - run: npx playwright install --with-deps chromium
-      - run: playwright test --project=chromium --grep @smoke
+      - run: npx playwright test --project=chromium --grep @smoke
 ```
 
 Parallel jobs reduce wall time; branch protection must list all required job names.

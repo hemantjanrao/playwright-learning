@@ -206,7 +206,7 @@ npm run test:mock        # --grep @mock
 
 ```typescript
 // playwright.config.ts
-trace: isCi ? 'retain-on-failure' : 'on-first-retry',
+trace: 'retain-on-failure',
 screenshot: 'only-on-failure',
 video: 'retain-on-failure',
 ```

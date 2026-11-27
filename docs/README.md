@@ -1,5 +1,15 @@
 # Documentation Hub
 
+**Local daily dashboard:** run `npm run dashboard`, then open [SDET Studio](http://localhost:4173). Includes the 28-day plan, checklists, notes, hours and exportable browser-saved progress. See [dashboard instructions](../learning-dashboard/README.md).
+
+See the [Toolshop documentation review and hands-on capability map](TOOLSHOP-HANDS-ON-CAPABILITIES.md), including GraphQL, TOTP, postcode mocking and version differences.
+
+**Start here — hands-on:** [30-day Toolshop challenges](TOOLSHOP-30-DAY-CHALLENGES.md) — 20 coding challenges that migrate this framework from Sauce Demo to the local Toolshop; you write every line.
+
+**Recommended starting point:** [four-week Toolshop senior SDET plan](HANDS-ON-MASTERY-PLAN.md) — build, debug, design, and review using this framework. Track your own evidence in [PRACTICE-TRACKER.md](PRACTICE-TRACKER.md). Read [DOCS-REVIEW.md](DOCS-REVIEW.md) before treating older tickets as missing work.
+
+**Primary learning target: Toolshop.** Follow the [environment/integration guide](TOOLSHOP-PRACTICE-GUIDE.md) and [practical exercise briefs](TOOLSHOP-EXERCISE-BRIEFS.md). The existing framework still targets Sauce Demo/JSONPlaceholder; adapting it is a day-3 assignment, not a completed change. Historical T/H tickets remain concept references.
+
 > Playwright + TypeScript SDET framework — architecture, learning path, and visual references.
 
 ## Start here
