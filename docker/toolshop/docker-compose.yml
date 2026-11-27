@@ -17,7 +17,7 @@ services:
   angular-ui:
     image: testsmith/practice-software-testing-sprint5-ui:2.5
     ports:
-      - 4200:4200
+      - 127.0.0.1:4200:4200
     command: bash -c "ng serve --host 0.0.0.0 --port 4200"
 
   # testsmith/practice-software-testing-web is arm64-only; CI runners are amd64.
@@ -26,7 +26,7 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     ports:
-      - 8091:80
+      - 127.0.0.1:8091:80
     depends_on:
       - laravel-api
 
