@@ -1,4 +1,4 @@
-import { execSync } from 'node:child_process';
+import { execFileSync } from 'node:child_process';
 
 /**
  * Returns `true` when the Docker daemon is reachable.
@@ -11,7 +11,7 @@ export function isDockerAvailable(): boolean {
     return false;
   }
   try {
-    execSync('docker info', { stdio: 'ignore' });
+    execFileSync('docker', ['info'], { stdio: 'ignore', timeout: 10_000, killSignal: 'SIGKILL' });
     return true;
   } catch {
     if (process.env.CI)

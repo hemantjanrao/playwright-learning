@@ -98,12 +98,14 @@ env:
   run: npm run report:allure
 
 - uses: actions/upload-pages-artifact@v3
+  id: upload-pages
   if: always()
   with:
     path: reports/allure-report
 
 - uses: actions/deploy-pages@v4
   id: deployment
+  if: always() && steps.upload-pages.outcome == 'success'
 ```
 
 **Requirement:** `allure-commandline` is in devDependencies — `npm run report:allure` uses the local CLI.
