@@ -1,7 +1,7 @@
 # Toolshop practice tracker
 
 Start date: not set. Capacity: **5–6 hours daily for 28 days (140–168 hours)**.
-Application checkout/revision/sprint: **not established**. Toolshop automation integration: **not implemented**.
+Application checkout/revision/sprint: **not established**. Toolshop automation integration: **partial scaffolding only** (`playwright.toolshop.config.ts`, `schemas/toolshop.schemas.ts`; no specs).
 
 Follow [the four-week plan](HANDS-ON-MASTERY-PLAN.md), [environment guide](TOOLSHOP-PRACTICE-GUIDE.md), and [exercise briefs](TOOLSHOP-EXERCISE-BRIEFS.md).
 

@@ -30,23 +30,23 @@ The source audit below still describes the existing reference framework. Toolsho
 
 “Present” means the implementation can be inspected in current source. It does not certify every historical acceptance criterion, a fresh green run, or learner mastery.
 
-| Ticket | Current source assessment                                   | Recommended practice                                           |
-| ------ | ----------------------------------------------------------- | -------------------------------------------------------------- |
-| T-01   | Present: card locator and retrying count assertion          | Rebuild, break card scope, explain oracle                      |
-| T-02   | Present: CartPage and identity/price/quantity assertions    | Rebuild; extend to multiple items                              |
-| T-03   | Present: empty-password case and fixture data               | Explain partitions; add a justified boundary                   |
-| T-04   | Still useful: overlapping inventory assertions remain       | Review risks before removing duplication                       |
-| T-05   | Present: `trace: 'retain-on-failure'`                       | Produce and inspect your own failure trace                     |
-| T-06   | Missing from MSW user specs: unknown-user negative case     | Implement the focused 404 exercise                             |
-| T-07   | Present: browser/mock split; workflow now unconditional     | Inspect discovery and CI triggers                              |
-| T-08   | Present: checkout happy path, validation, cancellation      | Rebuild and defend totals; extend state transitions            |
-| T-09   | No sorting scenario found                                   | Implement data-driven sorting                                  |
-| T-10   | Present: environment restoration with `try/finally`         | Explain missing-value restoration and test a variant           |
-| T-11   | No popup scenario found                                     | Observe current target behavior before selecting API           |
-| T-12   | Learner-specific drill; cannot infer completion from source | Perform hidden-fault diagnosis                                 |
-| T-13   | Present: GET post by ID and missing-resource test           | Explain branded ID and response contract                       |
-| T-14   | No dedicated update/delete specs found                      | Practice simulated responses; use local target for persistence |
-| T-15   | No product-detail scenario found                            | Implement identity/price/navigation checks                     |
+| Ticket | Current source assessment                                          | Recommended practice                                                   |
+| ------ | ------------------------------------------------------------------ | ---------------------------------------------------------------------- |
+| T-01   | Removed: inventory card specs deleted in the Toolshop rewrite      | Rebuild against Toolshop product cards                                 |
+| T-02   | Removed: CartPage and cart specs deleted                           | Restore against Toolshop cart; extend to multiple items                |
+| T-03   | Removed: negative-login spec and fixture data deleted              | Rebuild against Toolshop login; add a justified boundary               |
+| T-04   | Removed: inventory assertions deleted                              | Re-derive coverage before adding duplication back                      |
+| T-05   | Present: `trace: 'retain-on-failure'`                              | Produce and inspect your own failure trace                             |
+| T-06   | Missing from MSW user specs: unknown-user negative case            | Implement the focused 404 exercise                                     |
+| T-07   | Partial: browser/mock projects remain; `network-mock` spec deleted | Restore a `page.route` spec; inspect discovery and CI triggers         |
+| T-08   | Removed: checkout suite deleted                                    | Restore against Toolshop checkout; defend totals and state transitions |
+| T-09   | No sorting scenario found                                          | Implement data-driven sorting                                          |
+| T-10   | Present: environment restoration with `try/finally`                | Explain missing-value restoration and test a variant                   |
+| T-11   | No popup scenario found                                            | Observe current target behavior before selecting API                   |
+| T-12   | Learner-specific drill; cannot infer completion from source        | Perform hidden-fault diagnosis                                         |
+| T-13   | Present: GET post by ID and missing-resource test                  | Explain branded ID and response contract                               |
+| T-14   | No dedicated update/delete specs found                             | Practice simulated responses; use local target for persistence         |
+| T-15   | No product-detail scenario found                                   | Implement identity/price/navigation checks                             |
 
 ## Advanced task reconciliation
 
