@@ -1,5 +1,5 @@
 name: Configure test environment
-description: Apply CI env vars with demo-safe defaults when secrets are unset. Pass secrets via env on the calling step.
+description: Apply CI env vars with demo-safe URL defaults. Credentials come only from E2E_USERNAME / E2E_PASSWORD secrets passed via env on the calling step.
 
 runs:
   using: composite
@@ -10,6 +10,6 @@ runs:
         {
           echo "BASE_URL=${BASE_URL:-https://practicesoftwaretesting.com}"
           echo "API_BASE_URL=${API_BASE_URL:-https://jsonplaceholder.typicode.com}"
-          echo "E2E_USERNAME=${E2E_USERNAME:-customer@practicesoftwaretesting.com}"
-          echo "E2E_PASSWORD=${E2E_PASSWORD:-welcome01}"
+          echo "E2E_USERNAME=${E2E_USERNAME}"
+          echo "E2E_PASSWORD=${E2E_PASSWORD}"
         } >> "$GITHUB_ENV"
