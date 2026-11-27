@@ -30,23 +30,53 @@ npm run test:pr        # CI PR tier — ~10s
 
 ```mermaid
 flowchart TB
-    subgraph PYRAMID["Test pyramid"]
-        direction TB
-        UI["UI E2E · few · @smoke"]
-        API["API contracts · every PR"]
-        UNIT["Unit · framework logic"]
-    end
-
-    subgraph STACK["Tech stack"]
+    subgraph SPECS["tests/ — what runs"]
         direction LR
-        PW["Playwright"]
-        TS["TypeScript strict"]
-        ZOD["Zod"]
-        MSW["MSW"]
-        TC["Testcontainers"]
+        UNIT["unit/<br/>no browser"]
+        API["api/<br/>HTTP contracts"]
+        UI["ui/<br/>browser E2E"]
+        SETUP["setup/<br/>auth storageState"]
     end
 
-    PYRAMID --- STACK
+    subgraph FX["fixtures/ — typed DI"]
+        direction LR
+        BASE["index.ts<br/>test · config · apiClient · pages"]
+        AUTH["authenticated.fixture"]
+        MSWF["msw.fixture"]
+        CONT["container.fixture"]
+    end
+
+    subgraph FW["Framework"]
+        direction LR
+        POM["pages/ + components/<br/>BasePage → Header"]
+        CLIENT["utils/api-client<br/>ApiClient · ApiResult"]
+        CFG["utils/config-loader<br/>.env → Zod"]
+        SCH["schemas/<br/>Zod contracts"]
+    end
+
+    subgraph TARGETS["Systems under test"]
+        direction LR
+        TS["Toolshop UI :4200 + API :8091<br/>docker/toolshop"]
+        JP["JSONPlaceholder<br/>live API"]
+        MOCKS["MSW · WireMock<br/>Testcontainers"]
+    end
+
+    UNIT --> BASE
+    API --> BASE
+    API --> MSWF
+    API --> CONT
+    UI --> BASE
+    UI --> AUTH
+    SETUP --> AUTH
+    BASE --> POM
+    BASE --> CLIENT
+    BASE --> CFG
+    CLIENT --> SCH
+    CFG --> SCH
+    POM --> TS
+    CLIENT --> JP
+    MSWF --> MOCKS
+    CONT --> MOCKS
 ```
 
 ---
@@ -99,7 +129,7 @@ playwright-learning/
 | Unit      | Framework code                                          | `unit`                            |
 | API       | [JSONPlaceholder](https://jsonplaceholder.typicode.com) | `api`                             |
 | API mocks | MSW + WireMock Docker                                   | `api-mock`                        |
-| UI        | [Sauce Demo](https://www.saucedemo.com)                 | `chromium` / `firefox` / `webkit` |
+| UI        | Toolshop (local Docker, `docker/toolshop`)              | `chromium` / `firefox` / `webkit` |
 
 ---
 
@@ -107,28 +137,32 @@ playwright-learning/
 
 ```mermaid
 flowchart TB
-    subgraph PR["PR — playwright.yml"]
+    subgraph PR["PR + push main — playwright.yml"]
         Q["Lint & Typecheck"]
-        U["Unit tests"]
-        A["API contracts"]
-        S["Smoke E2E"]
+        U["Unit tests<br/>--project=unit"]
+        A["API contracts<br/>--project=api"]
+        DK["Start Toolshop (Docker)<br/>migrate:fresh --seed"]
+        S["Smoke E2E<br/>chromium + chromium-guest · @smoke"]
+        F["PR failure summary<br/>comment on PR"]
         Q --> U
         Q --> A
-        Q --> S
+        Q --> DK --> S
+        U -.->|on failure| F
+        A -.->|on failure| F
+        S -.->|on failure| F
     end
 
-    subgraph NIGHTLY["Nightly — playwright-nightly.yml"]
-        M["@regression matrix<br/>api · chromium · firefox · webkit"]
-        MERGE["merge sharded HTML report"]
-        PUB["publish-pages job → GitHub Pages<br/>ENABLE_GITHUB_PAGES=true"]
-        M --> MERGE --> PUB
+    subgraph MOCK["PR + push main — playwright-mock.yml"]
+        MK["@mock · MSW + WireMock + page.route"]
     end
 
-    subgraph MOCK["Mock — playwright-mock.yml"]
-        MK["@mock · every PR and main/master push"]
+    subgraph NIGHTLY["02:00 UTC / manual — playwright-nightly.yml"]
+        MX["build shard matrix<br/>api 1/1 · 6 browser projects × N shards"]
+        M["@regression per shard<br/>environment: dev / qa / staging"]
+        MERGE["merge blob reports → HTML"]
+        PUB["publish-pages<br/>if ENABLE_GITHUB_PAGES=true"]
+        MX --> M --> MERGE --> PUB
     end
-
-    PR -.->|path filter| MOCK
 ```
 
 Replace `OWNER/REPO` after pushing to GitHub:
