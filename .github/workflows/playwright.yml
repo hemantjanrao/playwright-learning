@@ -88,7 +88,9 @@ jobs:
         run: |
           compose="docker compose -f docker/toolshop/docker-compose.yml"
           $compose up -d --quiet-pull
-          for i in $(seq 1 30); do $compose exec -T laravel-api php artisan migrate:fresh --seed --force && break; sleep 5; done
+          seeded=
+          for i in $(seq 1 30); do $compose exec -T laravel-api php artisan migrate:fresh --seed --force && { seeded=1; break; }; sleep 5; done
+          [ -n "$seeded" ] || { echo "::error::Toolshop migrate/seed failed after 30 attempts"; exit 1; }
           curl -sf --retry 30 --retry-delay 5 --retry-all-errors -o /dev/null http://localhost:8091/products
           curl -sf --retry 60 --retry-delay 5 --retry-all-errors -o /dev/null http://localhost:4200
       - uses: ./.github/actions/configure-test-env
