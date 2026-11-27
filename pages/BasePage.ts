@@ -1,5 +1,6 @@
 import type { Page } from '@playwright/test';
 import { ROUTES } from '@utils/constants';
+import { Header } from '../components/Header';
 
 /**
  * Abstract base for all Page Objects in this framework.
@@ -27,14 +28,19 @@ export abstract class BasePage {
   /**
    * @param page - Playwright page injected by fixtures; subclasses must not create their own.
    */
-  constructor(protected readonly page: Page) {}
+  /** Header component. */
+  readonly header: Header;
+
+  constructor(protected readonly page: Page) {
+    this.header = new Header(page);
+  }
 
   /**
    * Navigates to a path relative to `baseURL` from Playwright config.
    *
    * @param path - Route path; defaults to the login route.
    */
-  async goto(path: string = ROUTES.login): Promise<void> {
+  async goto(path: string = ROUTES.home): Promise<void> {
     await this.page.goto(path);
   }
 
