@@ -30,7 +30,6 @@ import { LoginPage } from '@pages/LoginPage';
  * Destructuring a typo'd fixture name in a test fails at typecheck.
  */
 export type TestFixtures = {
-
   /** Home page object. */
   homePage: HomePage;
   /** Login page object. */
