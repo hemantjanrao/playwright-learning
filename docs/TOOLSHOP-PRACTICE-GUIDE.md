@@ -36,7 +36,7 @@ Upstream documents local service endpoints and operational commands for mail cap
 
 ## Day 3 integration assignment
 
-Proposed paths below **do not exist yet**. They define a small starting seam, not mandatory new abstraction layers:
+Partial scaffolding exists: `playwright.toolshop.config.ts` (API-only `toolshop-api` project) and `schemas/toolshop.schemas.ts`. The `tests/toolshop/` specs, `fixtures/toolshop.fixture.ts`, and `pages/toolshop/` **do not exist yet**. The paths below define a small starting seam, not mandatory new abstraction layers:
 
 ```text
 playwright.toolshop.config.ts    # independent test selection and artifacts

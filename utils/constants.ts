@@ -23,7 +23,7 @@ export const ENVIRONMENTS = [
   'prod',
 ] as const satisfies readonly EnvironmentName[];
 
-/** UI routes for Sauce Demo (relative to Playwright `baseURL`). */
+/** UI routes for Toolshop (relative to Playwright `baseURL`). */
 export const ROUTES = {
   home: '/',
   categories: '/categories',

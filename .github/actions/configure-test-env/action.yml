@@ -8,7 +8,7 @@ runs:
       shell: bash
       run: |
         {
-          echo "BASE_URL=${BASE_URL:-https://www.saucedemo.com}"
+          echo "BASE_URL=${BASE_URL:-https://practicesoftwaretesting.com}"
           echo "API_BASE_URL=${API_BASE_URL:-https://jsonplaceholder.typicode.com}"
           echo "E2E_USERNAME=${E2E_USERNAME:-standard_user}"
           echo "E2E_PASSWORD=${E2E_PASSWORD:-secret_sauce}"

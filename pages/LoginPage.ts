@@ -1,13 +1,12 @@
-import { Locator, Page } from "@playwright/test";
-import { ROUTES } from "@utils/constants";
-import { BasePage } from "./BasePage";
+import type { Locator, Page } from '@playwright/test';
+import { ROUTES } from '@utils/constants';
+import { BasePage } from './BasePage';
 
 export class LoginPage extends BasePage {
-
   readonly emailInput: Locator;
   readonly passwordInput: Locator;
-  readonly loginButton: Locator;    
-    
+  readonly loginButton: Locator;
+
   constructor(page: Page) {
     super(page);
     this.emailInput = this.page.getByTestId('email');
