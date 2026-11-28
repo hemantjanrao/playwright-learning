@@ -1,5 +1,5 @@
 {
-  "name": "playwright-learning",
+  "name": "playwright-ts-framework",
   "version": "1.0.0",
   "description": "Production-ready Playwright TypeScript test automation framework",
   "private": true,
