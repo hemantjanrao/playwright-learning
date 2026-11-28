@@ -1,17 +1,6 @@
 # Playwright TypeScript Test Automation Framework
 
-Enterprise-grade Playwright framework with Page Object Model, Zod contracts, typed fixtures, tiered CI, API mocking, and a structured learning path.
-
----
-
-## Documentation
-
-| Doc                                              | What's inside                                         |
-| ------------------------------------------------ | ----------------------------------------------------- |
-| [**docs/ARCHITECTURE.md**](docs/ARCHITECTURE.md) | Layered diagrams, project graph, mocking, CI pipeline |
-| [**docs/LEARNING.md**](docs/LEARNING.md)         | Hands-on curriculum — start here to learn             |
-| [**docs/README.md**](docs/README.md)             | Documentation hub & navigation                        |
-| [**AGENTS.md**](AGENTS.md)                       | Cursor agent onboarding                               |
+My Playwright + TypeScript practice framework for advanced patterns beyond my production work: Page Object Model, Zod contracts, typed fixtures, tiered CI with sharding, and API mocking with MSW and WireMock.
 
 ---
 
@@ -101,7 +90,6 @@ flowchart TB
 
 ```
 playwright-learning/
-├── docs/                      # Architecture, learning, diagrams
 ├── schemas/                   # Zod — single source of truth
 ├── mocks/                     # MSW handlers
 ├── docker/wiremock/           # Testcontainers stub mappings
@@ -209,17 +197,9 @@ test('...', { tag: ['@smoke', '@regression'] }, async () => { ... });
 
 ---
 
-## Learn
-
-Open **[docs/LEARNING.md](docs/LEARNING.md)** or ask the agent:
-
-> "Teach me Lesson 01"
-
----
-
 ## License
 
-Private — learning / internal use.
+Personal project, shared for reference.
 
 ### Review hardening
 
@@ -230,4 +210,4 @@ Use `--project=chromium-guest` to run login and guest-access checks without auth
 
 Mock tests run on every PR and main/master push. Quarantined tests are excluded by default;
 use `npm run test:quarantine` for an explicit investigation run.
-See [coverage and remaining risks](docs/COVERAGE.md).
+
