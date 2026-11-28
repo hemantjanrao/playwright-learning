@@ -89,7 +89,7 @@ flowchart TB
 ## Project structure
 
 ```
-playwright-learning/
+playwright-ts-framework/
 ├── schemas/                   # Zod — single source of truth
 ├── mocks/                     # MSW handlers
 ├── docker/wiremock/           # Testcontainers stub mappings
@@ -151,13 +151,6 @@ flowchart TB
         PUB["publish-pages<br/>if ENABLE_GITHUB_PAGES=true"]
         MX --> M --> MERGE --> PUB
     end
-```
-
-Replace `OWNER/REPO` after pushing to GitHub:
-
-```markdown
-![Playwright PR](https://github.com/OWNER/REPO/actions/workflows/playwright.yml/badge.svg)
-![Nightly](https://github.com/OWNER/REPO/actions/workflows/playwright-nightly.yml/badge.svg)
 ```
 
 ### Required branch protection checks
