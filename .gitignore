@@ -13,3 +13,6 @@ allure-results/
 .env.*
 !.env.example
 !.env.*.example
+
+# Personal notes, kept local
+docs/
